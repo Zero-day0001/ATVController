@@ -1,0 +1,13 @@
+#Ignore Config file
+public/config.php
+
+#Ignore IPs file
+public/scripts/ips
+
+#Ignore Screenshots and Log outputs
+public/outputs/*
+public/screenshot/*
+public/deviceLogs/*
+
+#Ignore node modules
+node_modules/
