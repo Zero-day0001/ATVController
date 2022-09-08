@@ -3,9 +3,8 @@
 // SCRIPTS TO RUN ON ALL DEVICES
 
 function deviceinfo() {
-	echo 
-	'<form id="deviceinfo" action="index.php" method ="post">' .
-		'<button name="deviceinfo" type="submit" class="btn btn-primary menuButton">Build Info</button>' .
+	echo '<form id="deviceinfo" action="index.php" method="post" onsubmit="return confirmscreen()">' .
+	'<button name="deviceinfo" type="submit" class="btn btn-primary menuButton">Build Info</button>' .
 	'</form>';
 	if(isset($_POST['deviceinfo'])){
 		echo $res=shell_exec('scripts/deviceinfo.sh');
@@ -14,7 +13,7 @@ function deviceinfo() {
 
 function tempbutton() {
 	echo
-	'<form id="temp" action="index.php" method ="post">' .
+	'<form id="temp" action="index.php" method ="post" onsubmit="return confirmscreen()">' .
 		'<button name="temp" type="submit" class="btn btn-primary menuButton">Recollect Temps</button>' .
 	'</form>';
 	if(isset($_POST['temp'])){
@@ -24,7 +23,7 @@ function tempbutton() {
 
 function rebootbutton() {
 	echo 
-	'<form id="reboot" action="index.php" method ="post">' . 
+	'<form id="reboot" action="index.php" method ="post" onsubmit="return confirmscreen()">' . 
 		'<button name="reboot" type="submit" class="btn btn-primary menuButton">Reboot ALL</button>' .
 	'</form>';
 	if(isset($_POST['reboot'])){
@@ -34,7 +33,7 @@ function rebootbutton() {
 
 function vercheck() {
         echo
-        '<form id="vercheck" action="index.php" method ="post">' .
+        '<form id="vercheck" action="index.php" method ="post" onsubmit="return confirmscreen()">' .
                 '<button name="vercheck" type="submit" class="btn btn-primary menuButton">Recollect Versions</button>' .
         '</form>';
         if(isset($_POST['vercheck'])){
@@ -44,7 +43,7 @@ function vercheck() {
 
 function anvercheck() {
         echo
-        '<form id="anvercheck" action="index.php" method ="post">' .
+        '<form id="anvercheck" action="index.php" method ="post" onsubmit="return confirmscreen()">' .
                 '<button name="anvercheck" type="submit" class="btn btn-primary menuButton">Recollect Android Version</button>' .
         '</form>';
         if(isset($_POST['anvercheck'])){
@@ -54,7 +53,7 @@ function anvercheck() {
 
 function upatlas() {
 	echo 
-	'<form id="upatlas" action="index.php" method ="post">' . 
+	'<form id="upatlas" action="index.php" method ="post" onsubmit="return confirmscreen()">' . 
 		'<button name="upatlas" type="submit" class="btn btn-primary menuButton">Update Atlas ALL</button>' .
 	'</form>';
 	if(isset($_POST['upatlas'])){
@@ -64,7 +63,7 @@ function upatlas() {
 
 function startbutton() {
 	echo 
-	'<form id="start" action="index.php" method ="post">' . 
+	'<form id="start" action="index.php" method ="post" onsubmit="return confirmscreen()">' . 
 		'<button name="start" type="submit" class="btn btn-primary menuButton">Start Scanning ALL</button>' .
 	'</form>';
 	if(isset($_POST['start'])){
@@ -74,7 +73,7 @@ function startbutton() {
 
 function stopbutton() {
 	echo 
-	'<form id="stop" action="index.php" method ="post">' . 
+	'<form id="stop" action="index.php" method ="post" onsubmit="return confirmscreen()">' . 
 		'<button name="stop" type="submit" class="btn btn-primary menuButton">Stop Scanning ALL</button>' .
 	'</form>';
 	if(isset($_POST['stop'])){
@@ -83,7 +82,7 @@ function stopbutton() {
 }
 function uppogo() {
 	echo 
-	'<form id="uppogo" action="index.php" method ="post">' .
+	'<form id="uppogo" action="index.php" method ="post" onsubmit="return confirmscreen()">' .
                 '<button name="uppogo" type="submit" class="btn btn-primary menuButton">Update Pokemon ALL</button>' .
         '</form>';	
 	if(isset($_POST['uppogo'])){
@@ -158,6 +157,24 @@ echo '<div class="cssContainer">' .
 			$atvpogover = $rows['ATVPOGOVER'];
 			$atvatver = $rows['ATVATVER'];
 			$anver = $rows['ANDROIDVER'];
+			if(empty($name)){
+				$name = "N/A";
+			}
+			if(empty($atvtemp)){
+                                $atvtemp = "N/A";
+			}
+			if(empty($atvproxy) || $atvproxy == ":"){
+                                $atvproxy = "N/A";
+			}
+			if(empty($atvpogover)){
+                                $atvpogover = "N/A";
+			}
+			if(empty($atvatver)){
+                                $atvatver = "N/A";
+			}
+			if(empty($anver)){
+                                $anver = "N/A";
+                        }
 			echo '<tr id=device-' . $name . '>' .
 				'<td class="align-middle">' . $id . '</td>' .
 				'<td class="align-middle">' . $name . '</td>' .
@@ -165,32 +182,36 @@ echo '<div class="cssContainer">' .
 				'<td class="align-middle">' . $localip . '</td>';
 				if($noProxy === false){
 					echo '<td>' . $atvproxy .
-							'<form id="proxy" action="index.php#device-' . $name . '" method="post">' .
+							'<form id="proxy" method="post" onsubmit="return confirmsingle()">' .
 								'<textarea name="proxy-' . $name . '" placeholder="IP:PORT" rows="1" style="resize:none"></textarea><br>' .
-								'<input type="submit" value="Change" />' .
-							'</form>';
-					if(isset($_POST["proxy-$name"])){
-						$text = $_POST["proxy-$name"];
-						echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-								echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-								echo $res=shell_exec("adb shell settings put global http_proxy $text > /dev/null 2>&1");
-						echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-							$conn = new mysqli($servername, $username, $password, $dbname, $port);
-							// Checking for connections
-						if ($conn->connect_error) {
-							die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
-						}else{	
-							$sql = " UPDATE Devices SET ATVPROXYIP = '$text' WHERE ID = $id; ";
-							$conn->query($sql);
-							echo "Changing Proxy"; ?>
-							
+								'<input type="submit" value="Change">' .
+								'</form>';
+							echo '<p id="status"></p>';
+							if(isset($_POST["proxy-$name"])){
+							$text = $_POST["proxy-$name"];
+							if(empty($text)){
+								echo "No proxy set";
+								}else{
+                                                	echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                                                	echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
+                                                	echo $res=shell_exec("adb shell settings put global http_proxy $text > /dev/null 2>&1");
+                                                	echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                                                        $conn = new mysqli($servername, $username, $password, $dbname, $port);
+                                                        // Checking for connections
+                                                	if ($conn->connect_error) {
+                                                        die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
+                                                	}else{  
+                                                        $sql = " UPDATE Devices SET ATVPROXYIP = '$text' WHERE ID = $id; ";
+                                                        $conn->query($sql);
+                                                        $conn->close();
+							?>
 							<script>
-								window.location.reload();
+                                                        window.location.reload();
 							</script>
 							<?php
-							$conn->close();
-						}
-					}
+							}
+                                                	}
+                                        		}
 					echo '</td>';
 				}
 
@@ -256,7 +277,7 @@ echo '<div class="cssContainer">' .
 					echo '<div id="tabGeneral-' . $name .'" class="tabcontent tabcontent-' . $name .'">';
 
 							// Reboot Single device 
-							echo '<form class="d-inline" id="reboot-' . $name . '" action="index.php#device-' . $name . '" method ="post">' .
+							echo '<form class="d-inline" id="reboot-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
 								'<button name="reboot-' . $name . '" type="submit" class="btn btn-danger controlButton">Reboot</button>' .
 							'</form>';
 							if(isset($_POST["reboot-$name"])){
@@ -315,7 +336,7 @@ echo '<div class="cssContainer">' .
 					echo '<div id="tabAtlas-' . $name .'" class="tabcontent tabcontent-' . $name .'">';
 						
 						// Start Atlas
-						echo '<form class="d-inline" id="start-' . $name . '" action="index.php#device-' . $name . '" method ="post">' .
+						echo '<form class="d-inline" id="start-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
 							'<button name="start-' . $name . '" type="submit" class="btn btn-success controlButton">Start Atlas</button>' .
 						'</form>';
 						if(isset($_POST["start-$name"])){
@@ -325,7 +346,7 @@ echo '<div class="cssContainer">' .
 							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
 						}
 						// Stop Pogo & Atlas
-						echo '<form class="d-inline" id="stop-' . $name . '" action="index.php#device-' . $name . '" method ="post">' .
+						echo '<form class="d-inline" id="stop-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
 							'<button name="stop-' . $name . '" type="submit" class="btn btn-danger controlButton">Stop Atlas</button>' .
 						'</form>';
 						if(isset($_POST["stop-$name"])){
@@ -335,7 +356,7 @@ echo '<div class="cssContainer">' .
 							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
 						}
 						// Update Atlas Config
-						echo '<form class="d-inline" id="config-atlas-' . $name . '" action="index.php#device-' . $name . '" method ="post">' .
+						echo '<form class="d-inline" id="config-atlas-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
 							'<button name="update-atlas-' . $name . '" type="submit" class="btn btn-warning controlButton">Push Atlas Config</button>' .
 						'</form>';
 						if(isset($_POST["config-atlas-$name"])){
@@ -350,7 +371,7 @@ echo '<div class="cssContainer">' .
 					echo '<div id="tabAPKs-' . $name .'" class="tabcontent tabcontent-' . $name .'">';
 
 						// Update PoGo APK
-						echo '<form class="d-inline" id="update-pogo-' . $name . '" action="index.php#device-' . $name . '" method ="post">' .
+						echo '<form class="d-inline" id="update-pogo-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
 							'<button name="update-pogo-' . $name . '" type="submit" class="btn btn-primary controlButton">Push PoGo APK</button>' .
 						'</form>';
 						if(isset($_POST["update-pogo-$name"])){
@@ -361,7 +382,7 @@ echo '<div class="cssContainer">' .
 						}	
 
 						// Update Atlas APK
-						echo '<form class="d-inline" id="update-atlas-' . $name . '" action="index.php#device-' . $name . '" method ="post">' .
+						echo '<form class="d-inline" id="update-atlas-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
 							'<button name="update-atlas-' . $name . '" type="submit" class="btn btn-primary controlButton">Push Atlas APK</button>' .
 						'</form>';
 						if(isset($_POST["update-atlas-$name"])){
@@ -451,7 +472,7 @@ echo '<div class="cssContainer">' .
 							}
 					
 						// Push eMagisk.zip to Device
-							echo '<form class="d-inline" id="push-emagisk-' . $name . '" action="index.php#device-' . $name . '" method ="post">' .
+							echo '<form class="d-inline" id="push-emagisk-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
 								'<button name="push-emagisk-' . $name . '" type="submit" class="btn btn-primary controlButton">Push eMagisk.zip</button>' .
 							'</form>';
 							if(isset($_POST["push-emagisk-$name"])){
@@ -462,7 +483,7 @@ echo '<div class="cssContainer">' .
 							}
 							
 						// Push eMagisk Config to Device
-							echo '<form class="d-inline" id="config-emagisk-' . $name . '" action="index.php#device-' . $name . '" method ="post">' .
+							echo '<form class="d-inline" id="config-emagisk-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
 								'<button name="config-emagisk-' . $name . '" type="submit" class="btn btn-primary controlButton">Push eMagisk Config</button>' .
 							'</form>';
 							if(isset($_POST["config-emagisk-$name"])){
