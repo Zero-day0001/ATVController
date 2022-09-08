@@ -27,7 +27,7 @@ function menu() {
 	}
 
 function confirmscreen(){
-        if (confirm("This process could take up to 5 minutes.") == true) {
+        if (confirm("This process could take up to 5 minutes.\n\nThe Page will refresh while data is collected in the background.\n\nYou may refresh the page to view the collected data.") == true) {
         return true;
         } else {
         return false;

@@ -7,7 +7,7 @@ function deviceinfo() {
 	'<button name="deviceinfo" type="submit" class="btn btn-primary menuButton">Build Info</button>' .
 	'</form>';
 	if(isset($_POST['deviceinfo'])){
-		echo $res=shell_exec('scripts/deviceinfo.sh');
+		echo $res=shell_exec('scripts/deviceinfo.sh > /dev/null 2>&1 &');
 	}
 }
 
@@ -17,7 +17,7 @@ function tempbutton() {
 		'<button name="temp" type="submit" class="btn btn-primary menuButton">Recollect Temps</button>' .
 	'</form>';
 	if(isset($_POST['temp'])){
-		echo $res=shell_exec('scripts/tempcheck.sh');
+		echo $res=shell_exec('scripts/tempcheck.sh > /dev/null 2>&1 &');
 	}
 }
 
@@ -27,7 +27,7 @@ function rebootbutton() {
 		'<button name="reboot" type="submit" class="btn btn-primary menuButton">Reboot ALL</button>' .
 	'</form>';
 	if(isset($_POST['reboot'])){
-		echo $res=shell_exec('scripts/reboot.sh');
+		echo $res=shell_exec('scripts/reboot.sh > /dev/null 2>&1 &');
 	}
 }
 
@@ -37,7 +37,7 @@ function vercheck() {
                 '<button name="vercheck" type="submit" class="btn btn-primary menuButton">Recollect Versions</button>' .
         '</form>';
         if(isset($_POST['vercheck'])){
-                echo $res=shell_exec('scripts/vercheck.sh');
+                echo $res=shell_exec('scripts/vercheck.sh > /dev/null 2>&1 &');
         }
 }
 
@@ -47,7 +47,7 @@ function allscreenshot() {
                 '<button name="allscreenshot" type="submit" class="btn btn-primary menuButton">Recollect Screenshots</button>' .
         '</form>';
         if(isset($_POST['allscreenshot'])){
-                echo $res=shell_exec('scripts/allscreenshot.sh');
+                echo $res=shell_exec('scripts/allscreenshot.sh > /dev/null 2>&1 &');
         }
 }
 
@@ -57,7 +57,7 @@ function anvercheck() {
                 '<button name="anvercheck" type="submit" class="btn btn-primary menuButton">Recollect Android Version</button>' .
         '</form>';
         if(isset($_POST['anvercheck'])){
-                echo $res=shell_exec('scripts/anvercheck.sh');
+                echo $res=shell_exec('scripts/anvercheck.sh > /dev/null 2>&1 &');
         }
 }
 
@@ -67,7 +67,7 @@ function upatlas() {
 		'<button name="upatlas" type="submit" class="btn btn-primary menuButton">Update Atlas ALL</button>' .
 	'</form>';
 	if(isset($_POST['upatlas'])){
-		echo $res=shell_exec('scripts/upat.sh');
+		echo $res=shell_exec('scripts/upat.sh > /dev/null 2>&1 &');
 	}
 }
 
@@ -77,7 +77,7 @@ function startbutton() {
 		'<button name="start" type="submit" class="btn btn-primary menuButton">Start Scanning ALL</button>' .
 	'</form>';
 	if(isset($_POST['start'])){
-		echo $res=shell_exec('scripts/start.sh');
+		echo $res=shell_exec('scripts/start.sh > /dev/null 2>&1 &');
 	}
 }
 
@@ -87,7 +87,7 @@ function stopbutton() {
 		'<button name="stop" type="submit" class="btn btn-primary menuButton">Stop Scanning ALL</button>' .
 	'</form>';
 	if(isset($_POST['stop'])){
-		echo $res=shell_exec('scripts/stop.sh');
+		echo $res=shell_exec('scripts/stop.sh > /dev/null 2>&1 &');
 	}
 }
 function uppogo() {
@@ -96,7 +96,7 @@ function uppogo() {
                 '<button name="uppogo" type="submit" class="btn btn-primary menuButton">Update Pokemon ALL</button>' .
         '</form>';	
 	if(isset($_POST['uppogo'])){
-		echo $res=shell_exec('scripts/uppogo.sh');
+		echo $res=shell_exec('scripts/uppogo.sh > /dev/null 2>&1 &');
 	}
 }
 function moreToCome() {
