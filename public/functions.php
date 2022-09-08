@@ -130,7 +130,6 @@ echo '<div class="cssContainer">' .
 	'<table class="table table-dark table-striped">' .
 		'<thead class="text-center">' . 
 			'<tr>' .
-				'<th>ID</th>' .
 				'<th>Device Name</th>' .
 				'<th>Temp</th>' .
 				'<th>Local IP</th>';
@@ -173,7 +172,7 @@ echo '<div class="cssContainer">' .
 			if(empty($atvtemp)){
                                 $atvtemp = "N/A";
 			}
-			if(empty($atvproxy) || $atvproxy == ":"){
+			if(empty($atvproxy) || $atvproxy == ":" || $atvproxy == ":0"){
                                 $atvproxy = "N/A";
 			}
 			if(empty($atvpogover)){
@@ -186,9 +185,8 @@ echo '<div class="cssContainer">' .
                                 $anver = "N/A";
                         }
 			echo '<tr id=device-' . $name . '>' .
-				'<td class="align-middle">' . $id . '</td>' .
 				'<td class="align-middle">' . $name . '</td>' .
-				'<td class="align-middle">' . $atvtemp . '</td>' .
+				'<td class="align-middle">' . $atvtemp . '°C</td>' .
 				'<td class="align-middle">' . $localip . '</td>';
 				if($noProxy === false){
 					echo '<td class="align-middle">' . $atvproxy . '</td>';
@@ -307,7 +305,7 @@ echo '<div class="cssContainer">' .
                                 echo $res=shell_exec("adb shell rm /sdcard/screen.png > /dev/null 2>&1");
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
 				}
-
+				if($noProxy === false){
 				echo '<br><br>Change Proxy' .
 					'<form id="proxy" method="post" onsubmit="return confirmsingle()">' .
                                                                 '<textarea name="proxy-' . $name . '" placeholder="IP:PORT" rows="1" style="resize:none"></textarea><br>' .
@@ -338,7 +336,7 @@ echo '<div class="cssContainer">' .
                                                         }
                                                         }
                                                         }
-
+				}
 
 
 					echo '</div>';
