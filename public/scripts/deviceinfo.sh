@@ -21,7 +21,7 @@ for i in `cat scripts/ips` ; do
       sleep 1
       adb connect $ip:$adbport
       sleep 1
-      name=$(adb shell cat /data/local/tmp/atlas_config.json | grep -oP '"deviceName": *"\K[^"]*')
+      name=$(adb shell settings list global | grep "device_name" | cut -d '=' -f2)
       atver=$(db shell dumpsys package com.pokemod.atlas | grep -E versionName | sed -e "s@    versionName=@@g")
       pokever=$(adb shell dumpsys package com.nianticlabs.pokemongo | grep -E versionName | sed -e "s@    versionName=@@g")
       anver=$(adb shell getprop ro.build.version.release)
@@ -45,7 +45,7 @@ for i in `cat scripts/ips` ; do
     ip="$lanip.$i"
     adb connect $ip:$adbport
     sleep 1
-    name=$(adb shell cat /data/local/tmp/atlas_config.json | grep -oP '"deviceName": *"\K[^"]*')
+    name=$(adb shell settings list global | grep "device_name" | cut -d '=' -f2)
     atver=$(adb shell dumpsys package com.pokemod.atlas | grep -E versionName | sed -e "s@    versionName=@@g")
     pogover=$(adb shell dumpsys package com.nianticlabs.pokemongo | grep -E versionName | sed -e "s@    versionName=@@g")
     anver=$(adb shell getprop ro.build.version.release)
