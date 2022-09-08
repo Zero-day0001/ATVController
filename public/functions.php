@@ -41,6 +41,16 @@ function vercheck() {
         }
 }
 
+function allscreenshot() {
+        echo
+        '<form id="allscreenshot" action="index.php" method ="post" onsubmit="return confirmscreen()">' .
+                '<button name="allscreenshot" type="submit" class="btn btn-primary menuButton">Recollect Screenshots</button>' .
+        '</form>';
+        if(isset($_POST['allscreenshot'])){
+                echo $res=shell_exec('scripts/allscreenshot.sh');
+        }
+}
+
 function anvercheck() {
         echo
         '<form id="anvercheck" action="index.php" method ="post" onsubmit="return confirmscreen()">' .
@@ -181,38 +191,7 @@ echo '<div class="cssContainer">' .
 				'<td class="align-middle">' . $atvtemp . '</td>' .
 				'<td class="align-middle">' . $localip . '</td>';
 				if($noProxy === false){
-					echo '<td>' . $atvproxy .
-							'<form id="proxy" method="post" onsubmit="return confirmsingle()">' .
-								'<textarea name="proxy-' . $name . '" placeholder="IP:PORT" rows="1" style="resize:none"></textarea><br>' .
-								'<input type="submit" value="Change">' .
-								'</form>';
-							echo '<p id="status"></p>';
-							if(isset($_POST["proxy-$name"])){
-							$text = $_POST["proxy-$name"];
-							if(empty($text)){
-								echo "No proxy set";
-								}else{
-                                                	echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-                                                	echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-                                                	echo $res=shell_exec("adb shell settings put global http_proxy $text > /dev/null 2>&1");
-                                                	echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-                                                        $conn = new mysqli($servername, $username, $password, $dbname, $port);
-                                                        // Checking for connections
-                                                	if ($conn->connect_error) {
-                                                        die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
-                                                	}else{  
-                                                        $sql = " UPDATE Devices SET ATVPROXYIP = '$text' WHERE ID = $id; ";
-                                                        $conn->query($sql);
-                                                        $conn->close();
-							?>
-							<script>
-                                                        window.location.reload();
-							</script>
-							<?php
-							}
-                                                	}
-                                        		}
-					echo '</td>';
+					echo '<td class="align-middle">' . $atvproxy . '</td>';
 				}
 
 				if($noAccount === false){
@@ -295,7 +274,6 @@ echo '<div class="cssContainer">' .
                 	        if(isset($_POST["logfile-$name"])){
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                                 echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-                                echo $res=shell_exec('adb shell screencap -p /sdcard/screen.png > /dev/null 2>&1');
                                 echo $res=shell_exec("adb pull /data/local/tmp/atlas.log deviceLogs/$name.log > /dev/null 2>&1");
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                         	}
@@ -310,7 +288,6 @@ echo '<div class="cssContainer">' .
 								if(isset($_POST["logfile-$name"])){
 									echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
 									echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-									echo $res=shell_exec('adb shell screencap -p /sdcard/screen.png > /dev/null 2>&1');
 									echo $res=shell_exec("adb pull /data/local/tmp/atlas.log deviceLogs/$name.log > /dev/null 2>&1");
 									echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
 								}
@@ -329,7 +306,41 @@ echo '<div class="cssContainer">' .
                                 echo $res=shell_exec("adb pull /sdcard/screen.png screenshot/$name.png > /dev/null 2>&1");
                                 echo $res=shell_exec("adb shell rm /sdcard/screen.png > /dev/null 2>&1");
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-                        	}
+				}
+
+				echo '<br><br>Change Proxy' .
+					'<form id="proxy" method="post" onsubmit="return confirmsingle()">' .
+                                                                '<textarea name="proxy-' . $name . '" placeholder="IP:PORT" rows="1" style="resize:none"></textarea><br>' .
+                                                                '<input type="submit" value="Change">' .
+                                                                '</form>';
+                                                        if(isset($_POST["proxy-$name"])){
+                                                        $text = $_POST["proxy-$name"];
+                                                        if(empty($text)){
+                                                                echo "No proxy set";
+                                                                }else{
+                                                        echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                                                        echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
+                                                        echo $res=shell_exec("adb shell settings put global http_proxy $text > /dev/null 2>&1");
+                                                        echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                                                        $conn = new mysqli($servername, $username, $password, $dbname, $port);
+                                                        // Checking for connections
+                                                        if ($conn->connect_error) {
+                                                        die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
+                                                        }else{
+                                                        $sql = " UPDATE Devices SET ATVPROXYIP = '$text' WHERE ID = $id; ";
+                                                        $conn->query($sql);
+                                                        $conn->close();
+                                                        ?>
+                                                        <script>
+                                                        window.location.reload();
+                                                        </script>
+                                                        <?php
+                                                        }
+                                                        }
+                                                        }
+
+
+
 					echo '</div>';
 							
 					//Atlas TAB
