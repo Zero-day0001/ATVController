@@ -216,4 +216,5 @@ Built by @zero-day-#0001
 
 Scripts provided by @Xerock  
 
- 
+Join the Discord!  
+https://discord.gg/ecEbu3YC
