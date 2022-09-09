@@ -22,7 +22,8 @@ echo '<head>' .
 
 '<div class="topnav" id="TopnavMenu">' .
   '<a href="#" class="logo">ATV Controller</a>' .
-  '<a href="index.php" class="active">Home</a>' .
+  '<a href="index.php">Home</a>' .
+  '<a href="editor.php">Atlas Config Creator</a>' .
   '<a href="javascript:void(0);" class="icon" onclick="menu()">' .
     '<i class="fa fa-bars"></i>' .
   '</a>' .

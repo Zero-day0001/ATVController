@@ -371,7 +371,7 @@ echo '<div class="cssContainer">' .
 						if(isset($_POST["config-atlas-$name"])){
 							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
 							echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-							echo $res=shell_exec('adb push app/atlas_config.json /data/local/tmp > /dev/null 2>&1');
+							echo $res=shell_exec("adb push app/$name_atlas_config.json /data/local/tmp/atlas_config.json > /dev/null 2>&1");
 							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
 						}
 					echo '</div>';
@@ -646,5 +646,178 @@ echo '<div class="cssContainer">' .
 
 <?php
 echo '</div>';
+}
+
+function editatconf(){
+include("config.php");
+echo '<div class="cssContainer">' .
+     '<div style="color:#fff;"><center>';
+    // Select Json File
+    $atconfig = file_get_contents("apps/atlas_config.json");
+
+if(empty($atconfig)){
+echo 'No Atlas Config File Found, Would you like to make one?<br>' .
+     '<form class="d-inline" id="atconfcreate" action="editor.php" method ="post">' .
+     '<button name="atconfcreate" type="submit" class="btn btn-primary">Make Atlas config</button>' .
+     '</form>';
+	if(isset($_POST['atconfcreate'])){
+                echo $res=shell_exec('cp apps/atlas_config.json.example apps/atlas_config.json> /dev/null 2>&1 &');
+		?>
+		<script>
+		window.location.reload();
+		</script>
+		<?php
+	}	
+}else{
+echo '<h3>Current Config</h3>' .
+     '<textarea row=2 style="resize:none;width:75%;" readonly>'.$atconfig.'</textarea><br><br>' .
+     '<h4>Edit Atlas Config</h4>';
+
+    $array = json_decode($atconfig, true);
+    extract($array);
+    
+    if(empty($authBearer)){
+       $authBearer = "";
+    }
+    if(empty($deviceAuthToken)){
+       $deviceAuthToken = "";
+    }
+    if(empty($deviceName)){
+       $deviceName = "";
+    }
+    if(empty($email)){
+       $email = "";
+    }
+    if(empty($rdmUrl)){
+       $rdmUrl = "";
+    }
+    if($runOnBoot == "1"){
+       $runOnBoot = "true";
+    }else{
+       $runOnBoot = "false";
+    }
+    echo '<form id="atconfcreator" method="post">' .
+    
+        '<label for="authBearer">authBearer</label><br>' .
+        '<input type="text" id="authBearer" name="authBearer" placeholder="'.$authBearer.'" value="'.$authBearer.'"><br>' .
+        
+        '<label for="deviceAuthToken">deviceAuthToken</label><br>' .
+        '<input type="text" id="deviceAuthToken" name="deviceAuthToken" placeholder="'.$deviceAuthToken.'" value="'.$deviceAuthToken.'" required><br>' .
+    
+        '<label for="deviceName">deviceName</label><br>' .
+        '<input type="text" id="deviceName" name="deviceName" placeholder="'.$deviceName.'" value="'.$deviceName.'"><br>' .
+        
+        '<label for="email">email</label><br>' .
+        '<input type="text" id="email" name="email" placeholder="'.$email.'" value="'.$email.'" required><br>' .
+        
+        '<label for="rdmUrl">rdmUrl</label><br>' .
+        '<input type="text" id="rdmUrl" name="rdmUrl" placeholder="'.$rdmUrl.'" value="'.$rdmUrl.'" required><br><br>' .
+
+        '<label for="runOnBoot">Run On Boot:</label><br>' .
+        '<select id="runOnBoot" name="runOnBoot" required>' .
+        '<option value="" disabled selected hidden>--</option>' .
+        '<option value="true">true</option>' .
+        '<option value="false">false</option>' .
+        '</select><br><br>' .
+    
+    '<button name="atconfcreator" type="submit" class="btn btn-primary">Save</button><br>' .
+    'Or Generate for all(Name does not matter!)<br>' .
+    '<button name="atconfbulkcreator" type="submit" class="btn btn-primary">Generate</button>' .
+    '</form>';
+    
+    if(isset($_POST['atconfcreator'])){
+        $AB = $_POST["authBearer"];
+        if(empty($AB)){
+            $AB = "";
+        }
+        
+        $DAT = $_POST["deviceAuthToken"];
+        if(empty($DAT)){
+            $DAT = "";
+        }
+        
+        $DN = $_POST["deviceName"];
+        if(empty($DN)){
+            $DN = "";
+        }
+        
+        $EM = $_POST["email"];
+        if(empty($EM)){
+            $EM = "";
+        }
+        
+        $RURL = $_POST["rdmUrl"];
+        if(empty($RURL)){
+            $RURL = "";
+        }
+        
+        $ROB = $_POST["runOnBoot"];
+        if(empty($ROB)){
+            echo "";
+        }
+        
+        $file = fopen("apps/atlas_config.json","w");
+        fwrite($file,'{"authBearer":"'.$AB.'","deviceAuthToken":"'.$DAT.'","deviceName":"'.$DN.'","email":"'.$EM.'","rdmUrl":"'.$RURL.'","runOnBoot":'.$ROB.'}');
+        fclose($file);
+        ?>
+        <script>
+        window.location.reload();
+        </script>
+        <?php
+    }
+            
+            if(isset($_POST['atconfbulkcreator'])){
+                $AB = $_POST["authBearer"];
+                if(empty($AB)){
+                    $AB = "";
+                }
+                
+                $DAT = $_POST["deviceAuthToken"];
+                if(empty($DAT)){
+                    $DAT = "";
+                }
+                
+                $EM = $_POST["email"];
+                if(empty($EM)){
+                    $EM = "";
+                }
+                
+                $RURL = $_POST["rdmUrl"];
+                if(empty($RURL)){
+                    $RURL = "";
+                }
+                
+                $ROB = $_POST["runOnBoot"];
+                if(empty($ROB)){
+                    echo "";
+                }
+                
+                $conn = new mysqli($servername, $username, $password, $dbname, $port);
+                // Checking for connections
+                if ($conn->connect_error) {
+                    die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
+                }
+                $sql = " SELECT * FROM Devices; ";
+                $result = $conn->query($sql);
+                $conn->close();
+                
+                while($rows=$result->fetch_assoc()){
+                    $name = $rows['ATVNAME'];
+                    $file = fopen('apps/'.$name.'_atlas_config.json',"w");
+                    fwrite($file,'{"authBearer":"'.$AB.'","deviceAuthToken":"'.$DAT.'","deviceName":"'.$name.'","email":"'.$EM.'","rdmUrl":"'.$RURL.'","runOnBoot":'.$ROB.'}');
+                    fclose($file);
+                    }
+                ?>
+                <script>
+                window.location.reload();
+                </script>
+                <?php
+            }
+            
+            
+}
+echo '</center></div>' .
+     '</div>';
+
 }
 ?>
