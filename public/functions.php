@@ -139,16 +139,17 @@ echo '<div class="cssContainer">' .
 				}
 
 				if($noAccount === false){
-				echo 'Account';
+				echo '<th>Account</th>';
 				}
 
 				if($noLastSeen === false){
-                                echo 'Last Seen';
-                                } 				
+                echo '<th>Last Seen</th>';
+                }
 
 				echo '<th>PoGo Version</th>' .
 				'<th>Atlas Version</th>' .
 				'<th>Android Version</th>' .
+                '<th>CPU</th>' .
 				'<th>Controls</th>';
 	
 				if($noScreenshot === false){
@@ -166,6 +167,7 @@ echo '<div class="cssContainer">' .
 			$atvpogover = $rows['ATVPOGOVER'];
 			$atvatver = $rows['ATVATVER'];
 			$anver = $rows['ANDROIDVER'];
+            $cputype = $rows['CPUTYPE'];
 			if(empty($name)){
 				$name = "N/A";
 			}
@@ -184,9 +186,21 @@ echo '<div class="cssContainer">' .
 			if(empty($anver)){
                                 $anver = "N/A";
                         }
+            if(empty($cputype)){
+                                $cputype = "N/A";
+                        }
+            
+            if($atvtemp >= 80){
+               $tempcolor = 'red';
+            }elseif($atvtemp >= 75){
+               $tempcolor = 'orange';
+            }else{
+                $tempcolor = 'green';
+            }
+            
 			echo '<tr id=device-' . $name . '>' .
 				'<td class="align-middle">' . $name . '</td>' .
-				'<td class="align-middle">' . $atvtemp . '°C</td>' .
+				'<td class="align-middle" style="color:'.$tempcolor.';">' . $atvtemp . '°C</td>' .
 				'<td class="align-middle">' . $localip . '</td>';
 				if($noProxy === false){
 					echo '<td class="align-middle">' . $atvproxy . '</td>';
@@ -237,7 +251,10 @@ echo '<div class="cssContainer">' .
 				echo '<td class="align-middle">' . $atvatver . '</td>';
 
 				// Get Android Version
-                                echo '<td class="text-center align-middle"> ' . $anver . '</td>';
+                echo '<td class="text-center align-middle"> ' . $anver . '</td>';
+            
+                //Get CPU type
+                echo '<td class="text-center align-middle"> ' . $cputype . '</td>';
 
 				echo '<td class="controlTable">'; // Device Options for Users ---
 				
@@ -479,6 +496,59 @@ echo '<div class="cssContainer">' .
                                 <?php
                                 }
 							}
+                        
+                            // get CPU TYPE
+                            echo '<form class="d-inline" id="cputype-' . $name . '" action="index.php#device-' . $name . '" method ="post">' .
+                                '<button name="cputype-' . $name . '" type="submit" class="btn btn-primary controlButton">Check CPU type</button>' .
+                            '</form>';
+                            if(isset($_POST["cputype-$name"])){
+                                echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                                echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
+                                $cputype= shell_exec('adb shell getprop ro.product.cpu.abi');
+                                $conn = new mysqli($servername, $username, $password, $dbname, $port);
+                                //Checking for connections
+                                if ($conn->connect_error) {
+                                        die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
+                                }else {
+                                        $sql = " UPDATE Devices SET CPUTYPE = '$cputype' WHERE ID = $id; ";
+                                        $conn->query($sql);
+                                        echo "Checking CPU";
+                                        $conn->close();
+                                        echo $res=shell_exec('adb kill-server > /dev/null 2>&1'); ?>
+                                        <script>
+                                        window.location.reload();
+                                        </script>
+                                <?php
+                                }
+                            }
+                            
+                            // get temp TYPE
+                            echo '<form class="d-inline" id="temp-' . $name . '" action="index.php#device-' . $name . '" method ="post">' .
+                                '<button name="temp-' . $name . '" type="submit" class="btn btn-primary controlButton">Recheck Temp</button>' .
+                            '</form>';
+                            if(isset($_POST["temp-$name"])){
+                                echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                                echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
+                                $temp = shell_exec("adb shell cat /sys/class/thermal/thermal_zone0/temp | awk '{print substr($0, 1, length($0)-3)}'");
+                                $conn = new mysqli($servername, $username, $password, $dbname, $port);
+                                //Checking for connections
+                                if ($conn->connect_error) {
+                                        die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
+                                }else {
+                                        $sql = " UPDATE Devices SET ATVTEMP = '$temp' WHERE ID = $id; ";
+                                        $conn->query($sql);
+                                        echo "Checking Device temp";
+                                        $conn->close();
+                                        echo $res=shell_exec('adb kill-server > /dev/null 2>&1'); ?>
+                                        <script>
+                                        window.location.reload();
+                                        </script>
+                                <?php
+                                }
+                            }
+                                    
+                            
+                            
 					
 						// Push eMagisk.zip to Device
 							echo '<form class="d-inline" id="push-emagisk-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
@@ -670,9 +740,11 @@ echo 'No Atlas Config File Found, Would you like to make one?<br>' .
 	}	
 }else{
 echo '<h3>Current Config</h3>' .
-     '<textarea row=2 style="resize:none;width:75%;" readonly>'.$atconfig.'</textarea><br><br>' .
-     '<h4>Edit Atlas Config</h4>';
-
+     '<textarea row=2 style="resize:none;width:80%;text-align:center;" readonly>'.$atconfig.'</textarea><br>' .
+     '<a href="/apps/atlas_config.json" download><button name="export" type="submit" class="btn btn-primary">Export .Json</button></a>' .
+     
+    '<h4>Edit Atlas Config</h4>';
+    
     $array = json_decode($atconfig, true);
     extract($array);
     
@@ -720,8 +792,8 @@ echo '<h3>Current Config</h3>' .
         '<option value="false">false</option>' .
         '</select><br><br>' .
     
-    '<button name="atconfcreator" type="submit" class="btn btn-primary">Save</button><br>' .
-    'Or Generate for all(Name does not matter!)<br>' .
+    '<button name="atconfcreator" type="submit" class="btn btn-primary">Save</button><br><br>' .
+    'Or Generate for all<br>(Set everything above but the name!)<br>' .
     '<button name="atconfbulkcreator" type="submit" class="btn btn-primary">Generate</button>' .
     '</form>';
     

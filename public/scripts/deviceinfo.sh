@@ -25,6 +25,7 @@ for i in `cat scripts/ips` ; do
       atver=$(db shell dumpsys package com.pokemod.atlas | grep -E versionName | sed -e "s@    versionName=@@g")
       pokever=$(adb shell dumpsys package com.nianticlabs.pokemongo | grep -E versionName | sed -e "s@    versionName=@@g")
       anver=$(adb shell getprop ro.build.version.release)
+      cputype=$(adb shell getprop ro.product.cpu.abi)
       temp=$(adb shell cat /sys/class/thermal/thermal_zone0/temp | awk '{print substr($0, 1, length($0)-3)}')
       pip=$(adb shell settings list global | grep "global_http_proxy_host" | cut -d '=' -f2)
       pipp=$(adb shell settings list global | grep "global_http_proxy_port" | cut -d '=' -f2)
@@ -35,8 +36,9 @@ for i in `cat scripts/ips` ; do
       echo Atlas - $atver
       echo Pogo - $pogover
       echo Android - $anver
+      echo CPU - $cputype
       sleep 1
-      mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "INSERT INTO Devices (ATVNAME, ATVTEMP, ATVLOCALIP, ATVPROXYIP, ATATVER, ATVPOGOVER, ANDROIDVER) VALUES ('$name', '$temp', '$ip', '$fpip', '$atver', '$pogover', '$anver') ON DUPLICATE KEY UPDATE ATVNAME = '$name';"
+      mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "INSERT INTO Devices (ATVNAME, ATVTEMP, ATVLOCALIP, ATVPROXYIP, ATATVER, ATVPOGOVER, ANDROIDVER, CPUTPYE) VALUES ('$name', '$temp', '$ip', '$fpip', '$atver', '$pogover', '$anver','$cputype') ON DUPLICATE KEY UPDATE ATVNAME = '$name';"
       adb kill-server
     done
   else
@@ -49,6 +51,7 @@ for i in `cat scripts/ips` ; do
     atver=$(adb shell dumpsys package com.pokemod.atlas | grep -E versionName | sed -e "s@    versionName=@@g")
     pogover=$(adb shell dumpsys package com.nianticlabs.pokemongo | grep -E versionName | sed -e "s@    versionName=@@g")
     anver=$(adb shell getprop ro.build.version.release)
+    cputype=$(adb shell getprop ro.product.cpu.abi)
     temp=$(adb shell cat /sys/class/thermal/thermal_zone0/temp | awk '{print substr($0, 1, length($0)-3)}')
     pip=$(adb shell settings list global | grep "global_http_proxy_host" | cut -d '=' -f2)
     pipp=$(adb shell settings list global | grep "global_http_proxy_port" | cut -d '=' -f2)
@@ -59,8 +62,9 @@ for i in `cat scripts/ips` ; do
     echo Atlas - $atver
     echo Pogo - $pogover
     echo Android - $anver
+    echo CPU - $cputype
     sleep 1
-    mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "INSERT INTO Devices (ATVNAME, ATVTEMP, ATVLOCALIP, ATVPROXYIP, ATVATVER, ATVPOGOVER, ANDROIDVER) VALUES ('$name', '$temp', '$ip', '$fpip', '$atver', '$pogover', '$anver') ON DUPLICATE KEY UPDATE ATVNAME = '$name';"
+    mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "INSERT INTO Devices (ATVNAME, ATVTEMP, ATVLOCALIP, ATVPROXYIP, ATVATVER, ATVPOGOVER, ANDROIDVER, CPUTYPE) VALUES ('$name', '$temp', '$ip', '$fpip', '$atver', '$pogover', '$anver', '$cputype') ON DUPLICATE KEY UPDATE ATVNAME = '$name';"
     adb kill-server
   fi
 done
