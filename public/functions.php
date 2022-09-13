@@ -256,7 +256,7 @@ echo '<div class="cssContainer">' .
                 //Get CPU type
                 echo '<td class="text-center align-middle"> ' . $cputype . '</td>';
 
-				echo '<td class="controlTable">'; // Device Options for Users ---
+				echo '<td class="controlTable align-middle">'; // Device Options for Users ---
 				
 					// Reboot Device
 					echo
