@@ -226,22 +226,35 @@ echo '<div class="cssContainer">' .
 				}
 
 				if($noLastSeen === false){
-				 echo '<td class="align-middle">';
-                                        $conn = new mysqli($RDMservername, $RDMusername, $RDMpassword, $RDMdbname, $RDMport);
-                                                        // Checking for connections
-                                                if ($conn->connect_error) {
-                                                        die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
-                                                }else{
-                                                        $lastseen = " SELECT last_seen FROM device WHERE uuid = '$name'; ";
-                                                        $res = $conn->query($lastseen);
-                                                        $conn->close();
-                                                        while($rows=$res->fetch_assoc()){
-                                                        $lastseentime = $rows['last_seen'];
+					echo '<td class="align-middle">';
+						$conn = new mysqli($RDMservername, $RDMusername, $RDMpassword, $RDMdbname, $RDMport);
+						if ($conn->connect_error) { // Checking for connections
+							die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
+						}else{
+							$lastseen = " SELECT last_seen FROM device WHERE uuid = '$name'; ";
+							$res = $conn->query($lastseen);
+							$conn->close();
+							$lastSeenResult = 0;
+							while($rows=$res->fetch_assoc()){
+								$lastseentime = $rows['last_seen'];
+								if(count($lastseentime) > 0) {
+									$lastSeenResult = 1;
+								}
 							}
-							$timeconvert = date("d-m-Y\TH:i:s",$lastseentime);
-                                                        echo "$timeconvert";
-                                                }
-                                echo '</td>';
+							if($lastSeenResult === 1){
+								$timeDiff = (time() - $lastseentime) +1;
+								//Convert to seconds, minutes, hours
+								$seconds = $timeDiff % 60;
+								$minutes = floor(($timeDiff % 3600) / 60);
+								$hours = floor($timeDiff / 3600);
+								if($hours > 0) echo "$hours" . "h, ";
+								if($minutes > 0) echo "$minutes" . "m, ";
+								echo "$seconds" . "s ago";
+							} else{
+								echo "No LastSeen Found";
+							}
+						}
+					echo '</td>';
 				}
 
 				// Get PoGo Version
