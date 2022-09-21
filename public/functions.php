@@ -189,18 +189,23 @@ echo '<div class="cssContainer">' .
             if(empty($cputype)){
                                 $cputype = "N/A";
                         }
-            
-            if($atvtemp >= 80){
-               $tempcolor = 'red';
+            if($atvtemp >= 85){
+                $tempcolor = 'red';
+                $tempsize = '900';
+            }elseif($atvtemp >= 80){
+                $tempcolor = 'red';
+                $tempsize = '600';
             }elseif($atvtemp >= 75){
-               $tempcolor = 'orange';
+                $tempcolor = 'orange';
+                $tempsize = '400';
             }else{
                 $tempcolor = 'green';
+                $tempsize = '400';
             }
             
 			echo '<tr id=device-' . $name . '>' .
 				'<td class="align-middle">' . $name . '</td>' .
-				'<td class="align-middle" style="color:'.$tempcolor.';">' . $atvtemp . '°C</td>' .
+				'<td class="align-middle" style="color:'.$tempcolor.';font-weight:'.$tempsize.'">' . $atvtemp . '°C</td>' .
 				'<td class="align-middle">' . $localip . '</td>';
 				if($noProxy === false){
 					echo '<td class="align-middle">' . $atvproxy . '</td>';
@@ -214,7 +219,7 @@ echo '<div class="cssContainer">' .
                                                 if ($conn->connect_error) {
                                                         die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
                                                 }else{
-                                                        $acct = " SELECT account_username FROM device WHERE uuid = '$name'; ";
+                            $acct = " SELECT account_username FROM device WHERE uuid = '$name'; ";
 							$res = $conn->query($acct);
 							$conn->close();
 							while($rows=$res->fetch_assoc()){
@@ -226,35 +231,36 @@ echo '<div class="cssContainer">' .
 				}
 
 				if($noLastSeen === false){
-					echo '<td class="align-middle">';
-						$conn = new mysqli($RDMservername, $RDMusername, $RDMpassword, $RDMdbname, $RDMport);
-						if ($conn->connect_error) { // Checking for connections
-							die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
-						}else{
-							$lastseen = " SELECT last_seen FROM device WHERE uuid = '$name'; ";
-							$res = $conn->query($lastseen);
-							$conn->close();
-							$lastSeenResult = 0;
-							while($rows=$res->fetch_assoc()){
-								$lastseentime = $rows['last_seen'];
-								if(count($lastseentime) > 0) {
-									$lastSeenResult = 1;
-								}
-							}
-							if($lastSeenResult === 1){
-								$timeDiff = (time() - $lastseentime) +1;
-								//Convert to seconds, minutes, hours
-								$seconds = $timeDiff % 60;
-								$minutes = floor(($timeDiff % 3600) / 60);
-								$hours = floor($timeDiff / 3600);
-								if($hours > 0) echo "$hours" . "h, ";
-								if($minutes > 0) echo "$minutes" . "m, ";
-								echo "$seconds" . "s ago";
-							} else{
-								echo "No LastSeen Found";
-							}
-						}
-					echo '</td>';
+				 echo '<td class="align-middle">';
+                                        $conn = new mysqli($RDMservername, $RDMusername, $RDMpassword, $RDMdbname, $RDMport);
+                                                        // Checking for connections
+                                                if ($conn->connect_error) {
+                                                        die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
+                                                }else{
+                                                        $lastseen = " SELECT last_seen FROM device WHERE uuid = '$name'; ";
+                                                        $res = $conn->query($lastseen);
+                                                        $conn->close();
+                                                    $lastSeenResult = 0;
+                                                    while($rows=$res->fetch_assoc()){
+                                                        $lastseentime = $rows['last_seen'];
+                                                        if(!empty($lastseentime)) {
+                                                            $lastSeenResult = 1;
+                                                        }
+                                                    }
+                                                    if($lastSeenResult === 1){
+                                                        $timeDiff = (time() - $lastseentime) +1;
+                                                        //Convert to seconds, minutes, hours
+                                                        $seconds = $timeDiff % 60;
+                                                        $minutes = floor(($timeDiff % 3600) / 60);
+                                                        $hours = floor($timeDiff / 3600);
+                                                        if($hours > 0) echo "$hours" . "h, ";
+                                                        if($minutes > 0) echo "$minutes" . "m, ";
+                                                        echo "$seconds" . "s ago";
+                                                    } else{
+                                                        echo "No LastSeen Found";
+                                                    }
+                                                }
+                                echo '</td>';
 				}
 
 				// Get PoGo Version
@@ -401,7 +407,7 @@ echo '<div class="cssContainer">' .
 						if(isset($_POST["config-atlas-$name"])){
 							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
 							echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-							echo $res=shell_exec("adb push app/$name_atlas_config.json /data/local/tmp/atlas_config.json > /dev/null 2>&1");
+							echo $res=shell_exec("adb push apps/$name_atlas_config.json /data/local/tmp/atlas_config.json > /dev/null 2>&1");
 							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
 						}
 					echo '</div>';
@@ -416,7 +422,7 @@ echo '<div class="cssContainer">' .
 						if(isset($_POST["update-pogo-$name"])){
 							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
 							echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-							echo $res=shell_exec('adb install -r app/pokemongo.apk > /dev/null 2>&1');
+							echo $res=shell_exec('adb install -r apps/pokemongo.apk > /dev/null 2>&1');
 							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
 						}	
 
@@ -427,7 +433,7 @@ echo '<div class="cssContainer">' .
 						if(isset($_POST["update-atlas-$name"])){
 							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
 							echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-							echo $res=shell_exec('adb install -r app/atlas.apk > /dev/null 2>&1');
+							echo $res=shell_exec('adb install -r apps/atlas.apk > /dev/null 2>&1');
 							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
 						}
 					echo '</div>';// End of Device Options Tablerow
@@ -570,7 +576,7 @@ echo '<div class="cssContainer">' .
 							if(isset($_POST["push-emagisk-$name"])){
 								echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
 								echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-								echo $res=shell_exec('adb push app/eMagisk.zip /sdcard > /dev/null 2>&1');
+								echo $res=shell_exec('adb push apps/eMagisk.zip /sdcard > /dev/null 2>&1');
 								echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
 							}
 							
@@ -581,7 +587,7 @@ echo '<div class="cssContainer">' .
 							if(isset($_POST["config-emagisk-$name"])){
 							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
 							echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-							echo $res=shell_exec('adb push app/emagisk.congig /data/local/tmp > /dev/null 2>&1');
+							echo $res=shell_exec('adb push apps/emagisk.congig /data/local/tmp > /dev/null 2>&1');
 							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
 							}	
 							
