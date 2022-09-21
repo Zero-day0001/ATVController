@@ -8,6 +8,7 @@ dbpass="$(grep -oE '\$password = .*;' config.php | tail -1 | sed 's/$password = 
 db="$(grep -oE '\$dbname = .*;' config.php | tail -1 | sed 's/$dbname = //g;s/;//g;s/^"//;s/"$//')"
 port="$(grep -oE '\$port = .*;' config.php | tail -1 | sed 's/$port = //g;s/;//g;s/^"//;s/"$//')"
 adbport="$(grep -oE '\$adbport = .*;' config.php | tail -1 | sed 's/$adbport = //g;s/;//g;s/^"//;s/"$//')"
+dnl="$(grep -oE '\$namelocation = .*;' config.php | tail -1 | sed 's/$namelocation = //g;s/;//g;s/^"//;s/"$//')"
 rm outputs/buildinfo.log
 exec > outputs/buildinfo.log 2>&1
 adb kill-server
@@ -21,7 +22,11 @@ for i in `cat scripts/ips` ; do
       sleep 1
       adb connect $ip:$adbport
       sleep 1
-      name=$(adb shell settings list global | grep "device_name" | cut -d '=' -f2)
+      if [[ $dnl == "atconf" ]] ; then
+        name=$(adb shell settings list global | grep "device_name" | cut -d '=' -f2)
+      elif [[ $dnl == "globset" ]] ; then
+        name=$(adb shell cat /data/local/tmp/atlas_config.json | grep -oP '"deviceName": *"\K[^"]*')
+      fi
       atver=$(db shell dumpsys package com.pokemod.atlas | grep -E versionName | sed -e "s@    versionName=@@g")
       pokever=$(adb shell dumpsys package com.nianticlabs.pokemongo | grep -E versionName | sed -e "s@    versionName=@@g")
       anver=$(adb shell getprop ro.build.version.release)
@@ -30,6 +35,7 @@ for i in `cat scripts/ips` ; do
       pip=$(adb shell settings list global | grep "global_http_proxy_host" | cut -d '=' -f2)
       pipp=$(adb shell settings list global | grep "global_http_proxy_port" | cut -d '=' -f2)
       fpip="$pip:$pipp"
+      echo Name Location - $dnl
       echo Name - $name
       echo Proxy - $fpip
       echo Temp - $temp
@@ -47,7 +53,11 @@ for i in `cat scripts/ips` ; do
     ip="$lanip.$i"
     adb connect $ip:$adbport
     sleep 1
-    name=$(adb shell settings list global | grep "device_name" | cut -d '=' -f2)
+    if [[ $dnl == "atconf" ]] ; then
+      name=$(adb shell settings list global | grep "device_name" | cut -d '=' -f2)
+    elif [[ $dnl == "globset" ]] ; then
+      name=$(adb shell cat /data/local/tmp/atlas_config.json | grep -oP '"deviceName": *"\K[^"]*')
+    fi
     atver=$(adb shell dumpsys package com.pokemod.atlas | grep -E versionName | sed -e "s@    versionName=@@g")
     pogover=$(adb shell dumpsys package com.nianticlabs.pokemongo | grep -E versionName | sed -e "s@    versionName=@@g")
     anver=$(adb shell getprop ro.build.version.release)
@@ -56,6 +66,7 @@ for i in `cat scripts/ips` ; do
     pip=$(adb shell settings list global | grep "global_http_proxy_host" | cut -d '=' -f2)
     pipp=$(adb shell settings list global | grep "global_http_proxy_port" | cut -d '=' -f2)
     fpip="$pip:$pipp"
+    echo Name Location - $dnl
     echo Name - $name
     echo Proxy - $fpip
     echo Temp - $temp

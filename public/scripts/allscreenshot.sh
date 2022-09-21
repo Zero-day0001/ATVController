@@ -3,6 +3,7 @@
 IFS=$'\n'
 lanip="$(grep -oE '\$lanip = .*;' config.php | tail -1 | sed 's/$lanip = //g;s/;//g;s/^"//;s/"$//')"
 adbport="$(grep -oE '\$adbport = .*;' config.php | tail -1 | sed 's/$adbport = //g;s/;//g;s/^"//;s/"$//')"
+dnl="$(grep -oE '\$namelocation = .*;' config.php | tail -1 | sed 's/$namelocation = //g;s/;//g;s/^"//;s/"$//')"
 rm outputs/screenshot.log
 exec > outputs/screenshot.log 2>&1
 for i in `cat scripts/ips` ; do
@@ -13,9 +14,14 @@ for i in `cat scripts/ips` ; do
       ip="$lanip.$j"
       adb start-server
       adb connect $ip:$adbport
-      name=$(adb shell settings list global | grep "device_name" | cut -d '=' -f2)
+      if [[ $dnl == "atconf" ]] ; then
+        name=$(adb shell settings list global | grep "device_name" | cut -d '=' -f2)
+      elif [[ $dnl == "globset" ]] ; then
+        name=$(adb shell cat /data/local/tmp/atlas_config.json | grep -oP '"deviceName": *"\K[^"]*')
+      fi
       sleep 1
-      echo Taking screenshot of device - $ip - $nname
+      echo Name Location - $dnl
+      echo Taking screenshot of device - $ip - $name
       adb shell screencap -p /sdcard/screen.png
       adb pull /sdcard/screen.png screenshot/$name.png 
       adb shell rm /sdcard/screen.png
@@ -25,8 +31,13 @@ for i in `cat scripts/ips` ; do
     ip="$lanip.$i"
     adb start-server
     adb connect $ip:$adbport
-    name=$(adb shell settings list global | grep "device_name" | cut -d '=' -f2)
+    if [[ $dnl == "atconf" ]] ; then
+      name=$(adb shell settings list global | grep "device_name" | cut -d '=' -f2)
+    elif [[ $dnl == "globset" ]] ; then
+      name=$(adb shell cat /data/local/tmp/atlas_config.json | grep -oP '"deviceName": *"\K[^"]*')
+    fi
     sleep 1
+      echo Name Location - $dnl
       echo Taking screenshot of device - $ip - $name
       adb shell screencap -p /sdcard/screen.png
       adb pull /sdcard/screen.png screenshot/$name.png                          
