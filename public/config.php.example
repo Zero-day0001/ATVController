@@ -9,12 +9,24 @@ $password = "yourstrongpassword";
 $dbname = "dbname";
 $port = "3306";
 
+//RDM DB
+$RDMservername = "Localhost";
+$RDMusername = "root";
+$RDMpassword = "yourstrongpassword";
+$RDMdbname = "rdmdb";
+$RDMport = "3306";
+
 //ONLY CHANGE THIS PORT IF YOU NEED TO
 $adbport = "5555";
+
+//Device Name Location
+$namelocation = "atconf"; // (atconf) - atlas config / (globset) - device settings(about device rename)
 
 //Enable/Disable features
 $noScreenshot = false; // diable with true
 $noProxy = false; // diable with true
+$noAccount = false; // diable with true
+$noLastSeen = false; // diable with true
 
 
 
