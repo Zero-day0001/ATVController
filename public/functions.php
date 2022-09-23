@@ -154,7 +154,8 @@ echo '<div class="cssContainer">' .
 	
 				if($noScreenshot === false){
 				echo '<th>Screenshot</th>';
-				}	
+				}
+                echo '<th>Last Updated</th>';
 			echo '</tr>' .
 		'</thead>';
 		echo '<tbody class="text-center">';
@@ -164,10 +165,12 @@ echo '<div class="cssContainer">' .
 			$atvtemp = $rows['ATVTEMP'];
 			$localip = $rows['ATVLOCALIP'];
 			$atvproxy = $rows['ATVPROXYIP'];
+            $atvacc = $rows['ATVACCOUNT'];
 			$atvpogover = $rows['ATVPOGOVER'];
 			$atvatver = $rows['ATVATVER'];
 			$anver = $rows['ANDROIDVER'];
             $cputype = $rows['CPUTYPE'];
+            $lastupdated = $rows['LASTUPDATED'];
 			if(empty($name)){
 				$name = "N/A";
 			}
@@ -214,19 +217,7 @@ echo '<div class="cssContainer">' .
 				if($noAccount === false){
 				// Get Device Account
 				echo '<td class="align-middle">';
-					$conn = new mysqli($RDMservername, $RDMusername, $RDMpassword, $RDMdbname, $RDMport);
-                                                        // Checking for connections
-                                                if ($conn->connect_error) {
-                                                        die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
-                                                }else{
-                            $acct = " SELECT account_username FROM device WHERE uuid = '$name'; ";
-							$res = $conn->query($acct);
-							$conn->close();
-							while($rows=$res->fetch_assoc()){
-							$account = $rows['account_username'];
-							}
-							echo "$account";
-						}
+					echo $atvacc;
 				echo '</td>';
 				}
 
@@ -639,7 +630,24 @@ echo '<div class="cssContainer">' .
 					}
 					echo '</td>';
 				}
+                
+                echo '<td class="align-middle;">';
+                    $timecon = strtotime($lastupdated);
+                    
+                        $timeDiff = (time() - $timecon) +1;
+                        //Convert to seconds, minutes, hours
+                        $seconds = $timeDiff % 60;
+                        $minutes = floor(($timeDiff % 3600) / 60);
+                        $hours = floor($timeDiff / 3600);
+                        if($hours > 0) echo "$hours" . "h, ";
+                        if($minutes > 0) echo "$minutes" . "m, ";
+                        echo "$seconds" . "s ago";
+                    
+                     '</td>';
+                    
 			echo '</tr>';
+            
+            
 		}
 	echo '</tbody>
 	</table>
