@@ -51,6 +51,11 @@ for i in `cat public/scripts/ips` ; do
       echo Atlas - $atver
       echo Pogo - $pokever
       echo Account - $deviceaccount
+      echo Taking screenshot of device - $ip - $name
+      adb shell screencap -p /sdcard/screen.png
+      adb pull /sdcard/screen.png public/screenshot/$name.png
+      adb shell rm /sdcard/screen.png
+      adb kill-server
       sleep 1
       mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "UPDATE Devices SET ATVNAME = '$name', ATVTEMP = '$temp', ATVPROXYIP = '$fpip', ATVACCOUNT = '$deviceaccount', ATVATVER = '$atver', ATVPOGOVER = '$pokever' WHERE ATVNAME = '$name';"
       adb kill-server
@@ -80,6 +85,11 @@ for i in `cat public/scripts/ips` ; do
       echo Atlas - $atver
       echo Pogo - $pokever
       echo Account - $deviceaccount
+      echo Taking screenshot of device - $ip - $name
+      adb shell screencap -p /sdcard/screen.png
+      adb pull /sdcard/screen.png public/screenshot/$name.png
+      adb shell rm /sdcard/screen.png
+      adb kill-server
       sleep 1
       mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "UPDATE Devices SET ATVNAME = '$name', ATVTEMP = '$temp', ATVPROXYIP = '$fpip', ATVACCOUNT = '$deviceaccount', ATVATVER = '$atver', ATVPOGOVER = '$pokever' WHERE ATVNAME = '$name';"
     adb kill-server
