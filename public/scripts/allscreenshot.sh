@@ -14,9 +14,9 @@ for i in `cat scripts/ips` ; do
       ip="$lanip.$j"
       adb start-server
       adb connect $ip:$adbport
-      if [[ $dnl == "atconf" ]] ; then
+      if [[ $dnl == "globset" ]] ; then
         name=$(adb shell settings list global | grep "device_name" | cut -d '=' -f2)
-      elif [[ $dnl == "globset" ]] ; then
+      elif [[ $dnl == "atconf" ]] ; then
         name=$(adb shell cat /data/local/tmp/atlas_config.json | grep -oP '"deviceName": *"\K[^"]*')
       fi
       sleep 1
@@ -31,9 +31,9 @@ for i in `cat scripts/ips` ; do
     ip="$lanip.$i"
     adb start-server
     adb connect $ip:$adbport
-    if [[ $dnl == "atconf" ]] ; then
+    if [[ $dnl == "globset" ]] ; then
       name=$(adb shell settings list global | grep "device_name" | cut -d '=' -f2)
-    elif [[ $dnl == "globset" ]] ; then
+    elif [[ $dnl == "atconf" ]] ; then
       name=$(adb shell cat /data/local/tmp/atlas_config.json | grep -oP '"deviceName": *"\K[^"]*')
     fi
     sleep 1

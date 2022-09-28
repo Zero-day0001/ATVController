@@ -18,6 +18,10 @@ RDMport="$(grep -oE '\$RDMport = .*;' config.php | tail -1 | sed 's/$RDMport = /
 
 rm outputs/buildinfo.log
 exec > outputs/buildinfo.log 2>&1
+echo Building DB
+built=1
+echo Built - $built
+      mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "UPDATE Updater SET BUILT = '$built';"
 adb kill-server
 for i in `cat scripts/ips` ; do
   if [[ $i =~ "{".* ]] ; then
@@ -29,9 +33,9 @@ for i in `cat scripts/ips` ; do
       sleep 1
       adb connect $ip:$adbport
       sleep 1
-      if [[ $dnl == "atconf" ]] ; then
+      if [[ $dnl == "globset" ]] ; then
         name=$(adb shell settings list global | grep "device_name" | cut -d '=' -f2)
-      elif [[ $dnl == "globset" ]] ; then
+      elif [[ $dnl == "atconf" ]] ; then
         name=$(adb shell cat /data/local/tmp/atlas_config.json | grep -oP '"deviceName": *"\K[^"]*')
       fi
       atver=$(db shell dumpsys package com.pokemod.atlas | grep -E versionName | sed -e "s@    versionName=@@g")
@@ -62,9 +66,9 @@ for i in `cat scripts/ips` ; do
     ip="$lanip.$i"
     adb connect $ip:$adbport
     sleep 1
-    if [[ $dnl == "atconf" ]] ; then
+    if [[ $dnl == "globset" ]] ; then
       name=$(adb shell settings list global | grep "device_name" | cut -d '=' -f2)
-    elif [[ $dnl == "globset" ]] ; then
+    elif [[ $dnl == "atconf" ]] ; then
       name=$(adb shell cat /data/local/tmp/atlas_config.json | grep -oP '"deviceName": *"\K[^"]*')
     fi
     atver=$(adb shell dumpsys package com.pokemod.atlas | grep -E versionName | sed -e "s@    versionName=@@g")

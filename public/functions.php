@@ -744,6 +744,112 @@ echo '<div class="cssContainer">' .
 <?php
 echo '</div>';
 }
+    
+    function scanner(){
+    include("config.php");
+    
+    echo '<div class="cssContainer">' .
+         '<div style="color:#fff;"><center>';
+        
+         $filePath = "scripts/ips";
+         $lines = count(file("$filePath"));
+         $ips = file_get_contents("$filePath");
+         echo '<h4>Existing IPS file</h4>' .
+              '<textarea rows="'.$lines.'" style="resize:none;width:80%;height:auto;text-align:center;" readonly>'.$ips.'</textarea></br></br>';
+         
+         $newfilePath = "scripts/new_ips";
+         $newips = file_get_contents("$newfilePath");
+         if(!empty($newips)){
+             $newlines = count(file("$newfilePath"));
+             echo '</br><h4>New Devices Found</h4>' .
+                  '<form class="d-inline" id="newDevice" method ="post">' .
+                  '<textarea rows="'.$newlines.'" style="resize:none;width:80%;text-align:center;" readonly>';
+             echo "$newips";
+             echo '</textarea></br>' .
+                  '</form>';
+         }
+        
+    echo 'Scan for new network devices?<br>'.
+         '<form method="post" >' .
+         '<input type="submit" name="scanner" value="Scan" />' .
+         '</form></br>';
+        
+     if(!empty($_POST['scanner'])) {
+          
+          //list of port numbers to scan
+          $existcount = "0";
+          $foundcount = "0";
+          $startrange = "2";
+          $countrange = "$startrange";
+          $endrange = "255";
+          $port = "5555";
+          
+          $checknewips = file_get_contents("scripts/new_ips");
+          if(!empty($checknewips)){
+              echo $res=shell_exec('rm scripts/new_ips > /dev/null 2>&1 &');
+          }
+         
+          while($countrange <= $endrange){
+              $activeip = "$lanip.$countrange";
+              $conn = new mysqli($servername, $username, $password, $dbname, $port);
+              // Checking for connections
+              if ($conn->connect_error) {
+                  die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
+              }
+              $sql = " SELECT * FROM Devices WHERE ATVLOCALIP = '$activeip'; ";
+              $result = $conn->query($sql);
+              $conn->close();
+              while($rows=$result->fetch_assoc()){
+                      $atvlocalip = $rows['ATVLOCALIP'];
+              }
+              if($activeip != $atvlocalip){
+                  $fp = fsockopen("$activeip", "$port", $errno, $errstr, 1);
+                  if ($fp) {
+                      $file = fopen("scripts/new_ips","a");
+                      fwrite($file,"$countrange\n");
+                      fclose($file);
+                      fclose($fp);
+                      
+                      $foundcount++;
+                  }
+              }else{
+                  $existcount++;
+              }
+          $countrange++;
+          }
+         
+          if($foundcount == "0"){
+          $final = $foundcount + $existcount;
+          echo '</br>Range Checked: ' . $lanip . '.' . $startrange . ' - ' . $endrange . '</br>' .
+               'Total New: ' . $foundcount . '</br>' .
+               'Total Existing: ' . $existcount . '</br>' .
+               'Total Found: ' . $final . '</br>' .
+               'Total Checked: ' . $countrange . '</br>' .
+               'No new devices found';
+               sleep(5);
+              ?>
+              <script>
+              window.location.reload();
+              </script>
+              <?php
+          } else {
+          $final = $foundcount + $existcount;
+          echo '</br>Range Checked: ' . $lanip . '.' . $startrange . '/' . $endrange . '</br>' .
+               'Total New: ' . $foundcount . '</br>' .
+               'Total Existing: ' . $existcount . '</br>' .
+               'Total Found: ' . $final . '</br>' .
+               'Total Checked: ' . $countrange . '</br>' ;
+               sleep(5);
+              ?>
+              <script>
+              window.location.reload();
+              </script>
+              <?php
+          }
+     }
+        
+    echo '</div></div>';
+    }
 
 function editatconf(){
 include("config.php");

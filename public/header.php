@@ -24,6 +24,7 @@ echo '<head>' .
   '<a href="#" class="logo">ATV Controller</a>' .
   '<a href="index.php">Home</a>' .
   '<a href="editor.php">Atlas Config Creator</a>' .
+  '<a href="scanner.php">Device Scanner(WIP)</a>' .
   '<a href="javascript:void(0);" class="icon" onclick="menu()">' .
     '<i class="fa fa-bars"></i>' .
   '</a>';

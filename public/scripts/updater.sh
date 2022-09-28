@@ -15,6 +15,7 @@ RDMdbuser="$(grep -oE '\$RDMusername = .*;' public/config.php | tail -1 | sed 's
 RDMdbpass="$(grep -oE '\$RDMpassword = .*;' public/config.php | tail -1 | sed 's/$RDMpassword = //g;s/;//g;s/^"//;s/"$//')"
 RDMdb="$(grep -oE '\$RDMdbname = .*;' public/config.php | tail -1 | sed 's/$RDMdbname = //g;s/;//g;s/^"//;s/"$//')"
 RDMport="$(grep -oE '\$RDMport = .*;' public/config.php | tail -1 | sed 's/$RDMport = //g;s/;//g;s/^"//;s/"$//')"
+
 rm public/outputs/updater.log
 exec > public/outputs/updater.log 2>&1
 echo Changing Status to Running
@@ -32,9 +33,9 @@ for i in `cat public/scripts/ips` ; do
       sleep .5
       adb connect $ip:$adbport
       sleep .5
-      if [[ $dnl == "atconf" ]] ; then
+      if [[ $dnl == "globset" ]] ; then
         name=$(adb shell settings list global | grep "device_name" | cut -d '=' -f2)
-      elif [[ $dnl == "globset" ]] ; then
+      elif [[ $dnl == "atconf" ]] ; then
         name=$(adb shell cat /data/local/tmp/atlas_config.json | grep -oP '"deviceName": *"\K[^"]*')
       fi
       atver=$(adb shell dumpsys package com.pokemod.atlas | grep -E versionName | sed -e "s@    versionName=@@g")
@@ -66,9 +67,9 @@ for i in `cat public/scripts/ips` ; do
     sleep .5
     adb connect $ip:$adbport
     sleep .5
-      if [[ $dnl == "atconf" ]] ; then
+      if [[ $dnl == "globset" ]] ; then
         name=$(adb shell settings list global | grep "device_name" | cut -d '=' -f2)
-      elif [[ $dnl == "globset" ]] ; then
+      elif [[ $dnl == "atconf" ]] ; then
         name=$(adb shell cat /data/local/tmp/atlas_config.json | grep -oP '"deviceName": *"\K[^"]*')
       fi
       atver=$(adb shell dumpsys package com.pokemod.atlas | grep -E versionName | sed -e "s@    versionName=@@g")
