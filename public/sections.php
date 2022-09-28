@@ -8,12 +8,12 @@ echo
 			<div class="buttonHeaderText lead">Controller Utilities:</div>
 			<div class="row">
 				<div class="col-md-4 text-center">';
-					deviceinfo();
-					tempbutton();
+                    tempbutton();
+                    vercheck();
 				echo '</div>';
 				echo '<div class="col-md-4 text-center">';
-					vercheck();
-					allscreenshot();
+                    allscreenshot();
+                    moreToCome();
 				echo 
 				'</div>';
 				echo '<div class="col-md-4 text-center">';

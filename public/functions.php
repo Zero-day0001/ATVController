@@ -3,25 +3,92 @@
 // SCRIPTS TO RUN ON ALL DEVICES
 
 function deviceinfo() {
-	echo '<form id="deviceinfo" action="index.php" method="post" onsubmit="return confirmscreen()">' .
-	'<button name="deviceinfo" type="submit" class="btn btn-primary menuButton">Build Info</button>' .
-	'</form>';
-	if(isset($_POST['deviceinfo'])){
-		echo $res=shell_exec('scripts/deviceinfo.sh > /dev/null 2>&1 &');
-	}
+    require("config.php");
+    $conn = new mysqli($servername, $username, $password, $dbname, $port);
+
+    //Check Connection
+    if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+    }else{
+    
+    $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
+    $res = $conn->query($lastseen);
+    $conn->close();
+    $status = 0;
+    while($rows=$res->fetch_assoc()){
+        $gstatus = $rows['STATUS'];
+        if(!empty($gstatus)) {
+            $status = 1;
+        }
+    }
+    if($status === 1){
+        echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
+    }else{
+        echo '<form id="deviceinfo" action="index.php" method="post" onsubmit="return confirmscreen()">' .
+        '<button name="deviceinfo" type="submit" class="btn btn-primary menuButton">Build Info</button>' .
+        '</form>';
+        if(isset($_POST['deviceinfo'])){
+            echo $res=shell_exec('scripts/deviceinfo.sh > /dev/null 2>&1 &');
+        }
+    }
+    }
+	
 }
 
 function tempbutton() {
-	echo
-	'<form id="temp" action="index.php" method ="post" onsubmit="return confirmscreen()">' .
-		'<button name="temp" type="submit" class="btn btn-primary menuButton">Recollect Temps</button>' .
-	'</form>';
+    require("config.php");
+    $conn = new mysqli($servername, $username, $password, $dbname, $port);
+
+    //Check Connection
+    if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+    }else{
+    
+    $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
+    $res = $conn->query($lastseen);
+    $conn->close();
+    $status = 0;
+    while($rows=$res->fetch_assoc()){
+        $gstatus = $rows['STATUS'];
+        if(!empty($gstatus)) {
+            $status = 1;
+        }
+    }
+    if($status === 1){
+        echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
+    }else{
+	echo '<form id="temp" action="index.php" method ="post" onsubmit="return confirmscreen()">' .
+		 '<button name="temp" type="submit" class="btn btn-primary menuButton">Recollect Temps</button>' .
+	     '</form>';
 	if(isset($_POST['temp'])){
 		echo $res=shell_exec('scripts/tempcheck.sh > /dev/null 2>&1 &');
 	}
+   }
+  }
 }
 
 function rebootbutton() {
+    require("config.php");
+    $conn = new mysqli($servername, $username, $password, $dbname, $port);
+
+    //Check Connection
+    if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+    }else{
+    
+    $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
+    $res = $conn->query($lastseen);
+    $conn->close();
+    $status = 0;
+    while($rows=$res->fetch_assoc()){
+        $gstatus = $rows['STATUS'];
+        if(!empty($gstatus)) {
+            $status = 1;
+        }
+    }
+    if($status === 1){
+        echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
+    }else{
 	echo 
 	'<form id="reboot" action="index.php" method ="post" onsubmit="return confirmscreen()">' . 
 		'<button name="reboot" type="submit" class="btn btn-primary menuButton">Reboot ALL</button>' .
@@ -29,39 +96,131 @@ function rebootbutton() {
 	if(isset($_POST['reboot'])){
 		echo $res=shell_exec('scripts/reboot.sh > /dev/null 2>&1 &');
 	}
+   }
+  }
 }
 
 function vercheck() {
+    require("config.php");
+    $conn = new mysqli($servername, $username, $password, $dbname, $port);
+
+    //Check Connection
+    if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+    }else{
+    
+    $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
+    $res = $conn->query($lastseen);
+    $conn->close();
+    $status = 0;
+    while($rows=$res->fetch_assoc()){
+        $gstatus = $rows['STATUS'];
+        if(!empty($gstatus)) {
+            $status = 1;
+        }
+    }
+    if($status === 1){
+        echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
+    }else{
         echo
         '<form id="vercheck" action="index.php" method ="post" onsubmit="return confirmscreen()">' .
                 '<button name="vercheck" type="submit" class="btn btn-primary menuButton">Recollect Versions</button>' .
         '</form>';
         if(isset($_POST['vercheck'])){
                 echo $res=shell_exec('scripts/vercheck.sh > /dev/null 2>&1 &');
-        }
+    }
+   }
+  }
 }
 
 function allscreenshot() {
+    require("config.php");
+    $conn = new mysqli($servername, $username, $password, $dbname, $port);
+
+    //Check Connection
+    if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+    }else{
+    
+    $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
+    $res = $conn->query($lastseen);
+    $conn->close();
+    $status = 0;
+    while($rows=$res->fetch_assoc()){
+        $gstatus = $rows['STATUS'];
+        if(!empty($gstatus)) {
+            $status = 1;
+        }
+    }
+    if($status === 1){
+        echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
+    }else{
         echo
         '<form id="allscreenshot" action="index.php" method ="post" onsubmit="return confirmscreen()">' .
                 '<button name="allscreenshot" type="submit" class="btn btn-primary menuButton">Recollect Screenshots</button>' .
         '</form>';
         if(isset($_POST['allscreenshot'])){
                 echo $res=shell_exec('scripts/allscreenshot.sh > /dev/null 2>&1 &');
-        }
+    }
+   }
+  }
 }
 
 function anvercheck() {
+    require("config.php");
+    $conn = new mysqli($servername, $username, $password, $dbname, $port);
+
+    //Check Connection
+    if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+    }else{
+    
+    $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
+    $res = $conn->query($lastseen);
+    $conn->close();
+    $status = 0;
+    while($rows=$res->fetch_assoc()){
+        $gstatus = $rows['STATUS'];
+        if(!empty($gstatus)) {
+            $status = 1;
+        }
+    }
+    if($status === 1){
+        echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
+    }else{
         echo
         '<form id="anvercheck" action="index.php" method ="post" onsubmit="return confirmscreen()">' .
                 '<button name="anvercheck" type="submit" class="btn btn-primary menuButton">Recollect Android Version</button>' .
         '</form>';
         if(isset($_POST['anvercheck'])){
                 echo $res=shell_exec('scripts/anvercheck.sh > /dev/null 2>&1 &');
-        }
+    }
+   }
+  }
 }
 
 function upatlas() {
+    require("config.php");
+    $conn = new mysqli($servername, $username, $password, $dbname, $port);
+
+    //Check Connection
+    if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+    }else{
+    
+    $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
+    $res = $conn->query($lastseen);
+    $conn->close();
+    $status = 0;
+    while($rows=$res->fetch_assoc()){
+        $gstatus = $rows['STATUS'];
+        if(!empty($gstatus)) {
+            $status = 1;
+        }
+    }
+    if($status === 1){
+        echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
+    }else{
 	echo 
 	'<form id="upatlas" action="index.php" method ="post" onsubmit="return confirmscreen()">' . 
 		'<button name="upatlas" type="submit" class="btn btn-primary menuButton">Update Atlas ALL</button>' .
@@ -69,9 +228,32 @@ function upatlas() {
 	if(isset($_POST['upatlas'])){
 		echo $res=shell_exec('scripts/upat.sh > /dev/null 2>&1 &');
 	}
+   }
+  }
 }
-
+    
 function startbutton() {
+    require("config.php");
+    $conn = new mysqli($servername, $username, $password, $dbname, $port);
+
+    //Check Connection
+    if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+    }else{
+    
+    $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
+    $res = $conn->query($lastseen);
+    $conn->close();
+    $status = 0;
+    while($rows=$res->fetch_assoc()){
+        $gstatus = $rows['STATUS'];
+        if(!empty($gstatus)) {
+            $status = 1;
+        }
+    }
+    if($status === 1){
+        echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
+    }else{
 	echo 
 	'<form id="start" action="index.php" method ="post" onsubmit="return confirmscreen()">' . 
 		'<button name="start" type="submit" class="btn btn-primary menuButton">Start Scanning ALL</button>' .
@@ -79,9 +261,32 @@ function startbutton() {
 	if(isset($_POST['start'])){
 		echo $res=shell_exec('scripts/start.sh > /dev/null 2>&1 &');
 	}
+   }
+  }
 }
 
 function stopbutton() {
+    require("config.php");
+    $conn = new mysqli($servername, $username, $password, $dbname, $port);
+
+    //Check Connection
+    if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+    }else{
+    
+    $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
+    $res = $conn->query($lastseen);
+    $conn->close();
+    $status = 0;
+    while($rows=$res->fetch_assoc()){
+        $gstatus = $rows['STATUS'];
+        if(!empty($gstatus)) {
+            $status = 1;
+        }
+    }
+    if($status === 1){
+        echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
+    }else{
 	echo 
 	'<form id="stop" action="index.php" method ="post" onsubmit="return confirmscreen()">' . 
 		'<button name="stop" type="submit" class="btn btn-primary menuButton">Stop Scanning ALL</button>' .
@@ -89,8 +294,31 @@ function stopbutton() {
 	if(isset($_POST['stop'])){
 		echo $res=shell_exec('scripts/stop.sh > /dev/null 2>&1 &');
 	}
+   }
+  }
 }
 function uppogo() {
+    require("config.php");
+    $conn = new mysqli($servername, $username, $password, $dbname, $port);
+
+    //Check Connection
+    if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+    }else{
+    
+    $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
+    $res = $conn->query($lastseen);
+    $conn->close();
+    $status = 0;
+    while($rows=$res->fetch_assoc()){
+        $gstatus = $rows['STATUS'];
+        if(!empty($gstatus)) {
+            $status = 1;
+        }
+    }
+    if($status === 1){
+        echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
+    }else{
 	echo 
 	'<form id="uppogo" action="index.php" method ="post" onsubmit="return confirmscreen()">' .
                 '<button name="uppogo" type="submit" class="btn btn-primary menuButton">Update Pokemon ALL</button>' .
@@ -98,6 +326,8 @@ function uppogo() {
 	if(isset($_POST['uppogo'])){
 		echo $res=shell_exec('scripts/uppogo.sh > /dev/null 2>&1 &');
 	}
+   }
+  }
 }
 function moreToCome() {
 	echo
@@ -267,15 +497,40 @@ echo '<div class="cssContainer">' .
                 echo '<td class="text-center align-middle"> ' . $cputype . '</td>';
 
 				echo '<td class="controlTable align-middle">'; // Device Options for Users ---
+            
+
+            $conn = new mysqli($servername, $username, $password, $dbname, $port);
+
+            //Check Connection
+            if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+            }else{
+            
+            $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
+            $res = $conn->query($lastseen);
+            $conn->close();
+            $status = 0;
+            while($rows=$res->fetch_assoc()){
+                $gstatus = $rows['STATUS'];
+                if(!empty($gstatus)) {
+                    $status = 1;
+                }
+            }
+            if($status === 1){
+                echo "Waiting for updater!";
+            }else{
+                echo
+                '<div class="tab">
+                    <button class="tablink tablinks-' . $name . '" onclick="openTab(event, \'tabGeneral-' . $name .'\', \'' . $name . '\')">General</button>
+                    <button class="tablink tablinks-' . $name . '" onclick="openTab(event, \'tabAtlas-' . $name .'\', \'' . $name . '\')">Atlas</button>
+                    <button class="tablink tablinks-' . $name . '" onclick="openTab(event, \'tabAPKs-' . $name .'\', \'' . $name . '\')">APKs</button>
+                    <button class="tablink tablinks-' . $name . '" onclick="openTab(event, \'tabMisc-' . $name .'\', \'' . $name . '\')">Misc</button>
+                </div>    ';
+            }
+            }
 				
 					// Reboot Device
-					echo
-					'<div class="tab">
-						<button class="tablink tablinks-' . $name . '" onclick="openTab(event, \'tabGeneral-' . $name .'\', \'' . $name . '\')">General</button>
-						<button class="tablink tablinks-' . $name . '" onclick="openTab(event, \'tabAtlas-' . $name .'\', \'' . $name . '\')">Atlas</button>
-						<button class="tablink tablinks-' . $name . '" onclick="openTab(event, \'tabAPKs-' . $name .'\', \'' . $name . '\')">APKs</button>
-						<button class="tablink tablinks-' . $name . '" onclick="openTab(event, \'tabMisc-' . $name .'\', \'' . $name . '\')">Misc</button>
-					</div>	';
+					
 					
 					//General TAB
 					echo '<div id="tabGeneral-' . $name .'" class="tabcontent tabcontent-' . $name .'">';
