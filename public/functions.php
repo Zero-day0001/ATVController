@@ -1280,4 +1280,105 @@ echo '</center></div>' .
      '</div>';
 
 }
+                    
+
+                    function editemconf(){
+                    include("config.php");
+                    echo '<div class="cssContainer">' .
+                         '<div style="color:#fff;"><center>';
+                        // Select Json File
+                        $emconfig = file_get_contents("apps/emagisk.config");
+
+                    if(empty($emconfig)){
+                    echo 'No eMagisk Config File Found, Would you like to make one?<br>' .
+                         '<form class="d-inline" id="emconfcreate" action="emagiskeditor.php" method ="post">' .
+                         '<button name="emconfcreate" type="submit" class="btn btn-primary">Make eMagisk config</button>' .
+                         '</form>';
+                        if(isset($_POST['emconfcreate'])){
+                                    echo $res=shell_exec('cp apps/emagisk.config.example apps/emagisk.config> /dev/null 2>&1 &');
+                            ?>
+                            <script>
+                            window.location.reload();
+                            </script>
+                            <?php
+                        }
+                    }else{
+                    echo '<h3>Current Config</h3>' .
+                         '<textarea rows=3 style="resize:none;width:80%;text-align:center;" readonly>'.$emconfig.'</textarea><br>' .
+                         '<a href="/apps/emagisk.config" download><button name="export" type="submit" class="btn btn-primary">Export .config</button></a>' .
+                         
+                        '<h4>Edit eMagisk Config</h4>';
+                        
+                        $fp    = 'apps/emagisk.config';
+
+                                // get the contents of file in array
+                                $conents_arr   = file($fp,FILE_IGNORE_NEW_LINES);
+
+                                foreach($conents_arr as $key=>$value)
+                                {
+                                    $conents_arr[$key]  = rtrim($value, "\r");
+                                }
+
+                                $json_contents = json_encode($conents_arr);
+                        
+                        $array = json_decode($json_contents, true);
+                        extract($array);
+                        
+                        if(empty($rdm_user)){
+                           $rdm_user = "";
+                        }
+                        if(empty($rdm_password)){
+                           $rdm_password = "";
+                        }
+                        if(empty($rdm_backendURL)){
+                           $rdm_backendURL = "";
+                        }
+                        
+                        echo '<form id="emconfcreator" method="post">' .
+                        
+                            '<label for="rdm_user">RDM User</label><br>' .
+                            '<input type="text" id="rdm_user" name="rdm_user" placeholder="'.$rdm_user.'" value="'.$rdm_user.'" required><br>' .
+                            
+                            '<label for="rdm_password">RDM Password</label><br>' .
+                            '<input type="text" id="rdm_password" name="rdm_password" placeholder="'.$rdm_password.'" value="'.$rdm_password.'" required><br>' .
+                        
+                            '<label for="rdm_backendURL">RDM Backend URL</label><br>' .
+                            '<input type="text" id="rdm_backendURL" name="rdm_backendURL" placeholder="'.$rdm_backendURL.'" value="'.$rdm_backendURL.'" required><br>' .
+                        
+                        '<button name="emconfcreator" type="submit" class="btn btn-primary">Save</button><br><br>' .
+                        '</form>';
+                        
+                        if(isset($_POST['emconfcreator'])){
+                            $RDMUser = $_POST["rdm_user"];
+                            if(empty($RDMUser)){
+                                $RDMUser = "";
+                            }
+                            
+                            $RDMPass = $_POST["rdm_password"];
+                            if(empty($RDMPass)){
+                                $RDMPass = "";
+                            }
+                            
+                            $RDMUrl = $_POST["rdm_backendURL"];
+                            if(empty($RDMUrl)){
+                                $RDMUrl = "";
+                            }
+                            
+                            $file = fopen("apps/emagisk.config","w");
+                            fwrite($file,'rdm_user="'.$RDMUser.'"');
+                            fwrite($file, "\n");
+                            fwrite($file,'rdm_password="'.$RDMPass.'"');
+                            fwrite($file, "\n");
+                            fwrite($file,'rdm_backendURL="'.$RDMUrl.'"');
+                            fclose($file);
+                            ?>
+                            <script>
+                            window.location.reload();
+                            </script>
+                            <?php
+                        }
+                    }
+                    echo '</center></div>' .
+                         '</div>';
+                    }
 ?>
