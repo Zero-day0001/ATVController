@@ -361,32 +361,15 @@ echo '<div class="cssContainer">' .
 		'<thead class="text-center">' . 
 			'<tr>' .
 				'<th>Device Name</th>' .
-				'<th>Temp</th>' .
-				'<th>Local IP</th>';
-	
-				if($noProxy === false){
-				echo '<th>Proxy IP</th>';
-				}
-
-				if($noAccount === false){
-				echo '<th>Account</th>';
-				}
-
-				if($noLastSeen === false){
-                echo '<th>Last Seen</th>';
-                }
-
-				echo '<th>PoGo Version</th>' .
-				'<th>Atlas Version</th>' .
-				'<th>Android Version</th>' .
-                '<th>CPU</th>' .
+				'<th>Device IPs</th>' .
+                '<th>App Versions</th>' .
+				'<th>Device Info</th>' .
+                '<th>Status</th>' .
 				'<th>Controls</th>';
-	
-				if($noScreenshot === false){
-				echo '<th>Screenshot</th>';
-				}
-                echo '<th>Last Updated</th>';
-			echo '</tr>' .
+                if($noScreenshot === false){
+                    echo '<th>Screenshot</th>';
+                }
+           echo '</tr>' .
 		'</thead>';
 		echo '<tbody class="text-center">';
 		while($rows=$result->fetch_assoc()){
@@ -423,80 +406,149 @@ echo '<div class="cssContainer">' .
                                 $cputype = "N/A";
                         }
             if($atvtemp >= 85){
-                $tempcolor = 'red';
+                $tempcolor = '#950000';
                 $tempsize = '900';
             }elseif($atvtemp >= 80){
-                $tempcolor = 'red';
+                $tempcolor = '#950000';
                 $tempsize = '600';
             }elseif($atvtemp >= 75){
                 $tempcolor = 'orange';
                 $tempsize = '400';
             }else{
-                $tempcolor = 'green';
+                $tempcolor = '#00e06d';
                 $tempsize = '400';
             }
             
 			echo '<tr id=device-' . $name . '>' .
 				'<td class="align-middle">' . $name . '</td>' .
-				'<td class="align-middle" style="color:'.$tempcolor.';font-weight:'.$tempsize.'">' . $atvtemp . '°C</td>' .
-				'<td class="align-middle">' . $localip . '</td>';
-				if($noProxy === false){
-					echo '<td class="align-middle">' . $atvproxy . '</td>';
-				}
-
-				if($noAccount === false){
-				// Get Device Account
-				echo '<td class="align-middle">';
-					echo $atvacc;
-				echo '</td>';
-				}
-
-				if($noLastSeen === false){
-				 echo '<td class="align-middle">';
-                                        $conn = new mysqli($RDMservername, $RDMusername, $RDMpassword, $RDMdbname, $RDMport);
-                                                        // Checking for connections
-                                                if ($conn->connect_error) {
-                                                        die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
-                                                }else{
-                                                        $lastseen = " SELECT last_seen FROM device WHERE uuid = '$name'; ";
-                                                        $res = $conn->query($lastseen);
-                                                        $conn->close();
-                                                    $lastSeenResult = 0;
-                                                    while($rows=$res->fetch_assoc()){
-                                                        $lastseentime = $rows['last_seen'];
-                                                        if(!empty($lastseentime)) {
-                                                            $lastSeenResult = 1;
-                                                        }
-                                                    }
-                                                    if($lastSeenResult === 1){
-                                                        $timeDiff = (time() - $lastseentime) +1;
-                                                        //Convert to seconds, minutes, hours
-                                                        $seconds = $timeDiff % 60;
-                                                        $minutes = floor(($timeDiff % 3600) / 60);
-                                                        $hours = floor($timeDiff / 3600);
-                                                        if($hours > 0) echo "$hours" . "h, ";
-                                                        if($minutes > 0) echo "$minutes" . "m, ";
-                                                        echo "$seconds" . "s ago";
-                                                    } else{
-                                                        echo "No LastSeen Found";
-                                                    }
-                                                }
-                                echo '</td>';
-				}
-
-				// Get PoGo Version
-				echo '<td class="text-center align-middle"> ' . $atvpogover . '</td>';
-				
-				// Get Atlas Version
-				echo '<td class="align-middle">' . $atvatver . '</td>';
-
-				// Get Android Version
-                echo '<td class="text-center align-middle"> ' . $anver . '</td>';
+                '<td class="text-center align-middle"> ' .
+                '<table class="table" style="border:1px solid #fff;color:#fff;margin-bottom: 0px !important;">' .
+                '<tr style="background-color:#6c757d"><td>' .
+                "Local:" .
+                '</td>' .
+                '<td>' .
+                "$localip" .
+                '</td></tr>';
             
-                //Get CPU type
-                echo '<td class="text-center align-middle"> ' . $cputype . '</td>';
+                if($noProxy === false){
+                echo '<tr style="background-color:#6c757d"><td>' .
+                "Proxy: " .
+                '</td>' .
+                '<td>' .
+                "$atvproxy " .
+                '</td></tr>';
+                }
+                echo '</table>' .
+                '</td>';
 
-				echo '<td class="controlTable align-middle">'; // Device Options for Users ---
+				// Get App Versions
+				echo '<td class="text-center align-middle"> ' .
+                     '<table class="table" style="border:1px solid #fff;color:#fff;margin-bottom: 0px !important;">' .
+                     '<tr style="background-color:#6c757d"><td>' .
+                     "Pokemon:" .
+                     '</td>' .
+                     '<td>' .
+                     "$atvpogover" .
+                     '</td></tr>' .
+                     '<tr style="background-color:#6c757d"><td>' .
+				     "Atlas:" .
+                     '</td>' .
+                     '<td>' .
+                     "$atvatver" .
+                     '</td></tr>' .
+                     '</table>' .
+                     '</td>' .
+            
+                // Get App Versions
+                    '<td class="text-center align-middle"> ' .
+                    '<table class="table" style="border:1px solid #fff;color:#fff;width: 185px;margin-bottom: 0px !important;">' .
+                    '<tr style="background-color:#6c757d"><td>' .
+                    "Android:" .
+                    '</td>' .
+                    '<td>' .
+                    "$anver" .
+                    '</td></tr>' .
+                    '<tr style="background-color:#6c757d"><td>' .
+                    "CPU:" .
+                    '</td>' .
+                    '<td>' .
+                    "$cputype " .
+                    '</td></tr>' .
+                    '<tr style="background-color:#6c757d"><td>' .
+                    "Temp:" .
+                    '</td>' .
+                    '<td class="align-middle" style="color:'.$tempcolor.';font-weight:'.$tempsize.'">' . $atvtemp . '°C</td></tr>' .
+                    '</table>' .
+                    '</td>' .
+
+             '<td class="text-center align-middle">' .
+             '<table class="table" style="border:1px solid #fff;color:#fff;margin-bottom: 0px !important;width:240px;">' ;
+            if($noAccount === false){
+            // Get Device Account
+            echo '<tr style="background-color:#6c757d">' .
+                 '<td>' .
+                 'Account:' .
+                 '</td>' .
+                 '<td class="align-middle">' .
+                 "$atvacc" .
+                 '</td>';
+            }
+        if($noLastSeen === false){
+            echo '<tr style="background-color:#6c757d">' .
+                 '<td>' .
+                 "Seen:" .
+                 '</td>' .
+                 '<td>';
+                                $conn = new mysqli($RDMservername, $RDMusername, $RDMpassword, $RDMdbname, $RDMport);
+                                                // Checking for connections
+                                        if ($conn->connect_error) {
+                                                die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
+                                        }else{
+                                                $lastseen = " SELECT last_seen FROM device WHERE uuid = '$name'; ";
+                                                $res = $conn->query($lastseen);
+                                                $conn->close();
+                                            $lastSeenResult = 0;
+                                            while($rows=$res->fetch_assoc()){
+                                                $lastseentime = $rows['last_seen'];
+                                                if(!empty($lastseentime)) {
+                                                    $lastSeenResult = 1;
+                                                }
+                                            }
+                                            if($lastSeenResult === 1){
+                                                $timeDiff = (time() - $lastseentime) +1;
+                                                //Convert to seconds, minutes, hours
+                                                $seconds = $timeDiff % 60;
+                                                $minutes = floor(($timeDiff % 3600) / 60);
+                                                $hours = floor($timeDiff / 3600);
+                                                if($hours > 0) echo "$hours" . "h, ";
+                                                if($minutes > 0) echo "$minutes" . "m, ";
+                                                echo "$seconds" . "s";
+                                            } else{
+                                                echo "No Last Seen Found";
+                                            }
+                                        }
+            echo '</td></tr>' ;
+        }
+            echo '<tr style="background-color:#6c757d"><td>' .
+            "Updated" .
+            '</td>' .
+            '<td>' ;
+            $timecon = strtotime($lastupdated);
+            
+                $timeDiff = (time() - $timecon) +1;
+                //Convert to seconds, minutes, hours
+                $seconds = $timeDiff % 60;
+                $minutes = floor(($timeDiff % 3600) / 60);
+                $hours = floor($timeDiff / 3600);
+                if($hours > 0) echo "$hours" . "h, ";
+                if($minutes > 0) echo "$minutes" . "m, ";
+                echo "$seconds" . "s" .
+            
+                 '</td></tr>' .
+                 '</table>' .
+                 '</td>' .
+
+				 '<td class="controlTable align-middle">'; // Device Options for Users ---
             
 
             $conn = new mysqli($servername, $username, $password, $dbname, $port);
@@ -869,39 +921,28 @@ echo '<div class="cssContainer">' .
 					//document.getElementById("defaultOpen").click();
 				</script>
 				<?php
-				if($noScreenshot === false){
-					echo '<td class="align-middle;">';
-					$filename = __DIR__ .'/screenshot/' . $name . '.png';
-					if(file_exists($filename)){
-						echo 
-						'<div class="imageContainer">' .
-							'<a href="screenshot/' . $name . '.png" target="_blank" >' .
-								'<img src="screenshot/' . $name . '.png" width="25" height="40" />' .
-							'</a>' .
-						'</div>';
-					}
-					else{
-						echo 'No Screenshot Found.';
-					}
-					echo '</td>';
-				}
-                
-                echo '<td class="align-middle;">';
-                    $timecon = strtotime($lastupdated);
                     
-                        $timeDiff = (time() - $timecon) +1;
-                        //Convert to seconds, minutes, hours
-                        $seconds = $timeDiff % 60;
-                        $minutes = floor(($timeDiff % 3600) / 60);
-                        $hours = floor($timeDiff / 3600);
-                        if($hours > 0) echo "$hours" . "h, ";
-                        if($minutes > 0) echo "$minutes" . "m, ";
-                        echo "$seconds" . "s ago";
                     
-                     '</td>';
+                    if($noScreenshot === false){
+                        echo '<td class="text-center align-middle">';
+                        $filename = __DIR__ .'/screenshot/' . $name . '.png';
+                        if(file_exists($filename)){
+                            echo
+                            '<div class="imageContainer">' .
+                                '<a href="screenshot/' . $name . '.png" target="_blank" >' .
+                                    '<img src="screenshot/' . $name . '.png" width="25" height="40" />' .
+                                '</a>' .
+                            '</div>';
+                        }
+                        else{
+                            echo 'No Screenshot Found.';
+                        }
+                        echo '</td>';
+                    }
                     
-			echo '</tr>';
+			        echo '</tr>';
             
+                    
             
 		}
 	echo '</tbody>
