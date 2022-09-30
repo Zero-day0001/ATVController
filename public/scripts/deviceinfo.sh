@@ -20,8 +20,12 @@ rm outputs/buildinfo.log
 exec > outputs/buildinfo.log 2>&1
 echo Building DB
 built=1
-echo Built - $built
       mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "UPDATE Updater SET BUILT = '$built';"
+echo Built - $built
+echo Setting Job
+job=2
+      mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "UPDATE Updater SET STATUS = '$job';"
+echo Job - $job
 adb kill-server
 for i in `cat scripts/ips` ; do
   if [[ $i =~ "{".* ]] ; then
@@ -45,11 +49,13 @@ for i in `cat scripts/ips` ; do
       temp=$(adb shell cat /sys/class/thermal/thermal_zone0/temp | awk '{print substr($0, 1, length($0)-3)}')
       pip=$(adb shell settings list global | grep "global_http_proxy_host" | cut -d '=' -f2)
       pipp=$(adb shell settings list global | grep "global_http_proxy_port" | cut -d '=' -f2)
+      mac=$(adb shell cat /sys/class/net/eth0/address)
       deviceaccount=$(mysql -sN -u $RDMdbuser -p$RDMdbpass -h $RDMdbhost -P $RDMport -D $RDMdb -e "SELECT account_username FROM device WHERE uuid = '$name'")
       fpip="$pip:$pipp"
       echo Name Location - $dnl
       echo Name - $name
       echo Proxy - $fpip
+      echo Mac - $mac
       echo Temp - $temp
       echo Atlas - $atver
       echo Pogo - $pogover
@@ -57,7 +63,7 @@ for i in `cat scripts/ips` ; do
       echo CPU - $cputype
       echo Account - $deviceaccount
       sleep 1
-      mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "INSERT INTO Devices (ATVNAME, ATVTEMP, ATVLOCALIP, ATVPROXYIP, ATVACCOUNT, ATATVER, ATVPOGOVER, ANDROIDVER, CPUTPYE) VALUES ('$name', '$temp', '$ip', '$fpip', '$deviceaccount', '$atver', '$pogover', '$anver','$cputype') ON DUPLICATE KEY UPDATE ATVNAME = '$name';"
+      mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "INSERT INTO Devices (ATVNAME, ATVTEMP, ATVLOCALIP, ATVPROXYIP, ATVMAC, ATVACCOUNT, ATATVER, ATVPOGOVER, ANDROIDVER, CPUTPYE) VALUES ('$name', '$temp', '$ip', '$fpip', '$mac',  '$deviceaccount', '$atver', '$pogover', '$anver','$cputype') ON DUPLICATE KEY UPDATE ATVNAME = '$name';"
       adb kill-server
     done
   else
@@ -78,11 +84,13 @@ for i in `cat scripts/ips` ; do
     temp=$(adb shell cat /sys/class/thermal/thermal_zone0/temp | awk '{print substr($0, 1, length($0)-3)}')
     pip=$(adb shell settings list global | grep "global_http_proxy_host" | cut -d '=' -f2)
     pipp=$(adb shell settings list global | grep "global_http_proxy_port" | cut -d '=' -f2)
+    mac=$(adb shell cat /sys/class/net/eth0/address)
     deviceaccount=$(mysql -sN -u $RDMdbuser -p$RDMdbpass -h $RDMdbhost -P $RDMport -D $RDMdb -e "SELECT account_username FROM device WHERE uuid = '$name'")
     fpip="$pip:$pipp"
     echo Name Location - $dnl
     echo Name - $name
     echo Proxy - $fpip
+    echo Mac - $mac
     echo Temp - $temp
     echo Atlas - $atver
     echo Pogo - $pogover
@@ -90,9 +98,13 @@ for i in `cat scripts/ips` ; do
     echo CPU - $cputype
     echo Account - $deviceaccount
     sleep 1
-    mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "INSERT INTO Devices (ATVNAME, ATVTEMP, ATVLOCALIP, ATVPROXYIP, ATVACCOUNT, ATVATVER, ATVPOGOVER, ANDROIDVER, CPUTYPE) VALUES ('$name', '$temp', '$ip', '$fpip', '$deviceaccount', '$atver', '$pogover', '$anver', '$cputype') ON DUPLICATE KEY UPDATE ATVNAME = '$name';"
+    mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "INSERT INTO Devices (ATVNAME, ATVTEMP, ATVLOCALIP, ATVPROXYIP, ATVMAC, ATVACCOUNT, ATVATVER, ATVPOGOVER, ANDROIDVER, CPUTYPE) VALUES ('$name', '$temp', '$ip', '$fpip', '$mac', '$deviceaccount', '$atver', '$pogover', '$anver', '$cputype') ON DUPLICATE KEY UPDATE ATVNAME = '$name';"
     adb kill-server
   fi
 done
+echo Setting Job
+job=0
+      mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "UPDATE Updater SET STATUS = '$job';"
+echo Job - $job
 echo Checking ADB server was killed
 adb kill-server

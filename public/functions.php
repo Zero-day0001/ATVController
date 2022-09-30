@@ -10,25 +10,24 @@ function deviceinfo() {
     if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
     }else{
-    
     $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
     $res = $conn->query($lastseen);
     $conn->close();
-    $status = 0;
     while($rows=$res->fetch_assoc()){
-        $gstatus = $rows['STATUS'];
-        if(!empty($gstatus)) {
-            $status = 1;
-        }
+        $status = $rows['STATUS'];
     }
-    if($status === 1){
+    if($status === 1 || $status == 2){
         echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
     }else{
         echo '<form id="deviceinfo" action="index.php" method="post" onsubmit="return confirmscreen()">' .
         '<button name="deviceinfo" type="submit" class="btn btn-primary menuButton">Build Info</button>' .
         '</form>';
         if(isset($_POST['deviceinfo'])){
-            echo $res=shell_exec('scripts/deviceinfo.sh > /dev/null 2>&1 &');
+            echo $res=shell_exec('scripts/deviceinfo.sh > /dev/null 2>&1 &') .
+            '<script>' .
+            'window.location.reload();' .
+            '</script>';
+            
         }
     }
     }
@@ -43,27 +42,28 @@ function tempbutton() {
     if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
     }else{
-    
     $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
     $res = $conn->query($lastseen);
     $conn->close();
-    $status = 0;
     while($rows=$res->fetch_assoc()){
-        $gstatus = $rows['STATUS'];
-        if(!empty($gstatus)) {
-            $status = 1;
+        $status = $rows['STATUS'];
+    }
+    if($status == 1){
+        echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
+    }elseif($status == 2){
+        echo '<button class="btn btn-primary menuButton">Waiting for Job</button>';
+    }else{
+        echo '<form id="temp" action="index.php" method ="post" onsubmit="return confirmscreen()">' .
+            '<button name="temp" type="submit" class="btn btn-primary menuButton">Recollect Temps</button>' .
+            '</form>';
+        if(isset($_POST['temp'])){
+            echo $res=shell_exec('scripts/tempcheck.sh > /dev/null 2>&1 &') .
+            '<script>' .
+            'window.location.reload();' .
+            '</script>';
+            
         }
     }
-    if($status === 1){
-        echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
-    }else{
-	echo '<form id="temp" action="index.php" method ="post" onsubmit="return confirmscreen()">' .
-		 '<button name="temp" type="submit" class="btn btn-primary menuButton">Recollect Temps</button>' .
-	     '</form>';
-	if(isset($_POST['temp'])){
-		echo $res=shell_exec('scripts/tempcheck.sh > /dev/null 2>&1 &');
-	}
-   }
   }
 }
 
@@ -75,26 +75,26 @@ function rebootbutton() {
     if (!$conn) {
     die("Connection failed: " . mysqli_connect_error());
     }else{
-    
     $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
     $res = $conn->query($lastseen);
     $conn->close();
-    $status = 0;
     while($rows=$res->fetch_assoc()){
-        $gstatus = $rows['STATUS'];
-        if(!empty($gstatus)) {
-            $status = 1;
-        }
+        $status = $rows['STATUS'];
     }
-    if($status === 1){
-        echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
-    }else{
+        if($status == 1){
+            echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
+        }elseif($status == 2){
+            echo '<button class="btn btn-primary menuButton">Waiting for Job</button>';
+        }else{
 	echo 
 	'<form id="reboot" action="index.php" method ="post" onsubmit="return confirmscreen()">' . 
 		'<button name="reboot" type="submit" class="btn btn-primary menuButton">Reboot ALL</button>' .
 	'</form>';
 	if(isset($_POST['reboot'])){
-		echo $res=shell_exec('scripts/reboot.sh > /dev/null 2>&1 &');
+		echo $res=shell_exec('scripts/reboot.sh > /dev/null 2>&1 &').
+        '<script>' .
+        'window.location.reload();' .
+        '</script>';
 	}
    }
   }
@@ -112,22 +112,23 @@ function vercheck() {
     $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
     $res = $conn->query($lastseen);
     $conn->close();
-    $status = 0;
     while($rows=$res->fetch_assoc()){
-        $gstatus = $rows['STATUS'];
-        if(!empty($gstatus)) {
-            $status = 1;
-        }
+        $status = $rows['STATUS'];
     }
-    if($status === 1){
-        echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
-    }else{
+        if($status == 1){
+            echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
+        }elseif($status == 2){
+            echo '<button class="btn btn-primary menuButton">Waiting for Job</button>';
+        }else{
         echo
         '<form id="vercheck" action="index.php" method ="post" onsubmit="return confirmscreen()">' .
                 '<button name="vercheck" type="submit" class="btn btn-primary menuButton">Recollect Versions</button>' .
         '</form>';
         if(isset($_POST['vercheck'])){
-                echo $res=shell_exec('scripts/vercheck.sh > /dev/null 2>&1 &');
+                echo $res=shell_exec('scripts/vercheck.sh > /dev/null 2>&1 &').
+            '<script>' .
+            'window.location.reload();' .
+            '</script>';
     }
    }
   }
@@ -145,22 +146,23 @@ function allscreenshot() {
     $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
     $res = $conn->query($lastseen);
     $conn->close();
-    $status = 0;
     while($rows=$res->fetch_assoc()){
-        $gstatus = $rows['STATUS'];
-        if(!empty($gstatus)) {
-            $status = 1;
-        }
+        $status = $rows['STATUS'];
     }
-    if($status === 1){
-        echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
-    }else{
+        if($status == 1){
+            echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
+        }elseif($status == 2){
+            echo '<button class="btn btn-primary menuButton">Waiting for Job</button>';
+        }else{
         echo
         '<form id="allscreenshot" action="index.php" method ="post" onsubmit="return confirmscreen()">' .
                 '<button name="allscreenshot" type="submit" class="btn btn-primary menuButton">Recollect Screenshots</button>' .
         '</form>';
         if(isset($_POST['allscreenshot'])){
-                echo $res=shell_exec('scripts/allscreenshot.sh > /dev/null 2>&1 &');
+                echo $res=shell_exec('scripts/allscreenshot.sh > /dev/null 2>&1 &').
+            '<script>' .
+            'window.location.reload();' .
+            '</script>';
     }
    }
   }
@@ -178,22 +180,23 @@ function anvercheck() {
     $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
     $res = $conn->query($lastseen);
     $conn->close();
-    $status = 0;
     while($rows=$res->fetch_assoc()){
-        $gstatus = $rows['STATUS'];
-        if(!empty($gstatus)) {
-            $status = 1;
-        }
+        $status = $rows['STATUS'];
     }
-    if($status === 1){
-        echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
-    }else{
+        if($status == 1){
+            echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
+        }elseif($status == 2){
+            echo '<button class="btn btn-primary menuButton">Waiting for Job</button>';
+        }else{
         echo
         '<form id="anvercheck" action="index.php" method ="post" onsubmit="return confirmscreen()">' .
                 '<button name="anvercheck" type="submit" class="btn btn-primary menuButton">Recollect Android Version</button>' .
         '</form>';
         if(isset($_POST['anvercheck'])){
-                echo $res=shell_exec('scripts/anvercheck.sh > /dev/null 2>&1 &');
+                echo $res=shell_exec('scripts/anvercheck.sh > /dev/null 2>&1 &').
+            '<script>' .
+            'window.location.reload();' .
+            '</script>';
     }
    }
   }
@@ -211,22 +214,23 @@ function upatlas() {
     $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
     $res = $conn->query($lastseen);
     $conn->close();
-    $status = 0;
     while($rows=$res->fetch_assoc()){
-        $gstatus = $rows['STATUS'];
-        if(!empty($gstatus)) {
-            $status = 1;
-        }
+        $status = $rows['STATUS'];
     }
-    if($status === 1){
-        echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
-    }else{
+        if($status == 1){
+            echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
+        }elseif($status == 2){
+            echo '<button class="btn btn-primary menuButton">Waiting for Job</button>';
+        }else{
 	echo 
 	'<form id="upatlas" action="index.php" method ="post" onsubmit="return confirmscreen()">' . 
 		'<button name="upatlas" type="submit" class="btn btn-primary menuButton">Update Atlas ALL</button>' .
 	'</form>';
 	if(isset($_POST['upatlas'])){
-		echo $res=shell_exec('scripts/upat.sh > /dev/null 2>&1 &');
+		echo $res=shell_exec('scripts/upat.sh > /dev/null 2>&1 &').
+        '<script>' .
+        'window.location.reload();' .
+        '</script>';
 	}
    }
   }
@@ -244,22 +248,23 @@ function startbutton() {
     $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
     $res = $conn->query($lastseen);
     $conn->close();
-    $status = 0;
     while($rows=$res->fetch_assoc()){
-        $gstatus = $rows['STATUS'];
-        if(!empty($gstatus)) {
-            $status = 1;
-        }
+        $status = $rows['STATUS'];
     }
-    if($status === 1){
-        echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
-    }else{
+        if($status == 1){
+            echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
+        }elseif($status == 2){
+            echo '<button class="btn btn-primary menuButton">Waiting for Job</button>';
+        }else{
 	echo 
 	'<form id="start" action="index.php" method ="post" onsubmit="return confirmscreen()">' . 
 		'<button name="start" type="submit" class="btn btn-primary menuButton">Start Scanning ALL</button>' .
 	'</form>';
 	if(isset($_POST['start'])){
-		echo $res=shell_exec('scripts/start.sh > /dev/null 2>&1 &');
+		echo $res=shell_exec('scripts/start.sh > /dev/null 2>&1 &').
+        '<script>' .
+        'window.location.reload();' .
+        '</script>';
 	}
    }
   }
@@ -277,26 +282,63 @@ function stopbutton() {
     $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
     $res = $conn->query($lastseen);
     $conn->close();
-    $status = 0;
     while($rows=$res->fetch_assoc()){
-        $gstatus = $rows['STATUS'];
-        if(!empty($gstatus)) {
-            $status = 1;
-        }
+        $status = $rows['STATUS'];
     }
-    if($status === 1){
-        echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
-    }else{
+        if($status == 1){
+            echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
+        }elseif($status == 2){
+            echo '<button class="btn btn-primary menuButton">Waiting for Job</button>';
+        }else{
 	echo 
 	'<form id="stop" action="index.php" method ="post" onsubmit="return confirmscreen()">' . 
 		'<button name="stop" type="submit" class="btn btn-primary menuButton">Stop Scanning ALL</button>' .
 	'</form>';
 	if(isset($_POST['stop'])){
-		echo $res=shell_exec('scripts/stop.sh > /dev/null 2>&1 &');
+		echo $res=shell_exec('scripts/stop.sh > /dev/null 2>&1 &').
+        '<script>' .
+        'window.location.reload();' .
+        '</script>';
 	}
    }
   }
 }
+    
+function restartbutton() {
+    require("config.php");
+    $conn = new mysqli($servername, $username, $password, $dbname, $port);
+
+    //Check Connection
+    if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+    }else{
+    
+    $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
+    $res = $conn->query($lastseen);
+    $conn->close();
+    while($rows=$res->fetch_assoc()){
+        $status = $rows['STATUS'];
+    }
+        if($status == 1){
+            echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
+        }elseif($status == 2){
+            echo '<button class="btn btn-primary menuButton">Waiting for Job</button>';
+        }else{
+    echo
+    '<form id="restart" action="index.php" method ="post" onsubmit="return confirmscreen()">' .
+        '<button name="restart" type="submit" class="btn btn-primary menuButton">Restart Scanning ALL</button>' .
+    '</form>';
+    if(isset($_POST['stop'])){
+        echo $res=shell_exec('scripts/stop.sh > /dev/null 2>&1 &');
+        echo $res=shell_exec('scripts/start.sh > /dev/null 2>&1 &') .
+        '<script>' .
+        'window.location.reload();' .
+        '</script>';
+    }
+   }
+  }
+}
+    
 function uppogo() {
     require("config.php");
     $conn = new mysqli($servername, $username, $password, $dbname, $port);
@@ -309,22 +351,23 @@ function uppogo() {
     $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
     $res = $conn->query($lastseen);
     $conn->close();
-    $status = 0;
     while($rows=$res->fetch_assoc()){
-        $gstatus = $rows['STATUS'];
-        if(!empty($gstatus)) {
-            $status = 1;
-        }
+        $status = $rows['STATUS'];
     }
-    if($status === 1){
-        echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
-    }else{
+        if($status == 1){
+            echo '<button class="btn btn-primary menuButton">Waiting for Updater</button>';
+        }elseif($status == 2){
+            echo '<button class="btn btn-primary menuButton">Waiting for Job</button>';
+        }else{
 	echo 
 	'<form id="uppogo" action="index.php" method ="post" onsubmit="return confirmscreen()">' .
                 '<button name="uppogo" type="submit" class="btn btn-primary menuButton">Update Pokemon ALL</button>' .
         '</form>';	
 	if(isset($_POST['uppogo'])){
-		echo $res=shell_exec('scripts/uppogo.sh > /dev/null 2>&1 &');
+		echo $res=shell_exec('scripts/uppogo.sh > /dev/null 2>&1 &').
+        '<script>' .
+        'window.location.reload();' .
+        '</script>';
 	}
    }
   }
@@ -338,6 +381,53 @@ function moreToCome() {
 	//	echo $res=shell_exec('scripts/stop.sh');
 	//}
 }
+    
+function totalcount() {
+        require("config.php");
+        $totalcount = 0;
+        $conn = new mysqli($servername, $username, $password, $dbname, $port);
+
+        //Check Connection
+        if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+        }else{
+        $sqltotal = " SELECT * FROM Devices; ";
+        $restotal = $conn->query($sqltotal);
+        $totalcount=mysqli_num_rows($restotal);
+        $conn->close();
+        echo '<h1 style="color:#fff !important;">' .$totalcount. '</h1>';
+      }
+    }
+    
+function onlinecount() {
+        require("config.php");
+        $conn = new mysqli($servername, $username, $password, $dbname, $port);
+        //Check Connection
+        if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+        }else{
+            $sqlonline = " SELECT ATVNAME FROM Devices; ";
+            $resonline = $conn->query($sqlonline);
+            $conn->close();
+            $count = 0;
+                while($rows=$resonline->fetch_assoc()){
+                    $nameonline = $rows['ATVNAME'];
+                    $conn = new mysqli($RDMservername, $RDMusername, $RDMpassword, $RDMdbname, $RDMport);
+                    if (!$conn) {
+                    die("Connection failed: " . mysqli_connect_error());
+                    }else{
+                        $sqlonlinerdm = " SELECT * FROM device WHERE uuid='$nameonline' AND last_seen < now() - interval 5 minute; ";
+                        $resonlinerdm = $conn->query($sqlonlinerdm);
+                        $conn->close();
+                        while($rows=$resonlinerdm->fetch_assoc()){
+                            $count++;
+                        }
+                    }
+            }
+            }
+    echo '<h1 style="color:#fff !important;">' .$count. '</h1>';
+}
+
 
 // TABLE DATA DISPLAY AND PER DEVICE CONTROLLER
 
@@ -361,23 +451,24 @@ echo '<div class="cssContainer">' .
 		'<thead class="text-center">' . 
 			'<tr>' .
 				'<th>Device Name</th>' .
-				'<th>Device IPs</th>' .
-                '<th>App Versions</th>' .
+				'<th>Device Status</th>' .
+                '<th>Device Addresses</th>' .
 				'<th>Device Info</th>' .
-                '<th>Status</th>' .
+                '<th>App Version</th>' .
 				'<th>Controls</th>';
                 if($noScreenshot === false){
-                    echo '<th>Screenshot</th>';
+                     echo '<th>Screenshot</th>';
                 }
-           echo '</tr>' .
-		'</thead>';
-		echo '<tbody class="text-center">';
+        echo '</tr>' .
+             '</thead>' .
+		     '<tbody class="text-center">';
 		while($rows=$result->fetch_assoc()){
 			$id = $rows['ID'];	
 			$name = $rows['ATVNAME'];
 			$atvtemp = $rows['ATVTEMP'];
 			$localip = $rows['ATVLOCALIP'];
 			$atvproxy = $rows['ATVPROXYIP'];
+            $atvmac = $rows['ATVMAC'];
             $atvacc = $rows['ATVACCOUNT'];
 			$atvpogover = $rows['ATVPOGOVER'];
 			$atvatver = $rows['ATVATVER'];
@@ -388,22 +479,25 @@ echo '<div class="cssContainer">' .
 				$name = "N/A";
 			}
 			if(empty($atvtemp)){
-                                $atvtemp = "N/A";
+                $atvtemp = "N/A";
 			}
 			if(empty($atvproxy) || $atvproxy == ":" || $atvproxy == ":0"){
-                                $atvproxy = "N/A";
+                $atvproxy = "N/A";
 			}
+            if(empty($atvmac)){
+                $atvmac = "N/A";
+            }
 			if(empty($atvpogover)){
-                                $atvpogover = "N/A";
+                $atvpogover = "N/A";
 			}
 			if(empty($atvatver)){
-                                $atvatver = "N/A";
+                $atvatver = "N/A";
 			}
 			if(empty($anver)){
-                                $anver = "N/A";
+               $anver = "N/A";
                         }
             if(empty($cputype)){
-                                $cputype = "N/A";
+                $cputype = "N/A";
                         }
             if($atvtemp >= 85){
                 $tempcolor = '#950000';
@@ -419,122 +513,61 @@ echo '<div class="cssContainer">' .
                 $tempsize = '400';
             }
             
-			echo '<tr id=device-' . $name . '>' .
-				'<td class="align-middle">' . $name . '</td>' .
-                '<td class="text-center align-middle"> ' .
-                '<table class="table" style="border:1px solid #fff;color:#fff;margin-bottom: 0px !important;">' .
-                '<tr style="background-color:#6c757d"><td>' .
-                "Local:" .
-                '</td>' .
-                '<td>' .
-                "$localip" .
-                '</td></tr>';
+            echo'<tr id=device-' . $name . '>' .
+            '<td class="align-middle">' . $name . '</td>' .
             
-                if($noProxy === false){
-                echo '<tr style="background-color:#6c757d"><td>' .
-                "Proxy: " .
-                '</td>' .
-                '<td>' .
-                "$atvproxy " .
-                '</td></tr>';
-                }
-                echo '</table>' .
-                '</td>';
-
-				// Get App Versions
-				echo '<td class="text-center align-middle"> ' .
-                     '<table class="table" style="border:1px solid #fff;color:#fff;margin-bottom: 0px !important;">' .
-                     '<tr style="background-color:#6c757d"><td>' .
-                     "Pokemon:" .
-                     '</td>' .
-                     '<td>' .
-                     "$atvpogover" .
-                     '</td></tr>' .
-                     '<tr style="background-color:#6c757d"><td>' .
-				     "Atlas:" .
-                     '</td>' .
-                     '<td>' .
-                     "$atvatver" .
-                     '</td></tr>' .
-                     '</table>' .
-                     '</td>' .
-            
-                // Get App Versions
-                    '<td class="text-center align-middle"> ' .
-                    '<table class="table" style="border:1px solid #fff;color:#fff;width: 185px;margin-bottom: 0px !important;">' .
-                    '<tr style="background-color:#6c757d"><td>' .
-                    "Android:" .
-                    '</td>' .
-                    '<td>' .
-                    "$anver" .
-                    '</td></tr>' .
-                    '<tr style="background-color:#6c757d"><td>' .
-                    "CPU:" .
-                    '</td>' .
-                    '<td>' .
-                    "$cputype " .
-                    '</td></tr>' .
-                    '<tr style="background-color:#6c757d"><td>' .
-                    "Temp:" .
-                    '</td>' .
-                    '<td class="align-middle" style="color:'.$tempcolor.';font-weight:'.$tempsize.'">' . $atvtemp . '°C</td></tr>' .
-                    '</table>' .
-                    '</td>' .
-
-             '<td class="text-center align-middle">' .
-             '<table class="table" style="border:1px solid #fff;color:#fff;margin-bottom: 0px !important;width:240px;">' ;
+            '<td class="text-center align-middle">' .
+            '<table class="table" style="border:1px solid #fff;color:#fff;margin-bottom: 0px !important;width:240px;">' ;
             if($noAccount === false){
-            // Get Device Account
             echo '<tr style="background-color:#6c757d">' .
-                 '<td>' .
-                 'Account:' .
-                 '</td>' .
-                 '<td class="align-middle">' .
-                 "$atvacc" .
-                 '</td>';
+            '<td>' .
+            'Account:' .
+            '</td>' .
+            '<td class="align-middle">' .
+            "$atvacc" .
+            '</td>';
             }
-        if($noLastSeen === false){
-            echo '<tr style="background-color:#6c757d">' .
-                 '<td>' .
-                 "Seen:" .
-                 '</td>' .
-                 '<td>';
-                                $conn = new mysqli($RDMservername, $RDMusername, $RDMpassword, $RDMdbname, $RDMport);
-                                                // Checking for connections
-                                        if ($conn->connect_error) {
-                                                die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
-                                        }else{
-                                                $lastseen = " SELECT last_seen FROM device WHERE uuid = '$name'; ";
-                                                $res = $conn->query($lastseen);
-                                                $conn->close();
-                                            $lastSeenResult = 0;
-                                            while($rows=$res->fetch_assoc()){
-                                                $lastseentime = $rows['last_seen'];
-                                                if(!empty($lastseentime)) {
-                                                    $lastSeenResult = 1;
-                                                }
-                                            }
-                                            if($lastSeenResult === 1){
-                                                $timeDiff = (time() - $lastseentime) +1;
-                                                //Convert to seconds, minutes, hours
-                                                $seconds = $timeDiff % 60;
-                                                $minutes = floor(($timeDiff % 3600) / 60);
-                                                $hours = floor($timeDiff / 3600);
-                                                if($hours > 0) echo "$hours" . "h, ";
-                                                if($minutes > 0) echo "$minutes" . "m, ";
-                                                echo "$seconds" . "s";
-                                            } else{
-                                                echo "No Last Seen Found";
-                                            }
-                                        }
-            echo '</td></tr>' ;
-        }
+            if($noLastSeen === false){
+               echo '<tr style="background-color:#6c757d">' .
+                '<td>' .
+                "Seen:" .
+                '</td>' .
+                '<td>';
+                $conn = new mysqli($RDMservername, $RDMusername, $RDMpassword, $RDMdbname, $RDMport);
+                   // Checking for connections
+                if ($conn->connect_error) {
+                    die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
+                }else{
+                    $lastseen = " SELECT last_seen FROM device WHERE uuid = '$name'; ";
+                    $res = $conn->query($lastseen);
+                    $conn->close();
+                    $lastSeenResult = 0;
+                    while($rows=$res->fetch_assoc()){
+                        $lastseentime = $rows['last_seen'];
+                        if(!empty($lastseentime)) {
+                            $lastSeenResult = 1;
+                        }
+                    }
+                    if($lastSeenResult === 1){
+                        $timeDiff = (time() - $lastseentime) +1;
+                        //Convert to seconds, minutes, hours
+                        $seconds = $timeDiff % 60;
+                        $minutes = floor(($timeDiff % 3600) / 60);
+                        $hours = floor($timeDiff / 3600);
+                        if($hours > 0) echo "$hours" . "h, ";
+                        if($minutes > 0) echo "$minutes" . "m, ";
+                        echo "$seconds" . "s";
+                    } else{
+                        echo "No Last Seen Found";
+                    }
+                }
+                echo '</td></tr>' ;
+            }
             echo '<tr style="background-color:#6c757d"><td>' .
             "Updated" .
             '</td>' .
             '<td>' ;
-            $timecon = strtotime($lastupdated);
-            
+                $timecon = strtotime($lastupdated);
                 $timeDiff = (time() - $timecon) +1;
                 //Convert to seconds, minutes, hours
                 $seconds = $timeDiff % 60;
@@ -543,12 +576,80 @@ echo '<div class="cssContainer">' .
                 if($hours > 0) echo "$hours" . "h, ";
                 if($minutes > 0) echo "$minutes" . "m, ";
                 echo "$seconds" . "s" .
+            '</td></tr>' .
+            '</table>' .
+            '</td>' .
             
-                 '</td></tr>' .
-                 '</table>' .
+                 '<td class="text-center align-middle"> ' .
+                 '<table class="table" style="border:1px solid #fff;color:#fff;margin-bottom: 0px !important;">' .
+                 '<tr style="background-color:#6c757d"><td>' .
+                 "Local:" .
                  '</td>' .
+                 '<td>' .
+                 "$localip" .
+                 '</td></tr>';
+                 if($noProxy === false){
+                     echo '<tr style="background-color:#6c757d">' .
+                     '<td>' .
+                     "Proxy: " .
+                     '</td>' .
+                     '<td>' .
+                     "$atvproxy " .
+                     '</td>' .
+                     '</tr>' .
+                     '<tr style="background-color:#6c757d"><td>' .
+                     "Mac:" .
+                     '</td>' .
+                     '<td>' .
+                     "$atvmac" .
+                     '</td></tr>';
+                 }
+                 echo '</table>' .
+                      '</td>' .
 
-				 '<td class="controlTable align-middle">'; // Device Options for Users ---
+            
+                     '<td class="text-center align-middle"> ' .
+                     '<table class="table" style="border:1px solid #fff;color:#fff;width: 185px;margin-bottom: 0px !important;">' .
+                     '<tr style="background-color:#6c757d"><td>' .
+                     "Android:" .
+                     '</td>' .
+                     '<td>' .
+                     "$anver" .
+                     '</td></tr>' .
+                     '<tr style="background-color:#6c757d"><td>' .
+                     "CPU:" .
+                     '</td>' .
+                     '<td>' .
+                     "$cputype " .
+                     '</td></tr>' .
+                     '<tr style="background-color:#6c757d"><td>' .
+                     "Temp:" .
+                     '</td>' .
+                     '<td class="align-middle" style="color:'.$tempcolor.';font-weight:'.$tempsize.'">' . $atvtemp . '°C</td></tr>' .
+                     '</table>' .
+                     '</td>' .
+            
+ 
+    
+            
+            '<td class="text-center align-middle"> ' .
+            '<table class="table" style="border:1px solid #fff;color:#fff;margin-bottom: 0px !important;">' .
+            '<tr style="background-color:#6c757d"><td>' .
+            "Pokemon:" .
+            '</td>' .
+            '<td>' .
+            "$atvpogover" .
+            '</td></tr>' .
+            '<tr style="background-color:#6c757d"><td>' .
+            "Atlas:" .
+            '</td>' .
+            '<td>' .
+            "$atvatver" .
+            '</td></tr>' .
+            '</table>' .
+            '</td>' .
+            
+             '<td class="controlTable align-middle">'; // Device Options for Users ---
             
 
             $conn = new mysqli($servername, $username, $password, $dbname, $port);
@@ -561,23 +662,21 @@ echo '<div class="cssContainer">' .
             $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
             $res = $conn->query($lastseen);
             $conn->close();
-            $status = 0;
             while($rows=$res->fetch_assoc()){
-                $gstatus = $rows['STATUS'];
-                if(!empty($gstatus)) {
-                    $status = 1;
-                }
+                $status = $rows['STATUS'];
             }
-            if($status === 1){
-                echo "Waiting for updater!";
-            }else{
+                if($status == 1){
+                    echo "Waiting for Updater";
+                }elseif($status == 2){
+                    echo "Waiting for Job";
+                }else{
                 echo
                 '<div class="tab">
                     <button class="tablink tablinks-' . $name . '" onclick="openTab(event, \'tabGeneral-' . $name .'\', \'' . $name . '\')">General</button>
                     <button class="tablink tablinks-' . $name . '" onclick="openTab(event, \'tabAtlas-' . $name .'\', \'' . $name . '\')">Atlas</button>
                     <button class="tablink tablinks-' . $name . '" onclick="openTab(event, \'tabAPKs-' . $name .'\', \'' . $name . '\')">APKs</button>
                     <button class="tablink tablinks-' . $name . '" onclick="openTab(event, \'tabMisc-' . $name .'\', \'' . $name . '\')">Misc</button>
-                </div>    ';
+                </div>';
             }
             }
 				
@@ -585,11 +684,9 @@ echo '<div class="cssContainer">' .
 					
 					
 					//General TAB
-					echo '<div id="tabGeneral-' . $name .'" class="tabcontent tabcontent-' . $name .'">';
-
-							// Reboot Single device 
-							echo '<form class="d-inline" id="reboot-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
-								'<button name="reboot-' . $name . '" type="submit" class="btn btn-danger controlButton">Reboot</button>' .
+                       echo '<div id="tabGeneral-' . $name .'" class="tabcontent tabcontent-' . $name .'">' .
+							'<form class="d-inline" id="reboot-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
+							'<button name="reboot-' . $name . '" type="submit" class="btn btn-danger controlButton">Reboot</button>' .
 							'</form>';
 							if(isset($_POST["reboot-$name"])){
 								echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
@@ -673,15 +770,15 @@ echo '<div class="cssContainer">' .
 				}
 
 
-					echo '</div>';
+					echo '</div>' .
 							
 					//Atlas TAB
-					echo '<div id="tabAtlas-' . $name .'" class="tabcontent tabcontent-' . $name .'">';
+					     '<div id="tabAtlas-' . $name .'" class="tabcontent tabcontent-' . $name .'">' .
 						
 						// Start Atlas
-						echo '<form class="d-inline" id="start-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
+						    '<form class="d-inline" id="start-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
 							'<button name="start-' . $name . '" type="submit" class="btn btn-success controlButton">Start Atlas</button>' .
-						'</form>';
+                            '</form>';
 						if(isset($_POST["start-$name"])){
 							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
 							echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
@@ -708,15 +805,15 @@ echo '<div class="cssContainer">' .
 							echo $res=shell_exec("adb push apps/$name_atlas_config.json /data/local/tmp/atlas_config.json > /dev/null 2>&1");
 							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
 						}
-					echo '</div>';
+					echo '</div>' .
 					
 					// APKs TAB
-					echo '<div id="tabAPKs-' . $name .'" class="tabcontent tabcontent-' . $name .'">';
+                         '<div id="tabAPKs-' . $name .'" class="tabcontent tabcontent-' . $name .'">' .
 
 						// Update PoGo APK
-						echo '<form class="d-inline" id="update-pogo-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
+                         '<form class="d-inline" id="update-pogo-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
 							'<button name="update-pogo-' . $name . '" type="submit" class="btn btn-primary controlButton">Push PoGo APK</button>' .
-						'</form>';
+						 '</form>';
 						if(isset($_POST["update-pogo-$name"])){
 							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
 							echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
@@ -734,13 +831,13 @@ echo '<div class="cssContainer">' .
 							echo $res=shell_exec('adb install -r apps/atlas.apk > /dev/null 2>&1');
 							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
 						}
-					echo '</div>';// End of Device Options Tablerow
+					echo '</div>'.// End of Device Options Tablerow
 					
 					// Misc TAB
-					echo '<div id="tabMisc-' . $name .'" class="tabcontent tabcontent-' . $name .'">';
+					        '<div id="tabMisc-' . $name .'" class="tabcontent tabcontent-' . $name .'">' .
 
 						// Get PoGo Version
-							echo '<form class="d-inline" id="version-pogo-' . $name . '" action="index.php#device-' . $name . '" method ="post">' .
+							'<form class="d-inline" id="version-pogo-' . $name . '" action="index.php#device-' . $name . '" method ="post">' .
 								'<button name="version-pogo-' . $name . '" type="submit" class="btn btn-primary controlButton">Get Version PoGo</button>' .
                             '</form>';
 							if(isset($_POST["version-pogo-$name"])){
@@ -930,7 +1027,7 @@ echo '<div class="cssContainer">' .
                             echo
                             '<div class="imageContainer">' .
                                 '<a href="screenshot/' . $name . '.png" target="_blank" >' .
-                                    '<img src="screenshot/' . $name . '.png" width="25" height="40" />' .
+                                    '<img src="screenshot/' . $name . '.png" width="75" height="120" />' .
                                 '</a>' .
                             '</div>';
                         }
@@ -1051,7 +1148,7 @@ echo '</div>';
          $lines = count(file("$filePath"));
          $ips = file_get_contents("$filePath");
          echo '<h4>Existing IPS file</h4>' .
-              '<textarea rows="'.$lines.'" style="resize:none;width:80%;height:auto;text-align:center;" readonly>'.$ips.'</textarea></br></br>';
+              '<textarea rows="'.$lines.'" style="resize:none;width:80%;height:auto;text-align:center;background-color:#6c757d;" readonly>'.$ips.'</textarea></br></br>';
          
          $newfilePath = "scripts/new_ips";
          $newips = file_get_contents("$newfilePath");
@@ -1059,7 +1156,7 @@ echo '</div>';
              $newlines = count(file("$newfilePath"));
              echo '</br><h4>New Devices Found</h4>' .
                   '<form class="d-inline" id="newDevice" method ="post">' .
-                  '<textarea rows="'.$newlines.'" style="resize:none;width:80%;text-align:center;" readonly>';
+                  '<textarea rows="'.$newlines.'" style="resize:none;width:80%;text-align:center;background-color:#6c757d;" readonly>';
              echo "$newips";
              echo '</textarea></br>' .
                   '</form>';
@@ -1169,7 +1266,7 @@ echo 'No Atlas Config File Found, Would you like to make one?<br>' .
 	}	
 }else{
 echo '<h3>Current Config</h3>' .
-     '<textarea row=2 style="resize:none;width:80%;text-align:center;" readonly>'.$atconfig.'</textarea><br>' .
+     '<textarea row=2 style="resize:none;width:80%;text-align:center;background-color:#6c757d;" readonly>'.$atconfig.'</textarea><br>' .
      '<a href="/apps/atlas_config.json" download><button name="export" type="submit" class="btn btn-primary">Export .Json</button></a>' .
      
     '<h4>Edit Atlas Config</h4>';
@@ -1200,22 +1297,22 @@ echo '<h3>Current Config</h3>' .
     echo '<form id="atconfcreator" method="post">' .
     
         '<label for="authBearer">authBearer</label><br>' .
-        '<input type="text" id="authBearer" name="authBearer" placeholder="'.$authBearer.'" value="'.$authBearer.'"><br>' .
+        '<input type="text" id="authBearer" name="authBearer" placeholder="'.$authBearer.'" value="'.$authBearer.'" style="background-color:#6c757d;"><br>' .
         
         '<label for="deviceAuthToken">deviceAuthToken</label><br>' .
-        '<input type="text" id="deviceAuthToken" name="deviceAuthToken" placeholder="'.$deviceAuthToken.'" value="'.$deviceAuthToken.'" required><br>' .
+        '<input type="text" id="deviceAuthToken" name="deviceAuthToken" placeholder="'.$deviceAuthToken.'" value="'.$deviceAuthToken.'" style="background-color:#6c757d;" required><br>' .
     
         '<label for="deviceName">deviceName</label><br>' .
-        '<input type="text" id="deviceName" name="deviceName" placeholder="'.$deviceName.'" value="'.$deviceName.'"><br>' .
+        '<input type="text" id="deviceName" name="deviceName" placeholder="'.$deviceName.'" value="'.$deviceName.'" style="background-color:#6c757d;"><br>' .
         
         '<label for="email">email</label><br>' .
-        '<input type="text" id="email" name="email" placeholder="'.$email.'" value="'.$email.'" required><br>' .
+        '<input type="text" id="email" name="email" placeholder="'.$email.'" value="'.$email.'" style="background-color:#6c757d;" required><br>' .
         
         '<label for="rdmUrl">rdmUrl</label><br>' .
-        '<input type="text" id="rdmUrl" name="rdmUrl" placeholder="'.$rdmUrl.'" value="'.$rdmUrl.'" required><br><br>' .
+        '<input type="text" id="rdmUrl" name="rdmUrl" placeholder="'.$rdmUrl.'" value="'.$rdmUrl.'" style="background-color:#6c757d;" required><br><br>' .
 
         '<label for="runOnBoot">Run On Boot:</label><br>' .
-        '<select id="runOnBoot" name="runOnBoot" required>' .
+        '<select id="runOnBoot" name="runOnBoot" style="background-color:#6c757d;" required>' .
         '<option value="" disabled selected hidden>--</option>' .
         '<option value="true">true</option>' .
         '<option value="false">false</option>' .
@@ -1345,7 +1442,7 @@ echo '</center></div>' .
                         }
                     }else{
                     echo '<h3>Current Config</h3>' .
-                         '<textarea rows=3 style="resize:none;width:80%;text-align:center;" readonly>'.$emconfig.'</textarea><br>' .
+                         '<textarea rows=3 style="resize:none;width:80%;text-align:center;background-color:#6c757d;" readonly>'.$emconfig.'</textarea><br>' .
                          '<a href="/apps/emagisk.config" download><button name="export" type="submit" class="btn btn-primary">Export .config</button></a>' .
                          
                         '<h4>Edit eMagisk Config</h4>';
@@ -1378,13 +1475,13 @@ echo '</center></div>' .
                         echo '<form id="emconfcreator" method="post">' .
                         
                             '<label for="rdm_user">RDM User</label><br>' .
-                            '<input type="text" id="rdm_user" name="rdm_user" placeholder="'.$rdm_user.'" value="'.$rdm_user.'" required><br>' .
+                            '<input type="text" id="rdm_user" name="rdm_user" placeholder="'.$rdm_user.'" value="'.$rdm_user.'" style="background-color:#6c757d;" required><br>' .
                             
                             '<label for="rdm_password">RDM Password</label><br>' .
-                            '<input type="text" id="rdm_password" name="rdm_password" placeholder="'.$rdm_password.'" value="'.$rdm_password.'" required><br>' .
+                            '<input type="text" id="rdm_password" name="rdm_password" placeholder="'.$rdm_password.'" value="'.$rdm_password.'" style="background-color:#6c757d;" required><br>' .
                         
                             '<label for="rdm_backendURL">RDM Backend URL</label><br>' .
-                            '<input type="text" id="rdm_backendURL" name="rdm_backendURL" placeholder="'.$rdm_backendURL.'" value="'.$rdm_backendURL.'" required><br>' .
+                            '<input type="text" id="rdm_backendURL" name="rdm_backendURL" placeholder="'.$rdm_backendURL.'" value="'.$rdm_backendURL.'" style="background-color:#6c757d;" required><br>' .
                         
                         '<button name="emconfcreator" type="submit" class="btn btn-primary">Save</button><br><br>' .
                         '</form>';

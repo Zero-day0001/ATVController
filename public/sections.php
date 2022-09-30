@@ -37,8 +37,8 @@ echo
 					stopbutton();
 				echo '</div>';
 				echo '<div class="col-md-4 text-center">';
-					rebootbutton();
-					moreToCome();
+                    restartbutton();
+                    rebootbutton();
 				echo 
 				'</div>
 			</div>
@@ -46,14 +46,35 @@ echo
 	</div>
 </div>';
 }
-function SectionTwo() {
-devicetable();
-}
 
-function SectionThree() { 
-echo '<div class="SectionThree">';
-//echo 'Placeholder';
-echo '</div>';
+function SectionTwo() {
+    echo
+    '<div id="buttonSection" class="cssContainer buttonSection">' .
+        '<div class="row">' .
+            '<div class="col-md-6 text-center buttonColumn">' .
+                '<div class="buttonHeaderText lead">Total Devices:</div>' .
+                '<div class="row">' .
+                    '<div class="col-md text-center">';
+                        totalcount();
+                    echo '</div>' .
+                '</div>' .
+            '</div>';
+
+            echo
+            '<div class="col-md-6 text-center buttonColumn">' .
+                '<div class="buttonHeaderText lead">Online Devices:</div>' .
+                '<div class="row">' .
+                    '<div class="col-md text-center">';
+                        onlinecount();
+                    echo '</div>' .
+                '</div>' .
+            '</div>' .
+        '</div>' .
+    '</div>';
+}
+    
+function SectionThree() {
+devicetable();
 }
 
 function SectionFour() {

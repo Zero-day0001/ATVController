@@ -8,8 +8,13 @@ dbpass="$(grep -oE '\$password = .*;' config.php | tail -1 | sed 's/$password = 
 db="$(grep -oE '\$dbname = .*;' config.php | tail -1 | sed 's/$dbname = //g;s/;//g;s/^"//;s/"$//')"
 port="$(grep -oE '\$port = .*;' config.php | tail -1 | sed 's/$port = //g;s/;//g;s/^"//;s/"$//')"
 adbport="$(grep -oE '\$adbport = .*;' config.php | tail -1 | sed 's/$adbport = //g;s/;//g;s/^"//;s/"$//')"
+dnl="$(grep -oE '\$namelocation = .*;' config.php | tail -1 | sed 's/$namelocation = //g;s/;//g;s/^"//;s/"$//')"
 rm outputs/gettemp.log
 exec > outputs/gettemp.log 2>&1
+echo Setting Job
+job=2
+      mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "UPDATE Updater SET STATUS = '$job';"
+echo Job - $job
 adb kill-server
 for i in `cat scripts/ips` ; do
   if [[ $i =~ "{".* ]] ; then
@@ -42,5 +47,9 @@ for i in `cat scripts/ips` ; do
     adb kill-server
   fi
 done
+echo Setting Job
+job=0
+      mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "UPDATE Updater SET STATUS = '$job';"
+echo Job - $job
 echo Checking ADB server was killed
 adb kill-server
