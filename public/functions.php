@@ -447,12 +447,12 @@ $conn->close();
 
 //START OF TABLE INFO
 echo '<div class="cssContainer">' . 
-	'<table class="table table-dark table-striped">' .
+	'<table id="devicelist" class="table table-dark table-striped">' .
 		'<thead class="text-center">' . 
 			'<tr>' .
-				'<th>Device Name</th>' .
+				'<th onclick="sortTable(0)">Device Name</th>' .
 				'<th>Device Status</th>' .
-                '<th>Device Addresses</th>' .
+                '<th onclick="sortTable(1)">Device Addresses</th>' .
 				'<th>Device Info</th>' .
                 '<th>App Version</th>' .
 				'<th>Controls</th>';
