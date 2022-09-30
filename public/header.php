@@ -56,7 +56,7 @@ echo '<head>' .
     }
     }
     
-  echo '<a href="editor.php" style="float:right;">STATUS: '.$stat.'(';
+  echo '<a href="#" style="float:right;">STATUS: '.$stat.'(';
     $timeDiff = (time() - $lastc) +1;
     //Convert to seconds, minutes, hours
     $seconds = $timeDiff % 60;
