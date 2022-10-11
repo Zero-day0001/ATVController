@@ -8,7 +8,9 @@ require('header.php');
 Menu();
 
 SectionOne();
+if($devicecount == "true"){
 SectionTwo();
+}
 SectionThree();
 SectionFour();
 

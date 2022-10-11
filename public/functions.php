@@ -372,14 +372,153 @@ function uppogo() {
    }
   }
 }
+    
+function serverControls() {
+    require("config.php");
+    $urlparse = $_GET["control"];
+    
+    echo '<div class="cssContainer"><center>';
+    
+    if($urlparse == "resetdb"){
+        $controlname = "Reset Database";
+        echo '<h4 style="color:#fff;">' . $controlname . '</h4></br>' .
+             '<form id="resetDB" action="index.php" method ="post" onsubmit="return confirmscreen()">' .
+               '<button name="resetDB" type="submit" class="btn btn-primary menuButton">Reset DB</button>' .
+             '</form>';
+        if(isset($_POST['resetDB'])){
+            echo $res=shell_exec('scripts/resetdb.sh > /dev/null 2>&1 &');
+            sleep(5);
+            echo  '<script>' .
+            'window.location.reload();' .
+            '</script>';
+        }
+    }
+    
+    elseif($urlparse == "reboot"){
+        $controlname = "Reboot Server";
+        echo '<h4 style="color:#fff;">' . $controlname . '</h4></br>' .
+                '<form id="rebootServer" action="rebootserver.php" method ="post" onsubmit="return confirmscreen()">' .
+                '<button name="rebootServer" type="submit" class="btn btn-primary menuButton">Reboot Server</button>' .
+                '</form>';
+                    if(isset($_POST['rebootServer'])){
+                        echo $res=shell_exec('scripts/rebootserver.sh > /dev/null 2>&1 &');
+                    }
+    }
+    
+    elseif($urlparse == "killadb"){
+        $controlname = "Kill ADB";
+        echo '<h4 style="color:#fff;">' . $controlname . '</h4></br>' .
+             '<form id="killADB" action="killadb.php" method ="post" onsubmit="return confirmscreen()">' .
+               '<button name="killADB" type="submit" class="btn btn-primary menuButton">Kill ADB</button>' .
+             '</form>';
+            if(isset($_POST['killADB'])){
+                echo $res=shell_exec('scripts/killadb.sh > /dev/null 2>&1 &');
+            }
+    }
+    
+    
+    echo '</center></div>';
+         
+}
+    
+function devicelogViewer() {
+    require("config.php");
+    $urlparsename = $_GET["devicename"];
+    $urlparseip = $_GET["localip"];
+    
+    echo '<div class="cssContainer"><center>';
+    
+    echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+    
+    echo '<p style="color:#fff;">Opening ADB Connection with '.$urlparseip.'<p>';
+    echo $res=shell_exec("adb connect $urlparseip:$adbport > /dev/null 2>&1");
+    
+    $devicelog=shell_exec("adb shell tail /data/local/tmp/atlas.log -n 25");
+    
+    echo '<h4 style="color:#fff;">Viewing ' . $urlparsename . ' Logs</h4></br>' .
+         '<textarea rows="25" style="resize:none;width:80%;height:auto;background-color:#6c757d;" readonly>'.$devicelog.'</textarea></br></br>';
+         '</center></div>' .
+         '<p style="color:#fff;">Closeing ADB Connection with '.$urlparseip.'<p>';
+    echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+    echo '</div>';
+}
+    
+function logViewer() {
+    require("config.php");
+    $urlparse = $_GET["logtoview"];
+    
+    if($urlparse == "buildinfo"){
+        $filePath = "outputs/buildinfo.log";
+        $lines = count(file("$filePath"));
+        $uplog = file_get_contents("$filePath");
+        $logname = "Build";
+    }
+    elseif($urlparse == "gettemp"){
+        $filePath = "outputs/gettemp.log";
+        $lines = count(file("$filePath"));
+        $uplog = file_get_contents("$filePath");
+        $logname = "Temp";
+    }
+    elseif($urlparse == "getversion"){
+        $filePath = "outputs/getversion.log";
+        $lines = count(file("$filePath"));
+        $uplog = file_get_contents("$filePath");
+        $logname = "Version";
+    }
+    elseif($urlparse == "screenshot"){
+        $filePath = "outputs/screenshot.log";
+        $lines = count(file("$filePath"));
+        $uplog = file_get_contents("$filePath");
+        $logname = "Screenshot";
+    }
+    elseif($urlparse == "updatepogo"){
+        $filePath = "outputs/update-pogo.log";
+        $lines = count(file("$filePath"));
+        $uplog = file_get_contents("$filePath");
+        $logname = "Update Pogo";
+    }
+    elseif($urlparse == "updateatlas"){
+        $filePath = "outputs/update-atlas.log";
+        $lines = count(file("$filePath"));
+        $uplog = file_get_contents("$filePath");
+        $logname = "Update Atlas";
+    }
+    elseif($urlparse == "stop"){
+        $filePath = "outputs/stop.log";
+        $lines = count(file("$filePath"));
+        $uplog = file_get_contents("$filePath");
+        $logname = "Stop";
+    }
+    elseif($urlparse == "start"){
+        $filePath = "outputs/start.log";
+        $lines = count(file("$filePath"));
+        $uplog = file_get_contents("$filePath");
+        $logname = "Start";
+    }
+    elseif($urlparse == "updater"){
+        $filePath = "outputs/updater.log";
+        $lines = count(file("$filePath"));
+        $uplog = file_get_contents("$filePath");
+        $logname = "Updater";
+    }
+         
+    echo '<div class="cssContainer"><center>' .
+    
+         '<h4 style="color:#fff;">Viewing ' . $logname . ' Logs</h4></br>' .
+    
+         '<textarea rows="'.$lines.'" style="resize:none;width:80%;height:auto;background-color:#6c757d;" readonly>'.$uplog.'</textarea></br></br>';
+    
+         '</center></div>';
+}
+
 function moreToCome() {
-	echo
-	'<form>' .
-		'<button class="btn btn-secondary menuButton">More Soon ➜</button>' .
-	'</form>';
-	//if(isset($_POST['NotSetYet'])){
-	//	echo $res=shell_exec('scripts/stop.sh');
-	//}
+    echo
+    '<form>' .
+        '<button class="btn btn-secondary menuButton">More Soon ➜</button>' .
+    '</form>';
+    //if(isset($_POST['NotSetYet'])){
+    //    echo $res=shell_exec('scripts/stop.sh');
+    //}
 }
     
 function totalcount() {
@@ -432,6 +571,7 @@ function onlinecount() {
 // TABLE DATA DISPLAY AND PER DEVICE CONTROLLER
 
 function devicetable() {
+
 include("config.php");
 
 //MYSQLI CONNECTION
@@ -446,54 +586,82 @@ $result = $conn->query($sql);
 $conn->close();
 
 //START OF TABLE INFO
-echo '<div class="cssContainer">' . 
-	'<table id="devicelist" class="table table-dark table-striped">' .
-		'<thead class="text-center">' . 
-			'<tr>' .
-				'<th onclick="sortTable(0)">Device Name</th>' .
-				'<th>Device Status</th>' .
-                '<th onclick="sortTable(1)">Device Addresses</th>' .
-				'<th>Device Info</th>' .
-                '<th>App Version</th>' .
-				'<th>Controls</th>';
-                if($noScreenshot === false){
-                     echo '<th>Screenshot</th>';
+echo '<div class="cssContainer">' .
+     '<div class="row">';
+                while($rows=$result->fetch_assoc()){
+                    $id = $rows['ID'];
+                    $name = $rows['ATVNAME'];
+                    if(empty($name)){
+                        $name = "N/A";
+                    }
+                    echo '<div class="column" style="text-align:center;">' .
+                         '<a href="singledevice.php?devicename=' . $name . '" style="color:#fff;text-decoration:none;">' ;
+                    $filename = __DIR__ .'/screenshot/' . $name . '.png';
+                    if(file_exists($filename)){
+                        echo '<div class="imageContainer">' .
+                             '<img src="screenshot/' . $name . '.png" width="100px" height="auto" />' .
+                             '</a>' .
+                             '</div>';
+                             }else{
+                                  echo 'No Screenshot Found.';
+                             }
+                    
+                    echo '<h5 style="color:#aaa;">'.$name.'<h5>' .
+                         '</a>'.
+                         '</div>';
                 }
-        echo '</tr>' .
-             '</thead>' .
-		     '<tbody class="text-center">';
-		while($rows=$result->fetch_assoc()){
-			$id = $rows['ID'];	
-			$name = $rows['ATVNAME'];
-			$atvtemp = $rows['ATVTEMP'];
-			$localip = $rows['ATVLOCALIP'];
-			$atvproxy = $rows['ATVPROXYIP'];
+    echo '</div>';
+    
+}
+    
+    function SingleDeviceViewer() {
+        require("config.php");
+        $urlparsename = $_GET["devicename"];
+        
+        echo '<h3 style="color:#fff;text-align:center;padding-top:25px;">About Device '.$urlparsename.'</h3>' .
+             '<div class="cssContainer">' ;
+            
+        $conn = new mysqli($servername, $username, $password, $dbname, $port);
+        // Checking for connections
+        if ($conn->connect_error) {
+            die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
+        }else{
+        $sql = " SELECT * FROM Devices WHERE ATVNAME = '$urlparsename'; ";
+        $result = $conn->query($sql);
+        $conn->close();
+        
+        while($rows=$result->fetch_assoc()){
+            $id = $rows['ID'];
+            $name = $rows['ATVNAME'];
+            $atvtemp = $rows['ATVTEMP'];
+            $localip = $rows['ATVLOCALIP'];
+            $atvproxy = $rows['ATVPROXYIP'];
             $atvmac = $rows['ATVMAC'];
             $atvacc = $rows['ATVACCOUNT'];
-			$atvpogover = $rows['ATVPOGOVER'];
-			$atvatver = $rows['ATVATVER'];
-			$anver = $rows['ANDROIDVER'];
+            $atvpogover = $rows['ATVPOGOVER'];
+            $atvatver = $rows['ATVATVER'];
+            $anver = $rows['ANDROIDVER'];
             $cputype = $rows['CPUTYPE'];
             $lastupdated = $rows['LASTUPDATED'];
-			if(empty($name)){
-				$name = "N/A";
-			}
-			if(empty($atvtemp)){
+            if(empty($name)){
+                $name = "N/A";
+            }
+            if(empty($atvtemp)){
                 $atvtemp = "N/A";
-			}
-			if(empty($atvproxy) || $atvproxy == ":" || $atvproxy == ":0"){
+            }
+            if(empty($atvproxy) || $atvproxy == ":" || $atvproxy == ":0"){
                 $atvproxy = "N/A";
-			}
+            }
             if(empty($atvmac)){
                 $atvmac = "N/A";
             }
-			if(empty($atvpogover)){
+            if(empty($atvpogover)){
                 $atvpogover = "N/A";
-			}
-			if(empty($atvatver)){
+            }
+            if(empty($atvatver)){
                 $atvatver = "N/A";
-			}
-			if(empty($anver)){
+            }
+            if(empty($anver)){
                $anver = "N/A";
                         }
             if(empty($cputype)){
@@ -513,145 +681,9 @@ echo '<div class="cssContainer">' .
                 $tempsize = '400';
             }
             
-            echo'<tr id=device-' . $name . '>' .
-            '<td class="align-middle">' . $name . '</td>' .
-            
-            '<td class="text-center align-middle">' .
-            '<table class="table" style="border:1px solid #fff;color:#fff;margin-bottom: 0px !important;width:240px;">' ;
-            if($noAccount === false){
-            echo '<tr style="background-color:#6c757d">' .
-            '<td>' .
-            'Account:' .
-            '</td>' .
-            '<td class="align-middle">' .
-            "$atvacc" .
-            '</td>';
-            }
-            if($noLastSeen === false){
-               echo '<tr style="background-color:#6c757d">' .
-                '<td>' .
-                "Seen:" .
-                '</td>' .
-                '<td>';
-                $conn = new mysqli($RDMservername, $RDMusername, $RDMpassword, $RDMdbname, $RDMport);
-                   // Checking for connections
-                if ($conn->connect_error) {
-                    die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
-                }else{
-                    $lastseen = " SELECT last_seen FROM device WHERE uuid = '$name'; ";
-                    $res = $conn->query($lastseen);
-                    $conn->close();
-                    $lastSeenResult = 0;
-                    while($rows=$res->fetch_assoc()){
-                        $lastseentime = $rows['last_seen'];
-                        if(!empty($lastseentime)) {
-                            $lastSeenResult = 1;
-                        }
-                    }
-                    if($lastSeenResult === 1){
-                        $timeDiff = (time() - $lastseentime) +1;
-                        //Convert to seconds, minutes, hours
-                        $seconds = $timeDiff % 60;
-                        $minutes = floor(($timeDiff % 3600) / 60);
-                        $hours = floor($timeDiff / 3600);
-                        if($hours > 0) echo "$hours" . "h, ";
-                        if($minutes > 0) echo "$minutes" . "m, ";
-                        echo "$seconds" . "s";
-                    } else{
-                        echo "No Last Seen Found";
-                    }
-                }
-                echo '</td></tr>' ;
-            }
-            echo '<tr style="background-color:#6c757d"><td>' .
-            "Updated" .
-            '</td>' .
-            '<td>' ;
-                $timecon = strtotime($lastupdated);
-                $timeDiff = (time() - $timecon) +1;
-                //Convert to seconds, minutes, hours
-                $seconds = $timeDiff % 60;
-                $minutes = floor(($timeDiff % 3600) / 60);
-                $hours = floor($timeDiff / 3600);
-                if($hours > 0) echo "$hours" . "h, ";
-                if($minutes > 0) echo "$minutes" . "m, ";
-                echo "$seconds" . "s" .
-            '</td></tr>' .
-            '</table>' .
-            '</td>' .
-            
-                 '<td class="text-center align-middle"> ' .
-                 '<table class="table" style="border:1px solid #fff;color:#fff;margin-bottom: 0px !important;">' .
-                 '<tr style="background-color:#6c757d"><td>' .
-                 "Local:" .
-                 '</td>' .
-                 '<td>' .
-                 "$localip" .
-                 '</td></tr>';
-                 if($noProxy === false){
-                     echo '<tr style="background-color:#6c757d">' .
-                     '<td>' .
-                     "Proxy: " .
-                     '</td>' .
-                     '<td>' .
-                     "$atvproxy " .
-                     '</td>' .
-                     '</tr>' .
-                     '<tr style="background-color:#6c757d"><td>' .
-                     "Mac:" .
-                     '</td>' .
-                     '<td>' .
-                     "$atvmac" .
-                     '</td></tr>';
-                 }
-                 echo '</table>' .
-                      '</td>' .
-
-            
-                     '<td class="text-center align-middle"> ' .
-                     '<table class="table" style="border:1px solid #fff;color:#fff;width: 185px;margin-bottom: 0px !important;">' .
-                     '<tr style="background-color:#6c757d"><td>' .
-                     "Android:" .
-                     '</td>' .
-                     '<td>' .
-                     "$anver" .
-                     '</td></tr>' .
-                     '<tr style="background-color:#6c757d"><td>' .
-                     "CPU:" .
-                     '</td>' .
-                     '<td>' .
-                     "$cputype " .
-                     '</td></tr>' .
-                     '<tr style="background-color:#6c757d"><td>' .
-                     "Temp:" .
-                     '</td>' .
-                     '<td class="align-middle" style="color:'.$tempcolor.';font-weight:'.$tempsize.'">' . $atvtemp . '°C</td></tr>' .
-                     '</table>' .
-                     '</td>' .
-            
- 
-    
-            
-            '<td class="text-center align-middle"> ' .
-            '<table class="table" style="border:1px solid #fff;color:#fff;margin-bottom: 0px !important;">' .
-            '<tr style="background-color:#6c757d"><td>' .
-            "Pokemon:" .
-            '</td>' .
-            '<td>' .
-            "$atvpogover" .
-            '</td></tr>' .
-            '<tr style="background-color:#6c757d"><td>' .
-            "Atlas:" .
-            '</td>' .
-            '<td>' .
-            "$atvatver" .
-            '</td></tr>' .
-            '</table>' .
-            '</td>' .
-            
-             '<td class="controlTable align-middle">'; // Device Options for Users ---
-            
-
+            echo '<div class="row">' .
+                 '<div class="col-md-3 text-center buttonColumn" style="padding: 25px 0;margin: 0px 0px 0px 5%">' .
+                        '<img src="screenshot/'.$name.'.png" class="singlesviewss" style="height:500px;width:auto;border: 1px solid #aaa"></br></br>';
             $conn = new mysqli($servername, $username, $password, $dbname, $port);
 
             //Check Connection
@@ -666,9 +698,9 @@ echo '<div class="cssContainer">' .
                 $status = $rows['STATUS'];
             }
                 if($status == 1){
-                    echo "Waiting for Updater";
+                    echo '<h3 style="color:#fff;">Waiting for Updater</h3>';
                 }elseif($status == 2){
-                    echo "Waiting for Job";
+                    echo '<h3style="color:#fff;">Waiting for Job</h3>';
                 }else{
                 echo
                 '<div class="tab">
@@ -679,66 +711,66 @@ echo '<div class="cssContainer">' .
                 </div>';
             }
             }
-				
-					// Reboot Device
-					
-					
-					//General TAB
+                
+                    // Reboot Device
+                    
+                    
+                    //General TAB
                        echo '<div id="tabGeneral-' . $name .'" class="tabcontent tabcontent-' . $name .'">' .
-							'<form class="d-inline" id="reboot-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
-							'<button name="reboot-' . $name . '" type="submit" class="btn btn-danger controlButton">Reboot</button>' .
-							'</form>';
-							if(isset($_POST["reboot-$name"])){
-								echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-								echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-								echo $res=shell_exec('adb shell reboot > /dev/null 2>&1');
-								echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-							}
-							
-						// Get Logfile
-							echo
-	                        '<form class="d-inline" id="logfile-' . $name . '" action="index.php#device-' . $name . '" method ="post" align="center">' .
+                            '<form class="d-inline" id="reboot-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
+                            '<button name="reboot-' . $name . '" type="submit" class="btn btn-danger controlButton">Reboot</button>' .
+                            '</form>';
+                            if(isset($_POST["reboot-$name"])){
+                                echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                                echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
+                                echo $res=shell_exec('adb shell reboot > /dev/null 2>&1');
+                                echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                            }
+                            
+                        // Get Logfile
+                            echo
+                            '<form class="d-inline" id="logfile-' . $name . '" action="index.php#device-' . $name . '" method ="post" align="center">' .
                                 '<button name="logfile-' . $name . '" type="submit" class="btn btn-warning controlButton">Pull Logfile</button>' .
-        	                '</form>';
-                	        if(isset($_POST["logfile-$name"])){
+                            '</form>';
+                            if(isset($_POST["logfile-$name"])){
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                                 echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
                                 echo $res=shell_exec("adb pull /data/local/tmp/atlas.log deviceLogs/$name.log > /dev/null 2>&1");
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-                        	}
-							
-						// Open Logfile
-							$filename = __DIR__ .'/deviceLogs/' . $name . '.log';
-							if(file_exists($filename)){
-								echo
-								'<form class="d-inline" id="logfile-' . $name . '" align="center">' .
-									'<button onclick="viewLogs(\'' . $name . '\')" type="button" class="btn btn-warning controlButton">View Logfile</button>' .
-								'</form>';
-								if(isset($_POST["logfile-$name"])){
-									echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-									echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-									echo $res=shell_exec("adb pull /data/local/tmp/atlas.log deviceLogs/$name.log > /dev/null 2>&1");
-									echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-								}
-							}
+                            }
+                            
+                        // Open Logfile
+                            $filename = __DIR__ .'/deviceLogs/' . $name . '.log';
+                            if(file_exists($filename)){
+                                echo
+                                '<form class="d-inline" id="logfile-' . $name . '" align="center">' .
+                                    '<button onclick="viewLogs(\'' . $name . '\')" type="button" class="btn btn-warning controlButton">View Logfile</button>' .
+                                '</form>';
+                                if(isset($_POST["logfile-$name"])){
+                                    echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                                    echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
+                                    echo $res=shell_exec("adb pull /data/local/tmp/atlas.log deviceLogs/$name.log > /dev/null 2>&1");
+                                    echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                                }
+                            }
 
-							
-							// Get Screenshot
-							echo
-	                        '<form class="d-inline" id="scrshot-' . $name . '" action="index.php#device-' . $name . '" method ="post" align="center">' .
+                            
+                            // Get Screenshot
+                            echo
+                            '<form class="d-inline" id="scrshot-' . $name . '" action="index.php#device-' . $name . '" method ="post" align="center">' .
                                 '<button name="scrshot-' . $name . '" type="submit" class="btn btn-success controlButton">Pull Screenshot</button>' .
-        	                '</form>';
-                	        if(isset($_POST["scrshot-$name"])){
+                            '</form>';
+                            if(isset($_POST["scrshot-$name"])){
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                                 echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
                                 echo $res=shell_exec('adb shell screencap -p /sdcard/screen.png > /dev/null 2>&1');
                                 echo $res=shell_exec("adb pull /sdcard/screen.png screenshot/$name.png > /dev/null 2>&1");
                                 echo $res=shell_exec("adb shell rm /sdcard/screen.png > /dev/null 2>&1");
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-				}
-				if($noProxy === false){
-				echo '<br><br>Change Proxy' .
-					'<form id="proxy" method="post" onsubmit="return confirmsingle()">' .
+                }
+                if($noProxy === false){
+                echo '<br><br>Change Proxy' .
+                    '<form id="proxy" method="post" onsubmit="return confirmsingle()">' .
                                                                 '<textarea name="proxy-' . $name . '" placeholder="IP:PORT" rows="1" style="resize:none"></textarea><br>' .
                                                                 '<input type="submit" value="Change">' .
                                                                 '</form>';
@@ -767,103 +799,103 @@ echo '<div class="cssContainer">' .
                                                         }
                                                         }
                                                         }
-				}
+                }
 
 
-					echo '</div>' .
-							
-					//Atlas TAB
-					     '<div id="tabAtlas-' . $name .'" class="tabcontent tabcontent-' . $name .'">' .
-						
-						// Start Atlas
-						    '<form class="d-inline" id="start-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
-							'<button name="start-' . $name . '" type="submit" class="btn btn-success controlButton">Start Atlas</button>' .
+                    echo '</div>' .
+                            
+                    //Atlas TAB
+                         '<div id="tabAtlas-' . $name .'" class="tabcontent tabcontent-' . $name .'">' .
+                        
+                        // Start Atlas
+                            '<form class="d-inline" id="start-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
+                            '<button name="start-' . $name . '" type="submit" class="btn btn-success controlButton">Start Atlas</button>' .
                             '</form>';
-						if(isset($_POST["start-$name"])){
-							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-							echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-							echo $res=shell_exec('adb shell "am startservice com.pokemod.atlas/com.pokemod.atlas.services.MappingService" > /dev/null 2>&1');
-							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-						}
-						// Stop Pogo & Atlas
-						echo '<form class="d-inline" id="stop-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
-							'<button name="stop-' . $name . '" type="submit" class="btn btn-danger controlButton">Stop Atlas</button>' .
-						'</form>';
-						if(isset($_POST["stop-$name"])){
-							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-							echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-							echo $res=shell_exec('adb shell "su -c am force-stop com.nianticlabs.pokemongo & am force-stop com.pokemod.atlas" > /dev/null 2>&1');
-							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-						}
-						// Update Atlas Config
-						echo '<form class="d-inline" id="config-atlas-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
-							'<button name="update-atlas-' . $name . '" type="submit" class="btn btn-warning controlButton">Push Atlas Config</button>' .
-						'</form>';
-						if(isset($_POST["config-atlas-$name"])){
-							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-							echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-							echo $res=shell_exec("adb push apps/$name_atlas_config.json /data/local/tmp/atlas_config.json > /dev/null 2>&1");
-							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-						}
-					echo '</div>' .
-					
-					// APKs TAB
+                        if(isset($_POST["start-$name"])){
+                            echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                            echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
+                            echo $res=shell_exec('adb shell "am startservice com.pokemod.atlas/com.pokemod.atlas.services.MappingService" > /dev/null 2>&1');
+                            echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                        }
+                        // Stop Pogo & Atlas
+                        echo '<form class="d-inline" id="stop-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
+                            '<button name="stop-' . $name . '" type="submit" class="btn btn-danger controlButton">Stop Atlas</button>' .
+                        '</form>';
+                        if(isset($_POST["stop-$name"])){
+                            echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                            echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
+                            echo $res=shell_exec('adb shell "su -c am force-stop com.nianticlabs.pokemongo & am force-stop com.pokemod.atlas" > /dev/null 2>&1');
+                            echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                        }
+                        // Update Atlas Config
+                        echo '<form class="d-inline" id="config-atlas-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
+                            '<button name="update-atlas-' . $name . '" type="submit" class="btn btn-warning controlButton">Push Atlas Config</button>' .
+                        '</form>';
+                        if(isset($_POST["config-atlas-$name"])){
+                            echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                            echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
+                            echo $res=shell_exec("adb push apps/$name_atlas_config.json /data/local/tmp/atlas_config.json > /dev/null 2>&1");
+                            echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                        }
+                    echo '</div>' .
+                    
+                    // APKs TAB
                          '<div id="tabAPKs-' . $name .'" class="tabcontent tabcontent-' . $name .'">' .
 
-						// Update PoGo APK
+                        // Update PoGo APK
                          '<form class="d-inline" id="update-pogo-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
-							'<button name="update-pogo-' . $name . '" type="submit" class="btn btn-primary controlButton">Push PoGo APK</button>' .
-						 '</form>';
-						if(isset($_POST["update-pogo-$name"])){
-							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-							echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-							echo $res=shell_exec('adb install -r apps/pokemongo.apk > /dev/null 2>&1');
-							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-						}	
+                            '<button name="update-pogo-' . $name . '" type="submit" class="btn btn-primary controlButton">Push PoGo APK</button>' .
+                         '</form>';
+                        if(isset($_POST["update-pogo-$name"])){
+                            echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                            echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
+                            echo $res=shell_exec('adb install -r apps/pokemongo.apk > /dev/null 2>&1');
+                            echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                        }
 
-						// Update Atlas APK
-						echo '<form class="d-inline" id="update-atlas-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
-							'<button name="update-atlas-' . $name . '" type="submit" class="btn btn-primary controlButton">Push Atlas APK</button>' .
-						'</form>';
-						if(isset($_POST["update-atlas-$name"])){
-							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-							echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-							echo $res=shell_exec('adb install -r apps/atlas.apk > /dev/null 2>&1');
-							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-						}
-					echo '</div>'.// End of Device Options Tablerow
-					
-					// Misc TAB
-					        '<div id="tabMisc-' . $name .'" class="tabcontent tabcontent-' . $name .'">' .
+                        // Update Atlas APK
+                        echo '<form class="d-inline" id="update-atlas-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
+                            '<button name="update-atlas-' . $name . '" type="submit" class="btn btn-primary controlButton">Push Atlas APK</button>' .
+                        '</form>';
+                        if(isset($_POST["update-atlas-$name"])){
+                            echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                            echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
+                            echo $res=shell_exec('adb install -r apps/atlas.apk > /dev/null 2>&1');
+                            echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                        }
+                    echo '</div>'.// End of Device Options Tablerow
+                    
+                    // Misc TAB
+                            '<div id="tabMisc-' . $name .'" class="tabcontent tabcontent-' . $name .'">' .
 
-						// Get PoGo Version
-							'<form class="d-inline" id="version-pogo-' . $name . '" action="index.php#device-' . $name . '" method ="post">' .
-								'<button name="version-pogo-' . $name . '" type="submit" class="btn btn-primary controlButton">Get Version PoGo</button>' .
+                        // Get PoGo Version
+                            '<form class="d-inline" id="version-pogo-' . $name . '" action="index.php#device-' . $name . '" method ="post">' .
+                                '<button name="version-pogo-' . $name . '" type="submit" class="btn btn-primary controlButton">Get Version PoGo</button>' .
                             '</form>';
-							if(isset($_POST["version-pogo-$name"])){
-								echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-								echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-								$pogver = shell_exec('adb shell dumpsys package com.nianticlabs.pokemongo | grep -E versionName | sed -e "s@    versionName=@@g"');
-								$conn = new mysqli($servername, $username, $password, $dbname, $port);
-								//Checking for connections
-								if ($conn->connect_error) {
-										die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
-								}else {
-										$sql = " UPDATE Devices SET ATVPOGOVER = '$pogver' WHERE ID = $id; ";
-										$conn->query($sql);
-										echo "Checking PoGo Version";
-										$conn->close();
-										echo $res=shell_exec('adb kill-server > /dev/null 2>&1'); ?>
-										<script>
-										window.location.reload();
-										</script>
-								<?php
-								}
-							}
+                            if(isset($_POST["version-pogo-$name"])){
+                                echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                                echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
+                                $pogver = shell_exec('adb shell dumpsys package com.nianticlabs.pokemongo | grep -E versionName | sed -e "s@    versionName=@@g"');
+                                $conn = new mysqli($servername, $username, $password, $dbname, $port);
+                                //Checking for connections
+                                if ($conn->connect_error) {
+                                        die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
+                                }else {
+                                        $sql = " UPDATE Devices SET ATVPOGOVER = '$pogver' WHERE ID = $id; ";
+                                        $conn->query($sql);
+                                        echo "Checking PoGo Version";
+                                        $conn->close();
+                                        echo $res=shell_exec('adb kill-server > /dev/null 2>&1'); ?>
+                                        <script>
+                                        window.location.reload();
+                                        </script>
+                                <?php
+                                }
+                            }
 
-						// Get Atlas Version
-							echo '<form class="d-inline" id="version-atlas-' . $name . '" action="index.php#device-' . $name . '" method ="post">' .
-								'<button name="version-atlas-' . $name . '" type="submit" class="btn btn-primary controlButton">Get Version Atlas</button>' .
+                        // Get Atlas Version
+                            echo '<form class="d-inline" id="version-atlas-' . $name . '" action="index.php#device-' . $name . '" method ="post">' .
+                                '<button name="version-atlas-' . $name . '" type="submit" class="btn btn-primary controlButton">Get Version Atlas</button>' .
                             '</form>';
                             if(isset($_POST["version-atlas-$name"])){
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
@@ -884,11 +916,11 @@ echo '<div class="cssContainer">' .
                                         </script>
                                 <?php
                                 }
-                            }	
-							
-						// get Android Version
-							echo '<form class="d-inline" id="version-android-' . $name . '" action="index.php#device-' . $name . '" method ="post">' .
-								'<button name="version-android-' . $name . '" type="submit" class="btn btn-primary controlButton">Get Version Android</button>' .
+                            }
+                            
+                        // get Android Version
+                            echo '<form class="d-inline" id="version-android-' . $name . '" action="index.php#device-' . $name . '" method ="post">' .
+                                '<button name="version-android-' . $name . '" type="submit" class="btn btn-primary controlButton">Get Version Android</button>' .
                             '</form>';
                             if(isset($_POST["version-android-$name"])){
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
@@ -909,7 +941,7 @@ echo '<div class="cssContainer">' .
                                         </script>
                                 <?php
                                 }
-							}
+                            }
                         
                             // get CPU TYPE
                             echo '<form class="d-inline" id="cputype-' . $name . '" action="index.php#device-' . $name . '" method ="post">' .
@@ -963,180 +995,274 @@ echo '<div class="cssContainer">' .
                                     
                             
                             
-					
-						// Push eMagisk.zip to Device
-							echo '<form class="d-inline" id="push-emagisk-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
-								'<button name="push-emagisk-' . $name . '" type="submit" class="btn btn-primary controlButton">Push eMagisk.zip</button>' .
-							'</form>';
-							if(isset($_POST["push-emagisk-$name"])){
-								echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-								echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-								echo $res=shell_exec('adb push apps/eMagisk.zip /sdcard > /dev/null 2>&1');
-								echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-							}
-							
-						// Push eMagisk Config to Device
-							echo '<form class="d-inline" id="config-emagisk-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
-								'<button name="config-emagisk-' . $name . '" type="submit" class="btn btn-primary controlButton">Push eMagisk Config</button>' .
-							'</form>';
-							if(isset($_POST["config-emagisk-$name"])){
-							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-							echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-							echo $res=shell_exec('adb push apps/emagisk.congig /data/local/tmp > /dev/null 2>&1');
-							echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-							}	
-							
-							
-					echo '</div>';// End of Device Options Tablerow
-					
-				echo '</td>';?> 
+                    
+                        // Push eMagisk.zip to Device
+                            echo '<form class="d-inline" id="push-emagisk-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
+                                '<button name="push-emagisk-' . $name . '" type="submit" class="btn btn-primary controlButton">Push eMagisk.zip</button>' .
+                            '</form>';
+                            if(isset($_POST["push-emagisk-$name"])){
+                                echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                                echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
+                                echo $res=shell_exec('adb push apps/eMagisk.zip /sdcard > /dev/null 2>&1');
+                                echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                            }
+                            
+                        // Push eMagisk Config to Device
+                            echo '<form class="d-inline" id="config-emagisk-' . $name . '" action="index.php#device-' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
+                                '<button name="config-emagisk-' . $name . '" type="submit" class="btn btn-primary controlButton">Push eMagisk Config</button>' .
+                            '</form>';
+                            if(isset($_POST["config-emagisk-$name"])){
+                            echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                            echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
+                            echo $res=shell_exec('adb push apps/emagisk.congig /data/local/tmp > /dev/null 2>&1');
+                            echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                            }
+                            
+                            
+                    echo '</div>';// End of Device Options Tablerow
+                    
+                ?>
 
-				<script>
-					function openTab(evt, tabName, deviceName) {
-						var i, tabcontent, tablinks;
-						if(evt.currentTarget.classList.contains("active")){
-							document.getElementById(tabName).style.display = "none";
-							tablinks = document.getElementsByClassName("tablinks-" + deviceName);
-							for (i = 0; i < tablinks.length; i++) {
-								tablinks[i].className = tablinks[i].className.replace(" active", "");
-							}
-						}else {
-							tabcontent = document.getElementsByClassName("tabcontent-" + deviceName);
-							for (i = 0; i < tabcontent.length; i++) {
-								tabcontent[i].style.display = "none";
-							}
-							tablinks = document.getElementsByClassName("tablinks-" + deviceName);
-							for (i = 0; i < tablinks.length; i++) {
-								tablinks[i].className = tablinks[i].className.replace(" active", "");
-							}
-							document.getElementById(tabName).style.display = "block";
-							evt.currentTarget.className += " active";
-						}
-					}
-					
-					// Get the element with id="defaultOpen" and click on it
-					//document.getElementById("defaultOpen").click();
-				</script>
-				<?php
-                    
-                    
-                    if($noScreenshot === false){
-                        echo '<td class="text-center align-middle">';
-                        $filename = __DIR__ .'/screenshot/' . $name . '.png';
-                        if(file_exists($filename)){
-                            echo
-                            '<div class="imageContainer">' .
-                                '<a href="screenshot/' . $name . '.png" target="_blank" >' .
-                                    '<img src="screenshot/' . $name . '.png" width="75" height="120" />' .
-                                '</a>' .
-                            '</div>';
+                <script>
+                    function openTab(evt, tabName, deviceName) {
+                        var i, tabcontent, tablinks;
+                        if(evt.currentTarget.classList.contains("active")){
+                            document.getElementById(tabName).style.display = "none";
+                            tablinks = document.getElementsByClassName("tablinks-" + deviceName);
+                            for (i = 0; i < tablinks.length; i++) {
+                                tablinks[i].className = tablinks[i].className.replace(" active", "");
+                            }
+                        }else {
+                            tabcontent = document.getElementsByClassName("tabcontent-" + deviceName);
+                            for (i = 0; i < tabcontent.length; i++) {
+                                tabcontent[i].style.display = "none";
+                            }
+                            tablinks = document.getElementsByClassName("tablinks-" + deviceName);
+                            for (i = 0; i < tablinks.length; i++) {
+                                tablinks[i].className = tablinks[i].className.replace(" active", "");
+                            }
+                            document.getElementById(tabName).style.display = "block";
+                            evt.currentTarget.className += " active";
                         }
-                        else{
-                            echo 'No Screenshot Found.';
-                        }
-                        echo '</td>';
                     }
                     
-			        echo '</tr>';
-            
+                    // Get the element with id="defaultOpen" and click on it
+                    //document.getElementById("defaultOpen").click();
+                </script>
+                <?php
                     
-            
-		}
-	echo '</tbody>
-	</table>
-	<div class="modal fade" id="modalLogFile" tabindex="-1" role="dialog">
-		<div class="modal-dialog modal-xl" role="document">
-			<div class="modal-content">
-				<div class="modal-header">
-					<h5 id="modalTitle" class="modal-title text-center">Logfile for Device </h5> (Last 200 Lines)
-				</div>
-				<div class="modal-body">
-					<div class="input-group mb-4">
-						<textarea id="logFileContent" style="height:500px;" class="form-control" readonly></textarea>
-					</div>
-					<div class="row mb-4">
-						<div class="col-md-4">
-							<label class="mb-1">Avg. Jumpspeed:</label>
-							<div class="form-group mb-2">
-								<input id="avgJumpSpeed" class="form-control" type="text" placeholder="" readonly>
-							</div>
-						</div>
-						<div class="col-md-4">
-							<label class="mb-1">Avg. Time per Monster:</label>
-							<div class="form-group mb-2">
-								<input id="avgTimePerMonster" class="form-control" type="text" placeholder="" readonly>
-							</div>
-						</div>
-						<div class="col-md-4">
-							<label class="mb-1">Avg. IV-Checks per 15m</label>
-							<div class="form-group mb-2">
-								<input id="avgMonsterPerTime" class="form-control" type="text" placeholder="" readonly>
-							</div>
-						</div>
-					</div>
-					<div class="modal-footer pb-1">
-							<a id="fullLogsButton" href="" target="_blank" >
-								<button type="button" class="btn btn-secondary" >Full Logfile</button>
-							</a>
-						<button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>';
-	?>
-	<script>
-		function populateLogfileModal(url,device) {
-			var xhr = new XMLHttpRequest();
-			xhr.onload = function () {
-				//document.getElementById('logFileContent').textContent = this.responseText;
-				var text = this.responseText;
-				text = text.split("\n");
-				var outputText = '----- Trimmed Logfile for Device ' + device + ' -----\n\n';
-				for (var i=0;i<text.length-1;i++){
-					if(i > text.length-202){
-						text[i] = text[i].replace('[32m[1m', ' ');
-						text[i] = text[i].replace('[22m[39m', ' ');
-						text[i] = text[i].replace('[0;31m', ' ');
-						text[i] = text[i].replace('[0;33m', ' ');
-						text[i] = text[i].replace('[0m', ' ');
-						outputText +=  text[i] + '\n';
-					}
-					if(i == text.length-2){
-						var avj = text[i].substring(text[i].indexOf('avj:') + 4, text[i].indexOf('avj:') + 8);
-						var avj = parseFloat(avj);
-						var avm = text[i].substring(text[i].indexOf('avm:') + 4, text[i].indexOf('avm:') + 8);
-						var avm = parseFloat(avm);
-						var avgChecks = Math.floor((3600/4)/avm);
-					}
-				}
-				$('#avgJumpSpeed').val(avj + 's');
-				$('#avgTimePerMonster').val(avm + 's');
-				$('#avgMonsterPerTime').val('~' + avgChecks);
-				$('#logFileContent').val(outputText);
-				$('#fullLogsButton').attr("href", url);
-				$('#modalTitle').text('Logfile for Device ' + device)
-			};
-			xhr.open('GET', url);
-			xhr.send();
-		}
-		function viewLogs(device){
-			var logPath = 'deviceLogs/' + device + '.log';
-			populateLogfileModal(logPath,device);
-			$('#modalLogFile').modal('show');
-		}
-		$('#modalLogFile').on('hidden.bs.modal', function(event) {
-			$('#logFileContent').val('');
-			$('#avgJumpSpeed').val('');
-			$('#avgTimePerMonster').val('');
-			$('#avgMonsterPerTime').val('');
-		});
-		
-	</script>
+                echo    '<div class="modal fade" id="modalLogFile" tabindex="-1" role="dialog">
+                        <div class="modal-dialog modal-xl" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 id="modalTitle" class="modal-title text-center">Logfile for Device </h5> (Last 200 Lines)
+                                </div>
+                                <div class="modal-body">
+                                    <div class="input-group mb-4">
+                                        <textarea id="logFileContent" style="height:500px;" class="form-control" readonly></textarea>
+                                    </div>
+                                    <div class="row mb-4">
+                                        <div class="col-md-4">
+                                            <label class="mb-1">Avg. Jumpspeed:</label>
+                                            <div class="form-group mb-2">
+                                                <input id="avgJumpSpeed" class="form-control" type="text" placeholder="" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="mb-1">Avg. Time per Monster:</label>
+                                            <div class="form-group mb-2">
+                                                <input id="avgTimePerMonster" class="form-control" type="text" placeholder="" readonly>
+                                            </div>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <label class="mb-1">Avg. IV-Checks per 15m</label>
+                                            <div class="form-group mb-2">
+                                                <input id="avgMonsterPerTime" class="form-control" type="text" placeholder="" readonly>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer pb-1">
+                                            <a id="fullLogsButton" href="" target="_blank" >
+                                                <button type="button" class="btn btn-secondary" >Full Logfile</button>
+                                            </a>
+                                        <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Close</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>';
+                    ?>
+                    <script>
+                        function populateLogfileModal(url,device) {
+                            var xhr = new XMLHttpRequest();
+                            xhr.onload = function () {
+                                //document.getElementById('logFileContent').textContent = this.responseText;
+                                var text = this.responseText;
+                                text = text.split("\n");
+                                var outputText = '----- Trimmed Logfile for Device ' + device + ' -----\n\n';
+                                for (var i=0;i<text.length-1;i++){
+                                    if(i > text.length-202){
+                                        text[i] = text[i].replace('[32m[1m', ' ');
+                                        text[i] = text[i].replace('[22m[39m', ' ');
+                                        text[i] = text[i].replace('[0;31m', ' ');
+                                        text[i] = text[i].replace('[0;33m', ' ');
+                                        text[i] = text[i].replace('[0m', ' ');
+                                        outputText +=  text[i] + '\n';
+                                    }
+                                    if(i == text.length-2){
+                                        var avj = text[i].substring(text[i].indexOf('avj:') + 4, text[i].indexOf('avj:') + 8);
+                                        var avj = parseFloat(avj);
+                                        var avm = text[i].substring(text[i].indexOf('avm:') + 4, text[i].indexOf('avm:') + 8);
+                                        var avm = parseFloat(avm);
+                                        var avgChecks = Math.floor((3600/4)/avm);
+                                    }
+                                }
+                                $('#avgJumpSpeed').val(avj + 's');
+                                $('#avgTimePerMonster').val(avm + 's');
+                                $('#avgMonsterPerTime').val('~' + avgChecks);
+                                $('#logFileContent').val(outputText);
+                                $('#fullLogsButton').attr("href", url);
+                                $('#modalTitle').text('Logfile for Device ' + device)
+                            };
+                            xhr.open('GET', url);
+                            xhr.send();
+                        }
+                        function viewLogs(device){
+                            var logPath = 'deviceLogs/' + device + '.log';
+                            populateLogfileModal(logPath,device);
+                            $('#modalLogFile').modal('show');
+                        }
+                        $('#modalLogFile').on('hidden.bs.modal', function(event) {
+                            $('#logFileContent').val('');
+                            $('#avgJumpSpeed').val('');
+                            $('#avgTimePerMonster').val('');
+                            $('#avgMonsterPerTime').val('');
+                        });
+                        
+                    </script>
 
-<?php
-echo '</div>';
-}
+                <?php
+                    
+                    
+                echo  '</div>' .
+                    '<div class="col-md-8 text-center buttonColumn" style="padding: 25px 0;">' .
+                    '<div class="row">' .
+                        '<div class="col-md text-center" style="color:#fff;">' .
+                        '<table style="width:80%;margin: 0px 0px 0px 10%;" class="table table-dark table-striped">' .
+                            '<tr>' .
+                            '<h5 style="text-align:left;">NETWORKING</h5>' .
+                            '</tr>' .
+                            '<tr>' .
+                            '<th style="text-align:right;padding-right:20px;width:50%;">Local IP:</th>' .
+                            '<td>'.$localip.'</td>' .
+                            '</tr>' .
+                            '<tr>' .
+                            '<th style="text-align:right;padding-right:20px;width:50%;">Mac:</th>' .
+                            '<td>'.$atvmac.'</td>' .
+                            '</tr>' .
+                            '<tr>' .
+                            '<th style="text-align:right;padding-right:20px;width:50%;">Proxy:</th>' .
+                            '<td>'.$atvproxy.'</td>' .
+                            '</tr>' .
+                            '</table></br>' .
+                            '<table style="width:80%;margin: 0px 0px 0px 10%;" class="table table-dark table-striped">' .
+                            '<tr>' .
+                            '<h5 style="text-align:left;">INFORMATION</h5>' .
+                            '</tr>' .
+                            '<tr>' .
+                            '<th style="text-align:right;padding-right:20px;width:50%;">Android Version:</th>' .
+                            '<td>'.$anver.'</td>' .
+                            '</tr>' .
+                            '<tr>' .
+                            '<th style="text-align:right;padding-right:20px;width:50%;">CPU:</th>' .
+                            '<td>'.$cputype.'</td>' .
+                            '</tr>' .
+                            '<tr>' .
+                            '<th style="text-align:right;padding-right:20px;width:50%;">Temp:</th>' .
+                            '<td style="color:'.$tempcolor.';font-weight:'.$tempsize.'">'.$atvtemp.'°C</td>' .
+                            '</tr>' .
+                            '</table></br>' .
+                            '<table style="width:80%;margin: 0px 0px 0px 10%;" class="table table-dark table-striped">' .
+                            '<tr>' .
+                            '<h5 style="text-align:left;">APP VERSIONS</h5>' .
+                            '</tr>' .
+                            '<tr>' .
+                            '<th style="text-align:right;padding-right:20px;width:50%;">Pokemon Version:</th>' .
+                            '<td>'.$atvpogover.'</td>' .
+                            '</tr>' .
+                            '<tr>' .
+                            '<th style="text-align:right;padding-right:20px;width:50%;">Atlas Version:</th>' .
+                            '<td>'.$atvatver.'</td>' .
+                            '</tr>' .
+                            '</table></br>' .
+                            '<table style="width:80%;margin: 0px 0px 0px 10%;" class="table table-dark table-striped">' .
+                            '<tr>' .
+                            '<h5 style="text-align:left;">CURRENT VIEW</h5>' .
+                            '</tr>' .
+                            '<tr>' .
+                            '<th style="text-align:right;padding-right:20px;width:50%;">Active Account:</th>' .
+                            '<td>'.$atvacc.'</td>' .
+                            '</tr>' .
+                            '<tr>' .
+                            '<th style="text-align:right;padding-right:20px;width:50%;">' .
+                            "Last Seen:" .
+                            '</th>' .
+                            '<td>';
+                            $conn = new mysqli($RDMservername, $RDMusername, $RDMpassword, $RDMdbname, $RDMport);
+                            // Checking for connections
+                            if ($conn->connect_error) {
+                                die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
+                            }else{
+                                $lastseen = " SELECT last_seen FROM device WHERE uuid = '$name'; ";
+                                $res = $conn->query($lastseen);
+                                $conn->close();
+                                $lastSeenResult = 0;
+                                while($rows=$res->fetch_assoc()){
+                                    $lastseentime = $rows['last_seen'];
+                                    if(!empty($lastseentime)) {
+                                        $lastSeenResult = 1;
+                                    }
+                                }
+                                if($lastSeenResult === 1){
+                                    $timeDiff = (time() - $lastseentime) +1;
+                                    //Convert to seconds, minutes, hours
+                                    $seconds = $timeDiff % 60;
+                                    $minutes = floor(($timeDiff % 3600) / 60);
+                                    $hours = floor($timeDiff / 3600);
+                                    if($hours > 0) echo "$hours" . "h, ";
+                                    if($minutes > 0) echo "$minutes" . "m, ";
+                                    echo "$seconds" . "s";
+                                } else{
+                                    echo "No Last Seen Found";
+                                }
+                            }
+                            echo '</td></tr>' .
+            
+                            '<tr><th style="text-align:right;padding-right:20px;width:50%;">' .
+                            "Updated" .
+                            '</th>' .
+                            '<td>' ;
+                                $timecon = strtotime($lastupdated);
+                                $timeDiff = (time() - $timecon) +1;
+                                //Convert to seconds, minutes, hours
+                                $seconds = $timeDiff % 60;
+                                $minutes = floor(($timeDiff % 3600) / 60);
+                                $hours = floor($timeDiff / 3600);
+                                if($hours > 0) echo "$hours" . "h, ";
+                                if($minutes > 0) echo "$minutes" . "m, ";
+                                echo "$seconds" . "s" .
+                            '</td></tr>' .
+            
+                        '</table>' .
+                        '</div>' .
+                    '</div>' .
+                '</div>' .
+            '</div>';
+            
+        }
+        echo '</div>';
+        }
+    }
     
     function scanner(){
     include("config.php");
@@ -1240,6 +1366,8 @@ echo '</div>';
               <?php
           }
      }
+                  
+     
         
     echo '</div></div>';
     }

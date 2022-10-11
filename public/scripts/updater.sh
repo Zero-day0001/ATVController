@@ -18,10 +18,21 @@ RDMport="$(grep -oE '\$RDMport = .*;' public/config.php | tail -1 | sed 's/$RDMp
 
 rm public/outputs/updater.log
 exec > public/outputs/updater.log 2>&1
+
+echo Checking Status
+    statcheck=$(mysql -sN -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "SELECT status FROM Updater WHERE id = '1'")
+    if [[ $statcheck == 1 ]] ; then
+        echo Updater Already Running. Stopping
+        exit 0
+    elif [[ $statcheck == 2 ]] ; then
+        echo Job Currently Running
+        exit 0
+    fi
+    
 echo Changing Status to Running
 status=1
 echo Status - $status
-      mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "UPDATE Updater SET status = '$status';"
+      mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "UPDATE Updater SET STATUS = '$status';"
 adb kill-server
 for i in `cat public/scripts/ips` ; do
   if [[ $i =~ "{".* ]] ; then

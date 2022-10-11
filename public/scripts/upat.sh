@@ -25,7 +25,7 @@ for i in `cat scripts/ips` ; do
       adb connect $ip:$adbport
       echo Updating Atlas Service $ip
       sleep 1
-      adb install -r app/atlas.apk > /dev/null 2>&1
+      adb install -r apps/atlas.apk > /dev/null 2>&1
       adb kill-server
     done
   else
@@ -34,7 +34,7 @@ for i in `cat scripts/ips` ; do
     adb connect $ip:$adbport
     echo Updating Atlas Service $ip 
     sleep 1
-    adb install -r app/atlas.apk
+    adb install -r apps/atlas.apk
     adb kill-server
   fi
 done

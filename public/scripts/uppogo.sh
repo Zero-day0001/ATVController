@@ -25,7 +25,7 @@ for i in `cat scripts/ips` ; do
       adb connect $ip:$adbport
       echo Updating Pokemon on $ip
       sleep 1
-      adb install -r app/pokemongo.apk
+      adb install -r apps/pokemongo.apk
       adb kill-server
     done
   else
@@ -34,7 +34,7 @@ for i in `cat scripts/ips` ; do
     adb connect $ip:$adbport
     echo Updating Pokemon on $ip
     sleep 1
-    adb install -r app/pokemongo.apk
+    adb install -r apps/pokemongo.apk
     adb kill-server
   fi
 done

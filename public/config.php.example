@@ -23,10 +23,7 @@ $adbport = "5555";
 $namelocation = "globset"; // (atconf) - atlas config / (globset) - device settings(about device rename)
 
 //Enable/Disable features
-$noScreenshot = false; // diable with true
-$noProxy = false; // diable with true
-$noAccount = false; // diable with true
-$noLastSeen = false; // diable with true
+$devicecount = false; // Total devices and Online count (currently lags the site with bulk devices)
 
 
 //Don't touch
