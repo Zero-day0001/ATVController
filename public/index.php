@@ -1,10 +1,10 @@
-<!DOCTYPE html>
-<html>
-
 <?php
-
 require('header.php');
-
+    if(!isset($_SESSION['UserID']))
+    {
+    header("Location: /auth.php?type=login");
+        exit;
+    }
 Menu();
 
 SectionOne();
@@ -99,4 +99,3 @@ function sortTable(n) {
 }
 </script>
 
-</html>

@@ -3,11 +3,13 @@ require('config.php');
 require('sections.php');
 require('functions.php');
 require('footer.php');
-
+    
+session_start();
+    
 function Menu() {
 require('config.php');
 echo '<head>' .
-	'<title>ATV Controller</title>' .
+	'<title>'.$title.'</title>' .
 	'<meta name="viewport" content="width=device-width, initial-scale=1">' .
 	'<link rel="icon" type="image/png" href="/favicon.png">' .
 	'<link rel="shortcut icon" href ="favicon.png">' .
@@ -21,10 +23,19 @@ echo '<head>' .
 '<header>'.
 
 '<div class="topnav" id="TopnavMenu">' .
-  '<a href="#" class="logo">ATV Controller</a>' .
-  '<a href="index.php">Home</a>' .
-    
-    '<div class="dropdown">' .
+  '<a href="#" class="logo">'.$title.'</a>';
+    if(!isset($_SESSION['UserID'])){
+     echo '<div class="dropdown">' .
+          '<button onclick="dropbuttonAcc()" class="dropbtn">Account</button>' .
+          '<div id="Account" class="dropdown-content">' .
+            '<a href="/auth.php?type=login">Login</a>' .
+            '<a href="/auth.php?type=register">Register</a>' .
+          '</div>' .
+      '</div>' ;
+    }else{
+  $loggedinUser=$_SESSION['LoggedinUser'];
+  echo '<a href="index.php">Home</a>' .
+      '<div class="dropdown">' .
       '<button onclick="dropbuttoneditor()" class="dropbtn">Config Creator</button>' .
       '<div id="editor" class="dropdown-content">' .
       '<a href="editor.php">Atlas Config Creator</a>' .
@@ -53,65 +64,17 @@ echo '<head>' .
     '<a href="logviewer.php?logtoview=start">Start Logs</a>' .
     '<a href="logviewer.php?logtoview=updater">Updater Logs</a>' .
       '</div>' .
+    '<div class="dropdown">' .
+      '<button onclick="dropbuttonAcc()" class="dropbtn">';
+      echo ucfirst("$loggedinUser") .
+        '</button>' .
+      '<div id="Account" class="dropdown-content">' .
+        '<a href="/auth.php?type=changepassword">Change Password</a>' .
+        '<a href="/auth.php?type=register">Create Account</a>' .
+        '<a href="/auth.php?type=killsession">Logout</a>' .
+      '</div>' .
+  '</div>' .
    '</div>' ;
-    
-?>
-<script>
-function dropbuttoneditor() {
-  document.getElementById("editor").classList.toggle("show");
-}
-
-// Close the dropdown if the user clicks outside of it
-window.onclick = function(event) {
-  if (!event.target.matches('.dropbtn')) {
-    var dropdowns = document.getElementsByClassName("dropdown-content");
-    var i;
-    for (i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show');
-      }
-    }
-  }
-}
-
-function dropbuttonSC() {
-  document.getElementById("serverControl").classList.toggle("show");
-}
-
-// Close the dropdown if the user clicks outside of it
-window.onclick = function(event) {
-  if (!event.target.matches('.dropbtn')) {
-    var dropdowns = document.getElementsByClassName("dropdown-content");
-    var i;
-    for (i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show');
-      }
-    }
-  }
-}
-
-function dropbuttonlogs() {
-  document.getElementById("logviewer").classList.toggle("show");
-}
-
-// Close the dropdown if the user clicks outside of it
-window.onclick = function(event) {
-  if (!event.target.matches('.dropbtn')) {
-    var dropdowns = document.getElementsByClassName("dropdown-content");
-    var i;
-    for (i = 0; i < dropdowns.length; i++) {
-      var openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show');
-      }
-    }
-  }
-}
-</script>
-<?php
     
   echo '<a href="javascript:void(0);" class="icon" onclick="menu()">' .
     '<i class="fa fa-bars"></i>' .
@@ -141,7 +104,7 @@ window.onclick = function(event) {
     }
     }
     
-  echo '<a href="editor.php" style="float:right;">STATUS: '.$stat.'(';
+  echo '<a href="#" style="float:right;">STATUS: '.$stat.'(';
     $timeDiff = (time() - $lastc) +1;
     //Convert to seconds, minutes, hours
     $seconds = $timeDiff % 60;
@@ -152,8 +115,81 @@ window.onclick = function(event) {
     echo "$seconds" . "s ago";
        echo ')</a>' .
        '</div>';
+}
+    ?>
+    <script>
+    function dropbuttoneditor() {
+      document.getElementById("editor").classList.toggle("show");
+    }
 
-'</header>' . 
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function(event) {
+      if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
 
+    function dropbuttonSC() {
+      document.getElementById("serverControl").classList.toggle("show");
+    }
+
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function(event) {
+      if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
+
+    function dropbuttonlogs() {
+      document.getElementById("logviewer").classList.toggle("show");
+    }
+
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function(event) {
+      if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
+    function dropbuttonAcc() {
+      document.getElementById("Account").classList.toggle("show");
+    }
+
+    // Close the dropdown if the user clicks outside of it
+    window.onclick = function(event) {
+      if (!event.target.matches('.dropbtn')) {
+        var dropdowns = document.getElementsByClassName("dropdown-content");
+        var i;
+        for (i = 0; i < dropdowns.length; i++) {
+          var openDropdown = dropdowns[i];
+          if (openDropdown.classList.contains('show')) {
+            openDropdown.classList.remove('show');
+          }
+        }
+      }
+    }
+    </script>
+    <?php
+echo '</header>' .
 '<body>';
  } ?>

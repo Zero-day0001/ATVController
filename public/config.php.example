@@ -25,6 +25,7 @@ $namelocation = "globset"; // (atconf) - atlas config / (globset) - device setti
 //Enable/Disable features
 $devicecount = false; // Total devices and Online count (currently lags the site with bulk devices)
 
+$noRegister = false; // Enable or Disable Sign Up.
 
 //Don't touch
 include("sql/makedb.php");

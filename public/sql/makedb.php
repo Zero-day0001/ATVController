@@ -52,6 +52,25 @@
     $conn->query($create_updater);
     $conn->close();
     }
+    
+    $conn = new mysqli($servername, $username, $password, $dbname, $port);
+
+    // Check Connection
+    if (!$conn) {
+     die("Connection failed: " . mysqli_connect_error());
+    }else{
+    $create_users = "CREATE TABLE IF NOT EXISTS `Users`
+    (
+     `ID` INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+     `USERNAME` VARCHAR(50) NOT NULL UNIQUE,
+     `PASSWORD` VARCHAR(255) NOT NULL,
+     `SESSION` VARCHAR(50) NULL,
+     `CREATED_AT` DATETIME DEFAULT CURRENT_TIMESTAMP
+    );";
+
+    $conn->query($create_users);
+    $conn->close();
+    }
         
     $conn = new mysqli($servername, $username, $password, $dbname, $port);
 

@@ -2,6 +2,296 @@
 
 // SCRIPTS TO RUN ON ALL DEVICES
 
+function auth() {
+    $urlparse = $_GET["type"];
+    if($urlparse == "register"){
+        require("config.php");
+        if($noRegister == "true"){
+            echo '<div class="cssContainer text-center">' .
+                 '<h5 style="color:#fff;">Registration is disabled. Contact the admin or check your config.</h5>' .
+                 '</div>';
+        }else{
+    echo '<div class="cssContainer text-center">'.
+         '<form action="auth.php?type=register" method="post" style="border:1px solid #ccc">' .
+         '<div class="container" style="color:#fff;">' .
+            '<h1 style="color:#fff;">Create Admin Account</h1>' .
+            '<hr>' .
+                '<label for="username"><b>Username</b></label></br></br>' .
+                '<input type="text" placeholder="Enter Username" name="username" required></br></br>' .
+                    '<label for="psw"><b>Password</b></label></br>' .
+                    '<input type="password" placeholder="Enter Password" name="psw" required></br></br>' .
+                        '<label for="psw-repeat"><b>Repeat Password</b></label></br>' .
+                        '<input type="password" placeholder="Repeat Password" name="psw-repeat" required></br></br>' .
+
+         '<div class="clearfix">' .
+         '<button name="signupbtn" id="signupbtn" type="submit" class="btn btn-primary">Sign Up</button></br></br>' .
+         '</div>' .
+         '</div>' .
+         '</form>';
+    
+    if(isset($_POST['signupbtn'])){
+        $userName = trim($_POST["username"]);
+        if(!preg_match('/^[a-zA-Z0-9_]+$/', $userName)){
+        $userName_err = 1;
+        echo '<p style="color:#fff;">Username can only contain letters, numbers, and underscores.</p>';
+        }
+        
+        $psw = trim($_POST["psw"]);
+        if(strlen($psw) < 6){
+                $password_err = 1;
+                echo '<p style="color:#fff;">Password must have atleast 6 characters.</p>';
+            }
+        
+        $pswrepeat = trim($_POST["psw-repeat"]);
+        if($psw != $pswrepeat){
+            $password_err = 1;
+            echo '<p style="color:#fff;">Passwords do not match.</p>';
+        }
+        
+        if($userName_err == 1 || $password_err == 1){
+            session_destroy();
+            echo '<script>' .
+                 'window.location.reload();' .
+                 '</script>';
+        }else{
+            require("config.php");
+            $hashed_password = password_hash($psw, PASSWORD_DEFAULT);
+            
+            $conn = new mysqli($servername, $username, $password, $dbname, $port);
+            //Check Connection
+            if (!$conn) {
+            die("Connection failed: " . mysqli_connect_error());
+            }else{
+                $sql = " INSERT INTO Users (USERNAME, PASSWORD) VALUES ('$userName', '$hashed_password'); ";
+                $result = $conn->query($sql);
+                $conn->close();
+            }
+            echo '<script>' .
+                 'location.replace("/auth.php?type=login");' .
+                 '</script>';
+        }
+    }
+  echo '</div>';
+
+}}elseif($urlparse == "login"){
+    require("config.php");
+    $conn = new mysqli($servername, $username, $password, $dbname, $port);
+    //Check Connection
+    if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+    }else{
+        $sql = " SELECT * FROM Users; ";
+        $result = $conn->query($sql);
+        $conn->close();
+        while($rows=$result->fetch_assoc()){
+            $userIDcount = $rows['ID'];
+        }
+        if(empty($userIDcount)){
+            echo '<script>' .
+                 'location.replace("/auth.php?type=register");' .
+                 '</script>';
+        }
+    }
+    echo '<div class="cssContainer text-center">'.
+         '<form method="post" style="border:1px solid #ccc">' .
+         '<div class="container" style="color:#fff;">' .
+            '<h1 style="color:#fff;">Login</h1>' .
+            '<hr>' .
+                '<label for="username"><b>Username</b></label></br></br>' .
+                '<input type="text" placeholder="Enter Username" name="username_login" required></br></br>' .
+                    '<label for="psw"><b>Password</b></label></br>' .
+                    '<input type="password" placeholder="Enter Password" name="psw_login" required></br></br>' .
+         '<div class="clearfix">' .
+         '<button name="loginbtn" id="loginbtn" type="submit" class="btn btn-primary">Login</button></br></br>' .
+         '</div>' .
+         '</div>' .
+         '</form>';
+    if(isset($_POST['loginbtn'])){
+        $userName = trim($_POST["username_login"]);
+        if(!preg_match('/^[a-zA-Z0-9_]+$/', $userName)){
+        $userName_err = 1;
+        }
+        
+        $psw_login = trim($_POST["psw_login"]);
+        
+        if($userName_err == 1){
+        session_destroy();
+        echo '<script>' .
+             'window.location.reload();' .
+             '</script>';
+        }else{
+            require("config.php");
+            $conn = new mysqli($servername, $username, $password, $dbname, $port);
+            //Check Connection
+            if (!$conn) {
+                die("Connection failed: " . mysqli_connect_error());
+            }else{
+                $sql = " Select * from Users WHERE USERNAME = '$userName'; ";
+                $result = $conn->query($sql);
+                $conn->close();
+                while($rows=$result->fetch_assoc()){
+                    $loginUserID = $rows['ID'];
+                    $loginUser = $rows['USERNAME'];
+                    $loginUserPass = $rows['PASSWORD'];
+                }
+                if(empty($loginUser)){
+                    session_destroy();
+                    echo '<p style="color:#fff;">User Not Found.</p>' .
+                         '<script>' .
+                         'window.location.reload();' .
+                         '</script>';
+                }
+                if($loginUser == $userName){
+                    if(password_verify($psw_login, $loginUserPass)) {
+                        $_SESSION['UserID']=$loginUserID;
+                        $_SESSION['LoggedinUser']=$loginUser;
+                        $_SESSION['sess_id']=session_id();
+                        echo '<p style="color:#fff;">Logging in!</p>' .
+                             '<script>' .
+                             'location.replace("/auth.php?type=startsession");' .
+                             '</script>';
+                    }else{
+                        session_destroy();
+                        echo '<p style="color:#fff;">Password incorrect.</p>' .
+                             '<script>' .
+                             'location.replace("/auth.php?type=login");' .
+                             '</script>';
+                    }
+                }
+            }
+        }
+    }
+echo '</div>';
+}elseif($urlparse == "startsession"){
+    require("config.php");
+            $uid = $_SESSION['UserID'];
+            $sess_id = $_SESSION['sess_id'];
+            $conn = new mysqli($servername, $username, $password, $dbname, $port);
+            //Check Connection
+            if (!$conn) {
+                die("Connection failed: " . mysqli_connect_error());
+            }else{
+                $sql = " UPDATE Users SET SESSION = '$sess_id' WHERE ID = '$uid'; ";
+                $result = $conn->query($sql);
+                $conn->close();
+                echo '<script>' .
+                     'location.replace("/index.php?");' .
+                     '</script>';
+            }
+}elseif($urlparse == "killsession"){
+    require("config.php");
+    $urlparseuser = $_SESSION['UserID'];
+            $conn = new mysqli($servername, $username, $password, $dbname, $port);
+            //Check Connection
+            if (!$conn) {
+                die("Connection failed: " . mysqli_connect_error());
+            }else{
+                $sess_id = "";
+                $sql = " UPDATE Users SET SESSION = '$sess_id' WHERE ID = '$urlparseuser'; ";
+                $result = $conn->query($sql);
+                $conn->close();
+                session_destroy();
+                echo '<script>' .
+                     'location.replace("/");' .
+                     '</script>';
+            }
+    echo '<script>' .
+         'location.replace("/");' .
+         '</script>';
+}elseif($urlparse == "changepassword"){
+    require("config.php");
+    $uid = $_SESSION['UserID'];
+    $uname = $_SESSION['LoggedinUser'];
+    echo '<div class="cssContainer text-center">';
+            $conn = new mysqli($servername, $username, $password, $dbname, $port);
+            //Check Connection
+            if (!$conn) {
+                die("Connection failed: " . mysqli_connect_error());
+            }else{
+                $sess_id = "";
+                $sql = " Select * from Users WHERE ID = '$uid'; ";
+                $result = $conn->query($sql);
+                $conn->close();
+                while($rows=$result->fetch_assoc()){
+                    $uidc = $rows['ID'];
+                    $uname = $rows['USERNAME'];
+                    $upass = $rows['PASSWORD'];
+                }
+                
+           echo '<form method="post" style="border:1px solid #ccc">' .
+                '<div class="container" style="color:#fff;">' .
+                   '<h1 style="color:#fff;">Change Password</h1>' .
+                   '<hr>' .
+                       //'<label for="uname-change"><b>Change Username</b></label></br></br>' .
+                       //'<input type="text" placeholder="'.$uname.'" name="uname-change"></br></br>' .
+                           
+                           '<label for="psw_change"><b>New Password</b></label></br>' .
+                           '<input type="password" placeholder="Enter New Password" name="psw_change" required></br></br>' .
+                
+                               '<label for="psw_repeat_change"><b>Confirm Password</b></label></br>' .
+                               '<input type="password" placeholder="Confirm Password" name="psw_repeat_change" required></br></br>' .
+
+                '<div class="clearfix">' .
+                '<button name="updatepassword" id="updatepassword" type="submit" class="btn btn-primary">Update</button></br></br>' .
+                '</div>' .
+                '</div>' .
+                '</form>';
+                
+                if(isset($_POST['updatepassword'])){
+                    //$userName = trim($_POST["username"]);
+                    //if(!preg_match('/^[a-zA-Z0-9_]+$/', $userName)){
+                    //$userName_err = 1;
+                    //echo '<p style="color:#fff;">Username can only contain letters, numbers, and underscores.</p>';
+                    //}
+                    
+                    $psw_change = trim($_POST["psw_change"]);
+                    if(strlen($psw_change) < 6){
+                            $password_err = 1;
+                            echo '<p style="color:#fff;">Password must have atleast 6 characters.</p>';
+                        }
+                    
+                    $pswrepeatchange = trim($_POST["psw_repeat_change"]);
+                    if($psw_change != $pswrepeatchange){
+                        $password_err = 1;
+                        echo '<p style="color:#fff;">Passwords do not match.</p>';
+                    }
+                    
+                    if($password_err == 1){
+                        echo '<script>' .
+                             'location.replace("/auth.php?type=changepassword&job=Failed");' .
+                             '</script>';
+                    }else{
+                        require("config.php");
+                        $hashed_password_change = password_hash($psw_change, PASSWORD_DEFAULT);
+                        
+                        $conn = new mysqli($servername, $username, $password, $dbname, $port);
+                        //Check Connection
+                        if (!$conn) {
+                        die("Connection failed: " . mysqli_connect_error());
+                        }else{
+                            $sql = " UPDATE Users SET PASSWORD = '$hashed_password_change' WHERE ID = '$uidc'; ";
+                            $result = $conn->query($sql);
+                            $conn->close();
+                        
+                        echo '<script>' .
+                             'location.replace("/auth.php?type=changepassword&job=Success");' .
+                             '</script>';
+                        }
+                    }
+                }
+                
+            }
+    $urlparsepswc = $_GET["job"];
+    echo '<p style="color:#fff;">'.$urlparsepswc.'</p>';
+    echo '</div>';
+}else{
+    session_destroy();
+    echo '<script>' .
+         'location.replace("/");' .
+         '</script>';
+}
+}
+
 function deviceinfo() {
     require("config.php");
     $conn = new mysqli($servername, $username, $password, $dbname, $port);

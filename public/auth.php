@@ -1,13 +1,10 @@
 <?php
+
 require('header.php');
-    if(!isset($_SESSION['UserID']))
-    {
-    header("Location: /auth.php?type=login");
-        exit;
-    }
+
 Menu();
 
-devicelogViewer();
+auth();
 
 Footer();
 
@@ -23,4 +20,3 @@ function menu() {
 	}
 	}
 </script>
-
