@@ -12,6 +12,7 @@ Local use only.
 (On page shell. Unsanitized mysql inputs, This will change over time).   
 
 ## TESTED SETUP.  
+
 Rasp pi - Ubuntu   
 Rasp pi - Raspbian
   
@@ -84,8 +85,8 @@ Edit the DB info to connect
 
 Enable or Disable wth true=off/false=off  
 ```
-$noScreenshot = true;
-$noProxy = false;
+$devicecount = true;
+$noRegister = false;
 ```
 
 You shouldn't need to edit the ADB port  
@@ -176,21 +177,28 @@ Load the page. (http://localhost:port)
 
 ## HOW TO USE  
 
-### THESE COMMANDS ONCE HIT CAN TAKE A MINUTE OR MORE TO RUN DEPENDING ON DEVICE COUNT!.  
-When you hit a button below. It is safe to hit the "HOME" button in the menu to trigger a refresh.  
-These scripts will continue to run in the background until there done, you may refresh the page after to see the updates.  
-
 Load the page. (http://localhost:3000) (Change port in ATVController.js). 
 
-On first page load it will create the table in the DB you selected.  
+On the first page load it will create the tables in the DB you selected.  
 
-If no account it made yet, it will force you to create one.
+If no account is made yet, it will force you to create one.
 
 Login to the controller.
 
-On first sign in it will start to build the db with the info from devices based on your IP file
+On first sign in it will start to build the db with the info from devices based on your IPS file
 
 You can refresh the page after its loaded to the empty table. You can view the build logs via the menu Log viewer.
+
+Once the first account is made you may edit the config option to disable register.
+
+
+-------------------------------------------------------------------
+
+## BULK CONTROLS
+### THESE COMMANDS ONCE HIT CAN TAKE A MINUTE OR MORE TO RUN DEPENDING ON DEVICE COUNT!.  
+When you hit a button below. It is safe to hit the "HOME" button in the menu to trigger a refresh.  
+These scripts will continue to run in the background until there done, you may refresh the page after to see the updates. 
+You may view the logs of these buttons in the Log Viewer via the menu.
 
 "Get all temps".  
 Gets all temps from ALL devices and will build this info to display in the table.  
@@ -255,26 +263,26 @@ This section only builds on press of the button atm.
 
 -------------------------------------------------------------------
 
-## Config Creator 
+## CONFIG CREATOR 
 
 Found in the menu
 
 "Atlas creator".
 ```
-You can creatr an atlsa config or generator a config for all your devices. 
+You can create an atlas config or generator a config for all your devices. 
 ```
 
 
 "eMagisk creator".
 ```
-You can creatr an eMagisk config. 
+You can create an eMagisk config. 
 ```
 
 These must be done for the buttons Update atlas or emagisk config to work in single device controls. 
 
 -------------------------------------------------------------------
 
-## Server Controls 
+## SERVER CONTROLS 
 
 Found in the menu
 
@@ -307,7 +315,7 @@ These must be done for the buttons Update atlas or emagisk config to work in sin
 
 -------------------------------------------------------------------
 
-## Log Viewer
+## LOG VIEWER
 
 Found in the menu
 
