@@ -51,7 +51,7 @@ function auth() {
         if($userName_err == 1 || $password_err == 1){
             session_destroy();
             echo '<script>' .
-                 'window.location.reload();' .
+                 'location.replace("/auth.php?type=register");' .
                  '</script>';
         }else{
             require("config.php");
@@ -117,7 +117,7 @@ function auth() {
         if($userName_err == 1){
         session_destroy();
         echo '<script>' .
-             'window.location.reload();' .
+             'location.replace("/auth.php?type=login");' .
              '</script>';
         }else{
             require("config.php");
@@ -138,7 +138,7 @@ function auth() {
                     session_destroy();
                     echo '<p style="color:#fff;">User Not Found.</p>' .
                          '<script>' .
-                         'window.location.reload();' .
+                         'location.replace("/auth.php?type=login");' .
                          '</script>';
                 }
                 if($loginUser == $userName){
@@ -200,6 +200,11 @@ echo '</div>';
          '</script>';
 }elseif($urlparse == "changepassword"){
     require("config.php");
+    if(!isset($_SESSION['UserID']))
+    {
+    header("Location: /auth.php?type=login");
+        exit;
+    }
     $uid = $_SESSION['UserID'];
     $uname = $_SESSION['LoggedinUser'];
     echo '<div class="cssContainer text-center">';
@@ -703,6 +708,18 @@ function serverControls() {
              '</form>';
             if(isset($_POST['killADB'])){
                 echo $res=shell_exec('scripts/killadb.sh > /dev/null 2>&1 &');
+            }
+    }
+    
+    elseif($urlparse == "updateapps"){
+        $controlname = "Update Apps";
+        require("updatelinks.php");
+        echo '<h4 style="color:#fff;">' . $controlname . '</h4></br>' .
+             '<form id="UpdatePokemonGo" method ="post">' .
+               '<button name="UpdatePokemonGo" type="submit" class="btn btn-primary menuButton">Download Pogo APK</button>' .
+             '</form>';
+            if(isset($_POST['UpdatePokemonGo'])){
+                echo shell_exec('wget -b -O apps/pokemongo.apk '.$pokemongoURL.'#'.$pokemongoURLauth.' ');
             }
     }
     
