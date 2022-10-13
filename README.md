@@ -215,5 +215,9 @@ This section only builds on press of the button atm.
 Built by @zero-day-#0001  
 
 Scripts provided by @Xerock  
+Dockerfile provided by @ReuschelCologne  
+
+Join the discord!
+tps://discord.gg/XRTxWzYXtb
 
  
