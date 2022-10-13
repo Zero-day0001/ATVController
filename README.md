@@ -57,6 +57,16 @@ sudo apt-get install mysql-client
 
 ## FILES AND THINGS TO EDIT.  
 
+#### Edit the updater script sleep timer  
+#### "ATVController.js"
+Set this the time based on your number of devices. 
+
+20 seconds per devices
+6 devices = 2
+```
+var minute = 3
+```
+
 #### Copy the config.   
 #### "public/config.php"  
 ```
@@ -105,7 +115,7 @@ Place your ip ends like this
 chmod +x *.sh
 ```
 
-## Start ATVController.  
+## Start ATVController with PM2 / DOCKER BELOW
 
 BEFORE YOU START THIS WITH PM2.  
 
@@ -133,6 +143,35 @@ Start the service with PM2.
 ```
 pm2 start ATVController.js
 ```
+
+## DOCKER INSTALLATION
+```
+1. Clone repository with git clone https://github.com/Zero-day0001/ATVController.git
+```
+```
+2. Copy content of docker-compose.yml.example into your running docker-compose.yml
+  - Adjust ports if necessary "3000:3000" to e.g. "3010:3000" (leave right one as it is!!!)
+  - Adjust in depends_on "dbcontainer" to name of your dbcontainer service, if you use a db in docker container, else if you use a normal DB, uncomment Rows "depends_on" and "- dbcontainer" with #.
+  ```
+  ```
+3. Copy+Rename and fill out the config files:
+cd ATVController/public
+cp config.php.example config.php
+edit -> fill in your data
+cd ATVController/public/scripts
+cp example.ips ips
+edit -> fill in your data
+```
+```
+4. Build your container with:
+docker-compose build atvc
+docker-compose up -d atvc
+```
+get logs: docker-compose logs -f atvc
+
+Load the page. (http://localhost:port)
+
+
 -------------------------------------------------------------------
 
 ## HOW TO USE  
@@ -142,14 +181,16 @@ When you hit a button below. It is safe to hit the "HOME" button in the menu to 
 These scripts will continue to run in the background until there done, you may refresh the page after to see the updates.  
 
 Load the page. (http://localhost:3000) (Change port in ATVController.js). 
+
 On first page load it will create the table in the DB you selected.  
 
-The db table and on page device table will be blank.  
-The first option to the run and build the database with your device info is "Build Info".  
+If no account it made yet, it will force you to create one.
 
-"Build Info"  
-This will take your 'ips' list and do the following.  
-Get the Name, Proxy (if any) and store this infomation the the db along with the local ip from the 'config and ip files set'.  
+Login to the controller.
+
+On first sign in it will start to build the db with the info from devices based on your IP file
+
+You can refresh the page after its loaded to the empty table. You can view the build logs via the menu Log viewer.
 
 "Get all temps".  
 Gets all temps from ALL devices and will build this info to display in the table.  
@@ -171,6 +212,8 @@ Will Stop Atlas Mapping Mervice And Pokemon on all devices defined in 'ips'.
 -------------------------------------------------------------------
 
 ## PER DEVICE CONTROLS
+
+Click a device to find these controls. 
 
 "Reboot".  
 Reboots device.
@@ -212,12 +255,75 @@ This section only builds on press of the button atm.
 
 -------------------------------------------------------------------
 
+## Config Creator 
+
+Found in the menu
+
+"Atlas creator".
+```
+You can creatr an atlsa config or generator a config for all your devices. 
+```
+
+
+"eMagisk creator".
+```
+You can creatr an eMagisk config. 
+```
+
+These must be done for the buttons Update atlas or emagisk config to work in single device controls. 
+
+-------------------------------------------------------------------
+
+## Server Controls 
+
+Found in the menu
+
+"Device Scanner (WIP)".
+```
+Scans your network for devices with port 5555 open. 
+```
+
+"Reset DB".
+```
+Will rebuild the DB device table.  
+```
+
+"Reboot Server".
+```
+Will reboot the host machine
+```
+
+"Kill ADB".
+```
+Will adb the ADB service if it got stuck
+```
+
+"Update Apps(WIP)".
+```
+Will doenload the supported version of either pogo and atlas apks.
+```
+
+These must be done for the buttons Update atlas or emagisk config to work in single device controls. 
+
+-------------------------------------------------------------------
+
+## Log Viewer
+
+Found in the menu
+
+"Shows logs for the select the script ".
+```
+Will load and view the currect logs for bulk jobs in the browser
+```
+
+-------------------------------------------------------------------
+
 Built by @zero-day-#0001  
 
-Scripts provided by @Xerock  
-Dockerfile provided by @ReuschelCologne  
+Scripts provided by @Xerock 
+Dockerfiles provided by  @ReuschelCologne
 
-Join the discord!
-tps://discord.gg/XRTxWzYXtb
+Join the Discord!  
+https://discord.gg/XRTxWzYXtb
 
  
