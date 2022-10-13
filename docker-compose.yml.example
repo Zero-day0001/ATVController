@@ -1,0 +1,16 @@
+version: "3.5"
+services:
+
+  atvc:
+    container_name: atvc
+    build: ./ATVController
+    restart: always
+    volumes:
+      - ./ATVController/public/config.php:/usr/src/app/public/config.php
+      - ./ATVController/public/scripts/ips:/usr/src/app/public/scripts/ips
+    depends_on: 
+      - dbcontainer
+    networks:
+      - default
+    ports:
+      - "3002:3000"
