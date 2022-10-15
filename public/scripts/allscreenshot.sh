@@ -32,7 +32,7 @@ for i in `cat scripts/ips` ; do
       echo Name Location - $dnl
       echo Taking screenshot of device - $ip - $name
       adb shell screencap -p /sdcard/screen.png
-      adb pull /sdcard/screen.png screenshot/$name.png 
+      adb pull /sdcard/screen.png screenshot/$ip.png
       adb shell rm /sdcard/screen.png
       adb kill-server
     done
@@ -49,7 +49,7 @@ for i in `cat scripts/ips` ; do
       echo Name Location - $dnl
       echo Taking screenshot of device - $ip - $name
       adb shell screencap -p /sdcard/screen.png
-      adb pull /sdcard/screen.png screenshot/$name.png                          
+      adb pull /sdcard/screen.png screenshot/$ip.png
       adb shell rm /sdcard/screen.png
       adb kill-server
   fi

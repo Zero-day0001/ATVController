@@ -69,7 +69,7 @@ for i in `cat public/scripts/ips` ; do
       echo Account - $deviceaccount
       echo Taking screenshot of device - $ip - $name
       adb shell screencap -p /sdcard/screen.png
-      adb pull /sdcard/screen.png public/screenshot/$name.png
+      adb pull /sdcard/screen.png public/screenshot/$ip.png
       adb shell rm /sdcard/screen.png
       adb kill-server
       sleep 1
@@ -107,7 +107,7 @@ for i in `cat public/scripts/ips` ; do
       echo Account - $deviceaccount
       echo Taking screenshot of device - $ip - $name
       adb shell screencap -p /sdcard/screen.png
-      adb pull /sdcard/screen.png public/screenshot/$name.png
+      adb pull /sdcard/screen.png public/screenshot/$ip.png
       adb shell rm /sdcard/screen.png
       adb kill-server
       sleep 1

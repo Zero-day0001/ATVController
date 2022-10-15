@@ -919,15 +919,16 @@ echo '<div class="cssContainer">' .
                 while($rows=$result->fetch_assoc()){
                     $id = $rows['ID'];
                     $name = $rows['ATVNAME'];
+                    $ipss = $rows['ATVLOCALIP'];
                     if(empty($name)){
                         $name = "N/A";
                     }
                     echo '<div class="column" id ="'.$name.'" style="text-align:center;">' .
                          '<a href="singledevice.php?devicename=' . $name . '" style="color:#fff;text-decoration:none;">' ;
-                    $filename = __DIR__ .'/screenshot/' . $name . '.png';
+                    $filename = __DIR__ .'/screenshot/' . $ipss . '.png';
                     if(file_exists($filename)){
                         echo '<div class="imageContainer">' .
-                             '<img src="screenshot/' . $name . '.png" width="100px" height="auto" />' .
+                             '<img src="screenshot/' . $ipss . '.png" width="100px" height="auto" />' .
                              '</a>' .
                              '</div>';
                              }else{
@@ -1019,7 +1020,7 @@ echo '<div class="cssContainer">' .
             
             echo '<div class="row">' .
                  '<div class="col-md-3 text-center buttonColumn" style="padding: 25px 0;margin: 0px 0px 0px 5%">' .
-                        '<img src="screenshot/'.$name.'.png" class="singlesviewss" style="height:500px;width:auto;border: 1px solid #aaa"></br></br>';
+                        '<img src="screenshot/'.$localip.'.png" class="singlesviewss" style="height:500px;width:auto;border: 1px solid #aaa"></br></br>';
             $conn = new mysqli($servername, $username, $password, $dbname, $port);
 
             //Check Connection
