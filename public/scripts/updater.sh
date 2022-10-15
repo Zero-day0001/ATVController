@@ -51,6 +51,8 @@ for i in `cat public/scripts/ips` ; do
       fi
       atver=$(adb shell dumpsys package com.pokemod.atlas | grep -E versionName | sed -e "s@    versionName=@@g")
       pokever=$(adb shell dumpsys package com.nianticlabs.pokemongo | grep -E versionName | sed -e "s@    versionName=@@g")
+      magver=$(adb shell magisk -c | sed 's/:.*//')
+      atvhostname=$(adb shell getprop net.hostname)
       temp=$(adb shell cat /sys/class/thermal/thermal_zone0/temp | awk '{print substr($0, 1, length($0)-3)}')
       pip=$(adb shell settings list global | grep "global_http_proxy_host" | cut -d '=' -f2)
       pipp=$(adb shell settings list global | grep "global_http_proxy_port" | cut -d '=' -f2)
@@ -59,9 +61,11 @@ for i in `cat public/scripts/ips` ; do
       echo Name Location - $dnl
       echo Name - $name
       echo Proxy - $fpip
+      echo Hostname - $atvhostname
       echo Temp - $temp
       echo Atlas - $atver
       echo Pogo - $pokever
+      echo Magisk - $magver
       echo Account - $deviceaccount
       echo Taking screenshot of device - $ip - $name
       adb shell screencap -p /sdcard/screen.png
@@ -69,7 +73,7 @@ for i in `cat public/scripts/ips` ; do
       adb shell rm /sdcard/screen.png
       adb kill-server
       sleep 1
-      mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "UPDATE Devices SET ATVNAME = '$name', ATVTEMP = '$temp', ATVPROXYIP = '$fpip', ATVACCOUNT = '$deviceaccount', ATVATVER = '$atver', ATVPOGOVER = '$pokever' WHERE ATVNAME = '$name';"
+      mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "UPDATE Devices SET ATVNAME = '$name', ATVTEMP = '$temp', ATVPROXYIP = '$fpip', ATVHOSTNAME = '$atvhostname', ATVACCOUNT = '$deviceaccount', ATVATVER = '$atver', ATVPOGOVER = '$pokever', ATVMAGVER = '$magver' WHERE ATVNAME = '$name';"
       adb kill-server
     done
   else
@@ -85,6 +89,8 @@ for i in `cat public/scripts/ips` ; do
       fi
       atver=$(adb shell dumpsys package com.pokemod.atlas | grep -E versionName | sed -e "s@    versionName=@@g")
       pokever=$(adb shell dumpsys package com.nianticlabs.pokemongo | grep -E versionName | sed -e "s@    versionName=@@g")
+      magver=$(adb shell magisk -c | sed 's/:.*//')
+      atvhostname=$(adb shell getprop net.hostname)
       temp=$(adb shell cat /sys/class/thermal/thermal_zone0/temp | awk '{print substr($0, 1, length($0)-3)}')
       pip=$(adb shell settings list global | grep "global_http_proxy_host" | cut -d '=' -f2)
       pipp=$(adb shell settings list global | grep "global_http_proxy_port" | cut -d '=' -f2)
@@ -93,9 +99,11 @@ for i in `cat public/scripts/ips` ; do
       echo Name Location - $dnl
       echo Name - $name
       echo Proxy - $fpip
+      echo Hostname - $atvhostname
       echo Temp - $temp
       echo Atlas - $atver
       echo Pogo - $pokever
+      echo Magisk - $magver
       echo Account - $deviceaccount
       echo Taking screenshot of device - $ip - $name
       adb shell screencap -p /sdcard/screen.png
@@ -103,7 +111,7 @@ for i in `cat public/scripts/ips` ; do
       adb shell rm /sdcard/screen.png
       adb kill-server
       sleep 1
-      mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "UPDATE Devices SET ATVNAME = '$name', ATVTEMP = '$temp', ATVPROXYIP = '$fpip', ATVACCOUNT = '$deviceaccount', ATVATVER = '$atver', ATVPOGOVER = '$pokever' WHERE ATVNAME = '$name';"
+      mysql -u $dbuser -p$dbpass -h $dbhost -P $port -D $db -e "UPDATE Devices SET ATVNAME = '$name', ATVTEMP = '$temp', ATVPROXYIP = '$fpip', ATVHOSTNAME = '$atvhostname', ATVACCOUNT = '$deviceaccount', ATVATVER = '$atver', ATVPOGOVER = '$pokever', ATVMAGVER = '$magver' WHERE ATVNAME = '$name';"
     adb kill-server
   fi
 done

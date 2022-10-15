@@ -6,42 +6,40 @@ echo
 	<div class="row">
 		<div class="col-md-6 text-center buttonColumn">
 			<div class="buttonHeaderText lead">Controller Utilities:</div>
-			<div class="row">
-				<div class="col-md-4 text-center">';
+			<div class="rowmenu">
+                <div class="columnmenu">';
                     tempbutton();
+                    moreToCome();
+                echo '</div>
+                <div class="columnmenu">';
                     vercheck();
-				echo '</div>';
-				echo '<div class="col-md-4 text-center">';
+                    moreToCome();
+               echo '</div>
+                <div class="columnmenu">';
                     allscreenshot();
                     moreToCome();
-				echo 
-				'</div>';
-				echo '<div class="col-md-4 text-center">';
-					moreToCome();
-					moreToCome();
-				echo 
-				'</div>
+               echo '</div>
 			</div>
 		</div>';
 
 		echo
 		'<div class="col-md-6 text-center buttonColumn">
 			<div class="buttonHeaderText lead">Device Utilities:</div>
-			<div class="row">
-				<div class="col-md-4 text-center">';
-					upatlas();
-					uppogo();
-				echo '</div>';
-				echo '<div class="col-md-4 text-center">';
-					startbutton();
-					stopbutton();
-				echo '</div>';
-				echo '<div class="col-md-4 text-center">';
-                    restartbutton();
-                    rebootbutton();
-				echo 
-				'</div>
-			</div>
+    
+                <div class="rowmenu">
+                    <div class="columnmenu">';
+                        upatlas();
+                        uppogo();
+                    echo '</div>
+                    <div class="columnmenu">';
+                        startbutton();
+                        stopbutton();
+                echo '</div>
+                    <div class="columnmenu">';
+                        restartbutton();
+                        rebootbutton();
+                echo '</div>
+            </div>
 		</div>
 	</div>
 </div>';

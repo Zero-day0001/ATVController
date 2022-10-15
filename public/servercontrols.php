@@ -24,7 +24,7 @@ function menu() {
 	}
 
 function confirmscreen(){
-        if (confirm("Are you sure you want to reset and rebuild the database?.") == true) {
+        if (confirm("Are you sure?.") == true) {
         return true;
         } else {
         return false;

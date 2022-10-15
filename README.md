@@ -83,6 +83,13 @@ $lanip=0.0.0
 
 Edit the DB info to connect  
 
+### important option
+Only use "globset" if you set the device name in the device settings.
+Otherwise use "atconf" to get the device name from your atlas conf. 
+```
+$namelocation = "globset" or "atconf"
+```
+
 Enable or Disable wth true=off/false=off  
 ```
 $devicecount = true;

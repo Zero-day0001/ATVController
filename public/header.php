@@ -49,6 +49,7 @@ echo '<head>' .
         '<a href="servercontrols.php?control=resetdb">Reset DB</a>' .
         '<a href="servercontrols.php?control=reboot">Reboot Server</a>' .
         '<a href="servercontrols.php?control=killadb">Kill ADB</a>' .
+        '<a href="servercontrols.php?control=updateapps">Update Apps</a>' .
       '</div>' .
   '</div>' .
   '<div class="dropdown">' .
@@ -64,6 +65,7 @@ echo '<head>' .
     '<a href="logviewer.php?logtoview=start">Start Logs</a>' .
     '<a href="logviewer.php?logtoview=updater">Updater Logs</a>' .
       '</div>' .
+    '</div>' .
     '<div class="dropdown">' .
       '<button onclick="dropbuttonAcc()" class="dropbtn">';
       echo ucfirst("$loggedinUser") .
@@ -73,48 +75,51 @@ echo '<head>' .
         '<a href="/auth.php?type=register">Create Account</a>' .
         '<a href="/auth.php?type=killsession">Logout</a>' .
       '</div>' .
-  '</div>' .
-   '</div>' ;
+  '</div>' ;
+        
+        $conn = new mysqli($servername, $username, $password, $dbname, $port);
+
+        //Check Connection
+        if (!$conn) {
+        die("Connection failed: " . mysqli_connect_error());
+        }else{
+        
+        $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
+        $res = $conn->query($lastseen);
+        $conn->close();
+        while($rows=$res->fetch_assoc()){
+            $gstatus = $rows['STATUS'];
+            $lastcheck = $rows['LASTCHECK'];
+            $lastc = strtotime($lastcheck);
+        }
+        if($gstatus == 1){
+            $stat = "UPDATING";
+            $logurl = "/logviewer.php?logtoview=updater";
+        }elseif($gstatus == 2){
+            $stat = "JOB";
+        }else{
+            $stat = "IDLE";
+            $logurl = "#";
+        }
+        }
+        
+      echo '<a href="'.$logurl.'" class="statusmenu" style="float:right;">STATUS: '.$stat.'(';
+        $timeDiff = (time() - $lastc) +1;
+        //Convert to seconds, minutes, hours
+        $seconds = $timeDiff % 60;
+        $minutes = floor(($timeDiff % 3600) / 60);
+        $hours = floor($timeDiff / 3600);
+        if($hours > 0) echo "$hours" . "h, ";
+        if($minutes > 0) echo "$minutes" . "m, ";
+        echo "$seconds" . "s ago";
+           echo ')</a>' .
+           
     
-  echo '<a href="javascript:void(0);" class="icon" onclick="menu()">' .
+  '<a href="javascript:void(0);" class="icon" onclick="menu()">' .
     '<i class="fa fa-bars"></i>' .
-  '</a>';
+  '</a>' .
+'</div>' ;
 
-    $conn = new mysqli($servername, $username, $password, $dbname, $port);
-
-    //Check Connection
-    if (!$conn) {
-    die("Connection failed: " . mysqli_connect_error());
-    }else{
-    
-    $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
-    $res = $conn->query($lastseen);
-    $conn->close();
-    while($rows=$res->fetch_assoc()){
-        $gstatus = $rows['STATUS'];
-        $lastcheck = $rows['LASTCHECK'];
-        $lastc = strtotime($lastcheck);
-    }
-    if($gstatus == 1){
-        $stat = "UPDATING";
-    }elseif($gstatus == 2){
-        $stat = "JOB";
-    }else{
-        $stat = "IDLE";
-    }
-    }
-    
-  echo '<a href="#" style="float:right;">STATUS: '.$stat.'(';
-    $timeDiff = (time() - $lastc) +1;
-    //Convert to seconds, minutes, hours
-    $seconds = $timeDiff % 60;
-    $minutes = floor(($timeDiff % 3600) / 60);
-    $hours = floor($timeDiff / 3600);
-    if($hours > 0) echo "$hours" . "h, ";
-    if($minutes > 0) echo "$minutes" . "m, ";
-    echo "$seconds" . "s ago";
-       echo ')</a>' .
-       '</div>';
 }
     ?>
     <script>

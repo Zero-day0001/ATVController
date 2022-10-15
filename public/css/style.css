@@ -9,6 +9,11 @@ h1 {
   color: #000;
 }
 
+.wrapper {
+  width: 360px;
+  padding: 20px;
+}
+
 /* Add a black background color to the top navigation */
 .topnav {
   background-color: #333;
@@ -17,6 +22,16 @@ h1 {
 
 /* Style the links inside the navigation bar */
 .topnav a {
+  float: left;
+  display: block;
+  color: #f2f2f2;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+  font-size: 17px;
+}
+
+.topnav button {
   float: left;
   display: block;
   color: #f2f2f2;
@@ -60,7 +75,7 @@ text-transform: uppercase;
 
 .dropdown {
   position: relative;
-  display: inline-block;
+  /*display: inline-block;*/
 }
 
 .dropdown-content {
@@ -82,7 +97,14 @@ text-transform: uppercase;
 
 .dropdown a:hover {background-color: #ddd;}
 
-.show {display: grid;}
+.show {
+    float: none !important;
+    display: grid;
+    margin-top: 4%;
+}
+.show > a{
+    float: none !important;
+}
 
 .SectionThree {
   background-color: #f7f7f7;
@@ -278,8 +300,6 @@ div.cssContainer{
     background: darkgray;
 }
 
-
-
 .modal-body, .modal-header, .modal-footer, .leaflet-popup-content-wrapper{
 	background-color:#282828;
 	color:white;
@@ -305,6 +325,30 @@ label{
 .close:focus, .close:hover{
 	color:white;
 	opacity:0.9;
+}
+
+.rowmenu {
+    width: 99%;
+    margin: 0px 0px 0px 0px;
+}
+.rowmenu:after {
+  content: "";
+  display: table;
+  clear: both;
+}
+.columnmenu {
+  float: left;
+  width: 32%;
+  padding: 1%;
+  margin: 1px;
+  height: auto; /* Should be removed. Only for demonstration */
+  border: 1px solid;
+  border-color: rgba(93,93,93,0.1);
+  padding-bottom:10px;
+}
+.menuButtonbulk {
+    margin:5px;
+    width: 95%;
 }
 
 .row {
@@ -337,7 +381,19 @@ label{
   .topnav.responsive a {
     float: none;
     display: block;
-    text-align: left;
+    text-align: center;
+  }
+  .topnav button {
+    display: none;
+  }
+  .topnav .statusmenu {
+    float: none !important;
+  }
+  .topnav.responsive button {
+      float: left;
+      display: block;
+      width: 100%;
+      text-align: center;
   }
   .column {
     width: 100%;
