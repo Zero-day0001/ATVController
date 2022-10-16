@@ -1348,7 +1348,7 @@ echo '<div class="cssContainer">' .
                             if(isset($_POST["config-emagisk-$id"])){
                             echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                             echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-                            echo $res=shell_exec('adb push apps/emagisk.congig /data/local/tmp > /dev/null 2>&1');
+                            echo $res=shell_exec('adb push apps/emagisk.config /data/local/tmp > /dev/null 2>&1');
                             echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                             }
                             
