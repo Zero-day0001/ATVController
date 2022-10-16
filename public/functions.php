@@ -318,10 +318,10 @@ function deviceinfo() {
         '<button name="deviceinfo" type="submit" class="btn btn-primary menuButtonbulk">Build Info</button>' .
         '</form>';
         if(isset($_POST['deviceinfo'])){
-            echo $res=shell_exec('scripts/deviceinfo.sh > /dev/null 2>&1 &') .
-            '<script>' .
-            'window.location.reload();' .
-            '</script>';
+            echo $res=shell_exec('scripts/deviceinfo.sh > /dev/null 2>&1 &');
+            echo '<script>' .
+                 'location.replace("/");' .
+                 '</script>';
             
         }
     }
@@ -352,10 +352,10 @@ function tempbutton() {
             '<button name="temp" type="submit" class="btn btn-primary menuButtonbulk">Recollect Temps</button>' .
             '</form>';
         if(isset($_POST['temp'])){
-            echo $res=shell_exec('scripts/tempcheck.sh > /dev/null 2>&1 &') .
-            '<script>' .
-            'window.location.reload();' .
-            '</script>';
+            echo $res=shell_exec('scripts/tempcheck.sh > /dev/null 2>&1 &');
+            echo '<script>' .
+                 'location.replace("/");' .
+                 '</script>';
             
         }
     }
@@ -386,10 +386,10 @@ function rebootbutton() {
 		'<button name="reboot" type="submit" class="btn btn-primary menuButtonbulk">Reboot ALL</button>' .
 	'</form>';
 	if(isset($_POST['reboot'])){
-		echo $res=shell_exec('scripts/reboot.sh > /dev/null 2>&1 &').
-        '<script>' .
-        'window.location.reload();' .
-        '</script>';
+		echo $res=shell_exec('scripts/reboot.sh > /dev/null 2>&1 &');
+        echo '<script>' .
+             'location.replace("/");' .
+             '</script>';
 	}
    }
   }
@@ -420,10 +420,10 @@ function vercheck() {
                 '<button name="vercheck" type="submit" class="btn btn-primary menuButtonbulk">Recollect Versions</button>' .
         '</form>';
         if(isset($_POST['vercheck'])){
-                echo $res=shell_exec('scripts/vercheck.sh > /dev/null 2>&1 &').
-            '<script>' .
-            'window.location.reload();' .
-            '</script>';
+                echo $res=shell_exec('scripts/vercheck.sh > /dev/null 2>&1 &');
+            echo '<script>' .
+                 'location.replace("/");' .
+                 '</script>';
     }
    }
   }
@@ -454,10 +454,10 @@ function allscreenshot() {
                 '<button name="allscreenshot" type="submit" class="btn btn-primary menuButtonbulk">Recollect Screenshots</button>' .
         '</form>';
         if(isset($_POST['allscreenshot'])){
-                echo $res=shell_exec('scripts/allscreenshot.sh > /dev/null 2>&1 &').
-            '<script>' .
-            'window.location.reload();' .
-            '</script>';
+                echo $res=shell_exec('scripts/allscreenshot.sh > /dev/null 2>&1 &');
+            echo '<script>' .
+                 'location.replace("/");' .
+                 '</script>';
     }
    }
   }
@@ -488,10 +488,10 @@ function anvercheck() {
                 '<button name="anvercheck" type="submit" class="btn btn-primary menuButtonbulk">Recollect Android Version</button>' .
         '</form>';
         if(isset($_POST['anvercheck'])){
-                echo $res=shell_exec('scripts/anvercheck.sh > /dev/null 2>&1 &').
-            '<script>' .
-            'window.location.reload();' .
-            '</script>';
+                echo $res=shell_exec('scripts/anvercheck.sh > /dev/null 2>&1 &');
+            echo '<script>' .
+                 'location.replace("/");' .
+                 '</script>';
     }
    }
   }
@@ -522,11 +522,47 @@ function upatlas() {
 		'<button name="upatlas" type="submit" class="btn btn-primary menuButtonbulk">Update Atlas ALL</button>' .
 	'</form>';
 	if(isset($_POST['upatlas'])){
-		echo $res=shell_exec('scripts/upat.sh > /dev/null 2>&1 &').
-        '<script>' .
-        'window.location.reload();' .
-        '</script>';
+		echo $res=shell_exec('scripts/upat.sh > /dev/null 2>&1 &');
+        echo '<script>' .
+             'location.replace("/");' .
+             '</script>';
+
 	}
+   }
+  }
+}
+    
+function pushemag() {
+    require("config.php");
+    $conn = new mysqli($servername, $username, $password, $dbname, $port);
+
+    //Check Connection
+    if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+    }else{
+    
+    $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
+    $res = $conn->query($lastseen);
+    $conn->close();
+    while($rows=$res->fetch_assoc()){
+        $status = $rows['STATUS'];
+    }
+        if($status == 1){
+            echo '<button class="btn btn-primary menuButtonbulk">Waiting for Updater</button>';
+        }elseif($status == 2){
+            echo '<button class="btn btn-primary menuButtonbulk">Waiting for Job</button>';
+        }else{
+    echo
+    '<form id="upatlas" method ="post" onsubmit="return confirmscreen()">' .
+        '<button name="upatlas" type="submit" class="btn btn-primary menuButtonbulk">Push Emagisk ALL</button>' .
+    '</form>';
+    if(isset($_POST['upatlas'])){
+        echo $res=shell_exec('scripts/pushemag.sh > /dev/null 2>&1 &');
+        echo '<script>' .
+             'location.replace("/");' .
+             '</script>';
+
+    }
    }
   }
 }
@@ -556,10 +592,10 @@ function startbutton() {
 		'<button name="start" type="submit" class="btn btn-primary menuButtonbulk">Start Scanning ALL</button>' .
 	'</form>';
 	if(isset($_POST['start'])){
-		echo $res=shell_exec('scripts/start.sh > /dev/null 2>&1 &').
-        '<script>' .
-        'window.location.reload();' .
-        '</script>';
+		echo $res=shell_exec('scripts/start.sh > /dev/null 2>&1 &');
+        echo '<script>' .
+             'location.replace("/");' .
+             '</script>';
 	}
    }
   }
@@ -590,10 +626,10 @@ function stopbutton() {
 		'<button name="stop" type="submit" class="btn btn-primary menuButtonbulk">Stop Scanning ALL</button>' .
 	'</form>';
 	if(isset($_POST['stop'])){
-		echo $res=shell_exec('scripts/stop.sh > /dev/null 2>&1 &').
-        '<script>' .
-        'window.location.reload();' .
-        '</script>';
+		echo $res=shell_exec('scripts/stop.sh > /dev/null 2>&1 &');
+        echo '<script>' .
+             'location.replace("/");' .
+             '</script>';
 	}
    }
   }
@@ -625,10 +661,10 @@ function restartbutton() {
     '</form>';
     if(isset($_POST['stop'])){
         echo $res=shell_exec('scripts/stop.sh > /dev/null 2>&1 &');
-        echo $res=shell_exec('scripts/start.sh > /dev/null 2>&1 &') .
-        '<script>' .
-        'window.location.reload();' .
-        '</script>';
+        echo $res=shell_exec('scripts/start.sh > /dev/null 2>&1 &');
+        echo '<script>' .
+             'location.replace("/");' .
+             '</script>';
     }
    }
   }
@@ -659,10 +695,10 @@ function uppogo() {
                 '<button name="uppogo" type="submit" class="btn btn-primary menuButtonbulk">Update Pokemon ALL</button>' .
         '</form>';	
 	if(isset($_POST['uppogo'])){
-		echo $res=shell_exec('scripts/uppogo.sh > /dev/null 2>&1 &').
-        '<script>' .
-        'window.location.reload();' .
-        '</script>';
+		echo $res=shell_exec('scripts/uppogo.sh > /dev/null 2>&1 &');
+        echo '<script>' .
+             'location.replace("/");' .
+             '</script>';
 	}
    }
   }
@@ -683,9 +719,9 @@ function serverControls() {
         if(isset($_POST['resetDB'])){
             echo $res=shell_exec('scripts/resetdb.sh > /dev/null 2>&1 &');
             sleep(5);
-            echo  '<script>' .
-            'window.location.reload();' .
-            '</script>';
+            echo '<script>' .
+                 'location.replace("/");' .
+                 '</script>';
         }
     }
     

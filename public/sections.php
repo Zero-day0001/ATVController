@@ -9,7 +9,7 @@ echo
 			<div class="rowmenu">
                 <div class="columnmenu">';
                     tempbutton();
-                    moreToCome();
+                    pushemag();
                 echo '</div>
                 <div class="columnmenu">';
                     vercheck();
