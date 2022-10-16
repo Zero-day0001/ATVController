@@ -136,7 +136,7 @@ function auth() {
                 }
                 if(empty($loginUser)){
                     session_destroy();
-                    echo '<p style="color:#fff;">User Not Found.</p>' .
+                    echo '<p style="color:#fff;">Incorrect Username or Password</p>' .
                          '<script>' .
                          'location.replace("/auth.php?type=login");' .
                          '</script>';
@@ -152,7 +152,7 @@ function auth() {
                              '</script>';
                     }else{
                         session_destroy();
-                        echo '<p style="color:#fff;">Password incorrect.</p>' .
+                        echo '<p style="color:#fff;">Incorrect Username or Password</p>' .
                              '<script>' .
                              'location.replace("/auth.php?type=login");' .
                              '</script>';
@@ -1710,7 +1710,9 @@ echo '<div class="cssContainer">' .
     echo '</div></div>';
     }
 
-function editatconf(){
+function editconfigs(){
+$urlparse = $_GET["type"];
+if($urlparse == "atconfig"){
 include("config.php");
 echo '<div class="cssContainer">' .
      '<div style="color:#fff;"><center>';
@@ -1725,7 +1727,7 @@ echo 'No Atlas Config File Found, Would you like to make one?<br>' .
 	if(isset($_POST['atconfcreate'])){
                 echo $res=shell_exec('cp apps/atlas_config.json.example apps/atlas_config.json> /dev/null 2>&1 &');
         echo '<script>' .
-            'location.replace("/editor.php");' .
+            'location.replace("/editor.php?type=atconfig");' .
             '</script>';
 	}	
 }else{
@@ -1821,11 +1823,9 @@ echo '<h3>Current Config</h3>' .
         $file = fopen("apps/atlas_config.json","w");
         fwrite($file,'{"authBearer":"'.$AB.'","deviceAuthToken":"'.$DAT.'","deviceName":"'.$DN.'","email":"'.$EM.'","rdmUrl":"'.$RURL.'","runOnBoot":'.$ROB.'}');
         fclose($file);
-        ?>
-        <script>
-        window.location.reload();
-        </script>
-        <?php
+        echo '<script>' .
+            'location.replace("/editor.php?type=atconfig");' .
+            '</script>';
     }
             
             if(isset($_POST['atconfbulkcreator'])){
@@ -1870,7 +1870,7 @@ echo '<h3>Current Config</h3>' .
                     fclose($file);
                     }
                 echo '<script>' .
-                    'location.replace("/editor.php");' .
+                    'location.replace("/editor.php?type=atconfig");' .
                     '</script>';
             }
             
@@ -1879,10 +1879,8 @@ echo '<h3>Current Config</h3>' .
 echo '</center></div>' .
      '</div>';
 
-}
-                    
 
-                    function editemconf(){
+}elseif($urlparse == "emagconfig"){
                     include("config.php");
                     echo '<div class="cssContainer">' .
                          '<div style="color:#fff;"><center>';
@@ -1896,11 +1894,9 @@ echo '</center></div>' .
                          '</form>';
                         if(isset($_POST['emconfcreate'])){
                                     echo $res=shell_exec('cp apps/emagisk.config.example apps/emagisk.config> /dev/null 2>&1 &');
-                            ?>
-                            <script>
-                            window.location.reload();
-                            </script>
-                            <?php
+                            echo '<script>' .
+                                'location.replace("/editor.php?type=emagconfig");' .
+                                '</script>';
                         }
                     }else{
                     echo '<h3>Current Config</h3>' .
@@ -1973,12 +1969,14 @@ echo '</center></div>' .
                             fclose($file);
                             
                         echo '<script>' .
-                            'location.replace("/emagiskeditor.php");' .
+                            'location.replace("/editor.php?type=emagconfig");' .
                             '</script>';
         
                         }
                     }
                     echo '</center></div>' .
                          '</div>';
-                    }
+                    
+}
+}
 ?>

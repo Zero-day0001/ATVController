@@ -38,18 +38,18 @@ echo '<head>' .
       '<div class="dropdown">' .
       '<button onclick="dropbuttoneditor()" class="dropbtn">Config Creator</button>' .
       '<div id="editor" class="dropdown-content">' .
-      '<a href="editor.php">Atlas Config Creator</a>' .
-      '<a href="emagiskeditor.php">eMagisk Config Creator</a>' .
+      '<a href="editor.php?type=atconfig">Atlas Config Creator</a>' .
+      '<a href="editor.php?type=emagconfig">eMagisk Config Creator</a>' .
       '</div>' .
     '</div>' .
     '<div class="dropdown">' .
       '<button onclick="dropbuttonSC()" class="dropbtn">Server Controls</button>' .
       '<div id="serverControl" class="dropdown-content">' .
-        '<a href="scanner.php">Device Scanner(WIP)</a>' .
         '<a href="servercontrols.php?control=resetdb">Reset DB</a>' .
         '<a href="servercontrols.php?control=reboot">Reboot Server</a>' .
         '<a href="servercontrols.php?control=killadb">Kill ADB</a>' .
-        '<a href="servercontrols.php?control=updateapps">Update Apps</a>' .
+        '<a href="scanner.php">Device Scanner(WIP)</a>' .
+        '<a href="servercontrols.php?control=updateapps">Update Apps(WIP)</a>' .
       '</div>' .
   '</div>' .
   '<div class="dropdown">' .
