@@ -890,11 +890,10 @@ function onlinecount() {
                             $count++;
                         }
                     }
-            }
+                }
             }
     echo '<h1 style="color:#fff !important;">' .$count. '</h1>';
 }
-
 
 // TABLE DATA DISPLAY AND PER DEVICE CONTROLLER
 
@@ -1041,10 +1040,10 @@ echo '<div class="cssContainer">' .
                 }else{
                 echo
                 '<div class="tab">
-                    <button class="tablink tablinks-' . $name . '" onclick="openTab(event, \'tabGeneral-' . $name .'\', \'' . $name . '\')">General</button>
-                    <button class="tablink tablinks-' . $name . '" onclick="openTab(event, \'tabAtlas-' . $name .'\', \'' . $name . '\')">Atlas</button>
-                    <button class="tablink tablinks-' . $name . '" onclick="openTab(event, \'tabAPKs-' . $name .'\', \'' . $name . '\')">APKs</button>
-                    <button class="tablink tablinks-' . $name . '" onclick="openTab(event, \'tabMisc-' . $name .'\', \'' . $name . '\')">Misc</button>
+                    <button class="tablink tablinks-' . $id . '" onclick="openTab(event, \'tabGeneral-' . $id .'\', \'' . $id . '\')">General</button>
+                    <button class="tablink tablinks-' . $id . '" onclick="openTab(event, \'tabAtlas-' . $id .'\', \'' . $id . '\')">Atlas</button>
+                    <button class="tablink tablinks-' . $id . '" onclick="openTab(event, \'tabAPKs-' . $id .'\', \'' . $id . '\')">APKs</button>
+                    <button class="tablink tablinks-' . $id . '" onclick="openTab(event, \'tabMisc-' . $id .'\', \'' . $id . '\')">Misc</button>
                 </div>';
             }
             }
@@ -1053,11 +1052,11 @@ echo '<div class="cssContainer">' .
                     
                     
                     //General TAB
-                       echo '<div id="tabGeneral-' . $name .'" class="tabcontent tabcontent-' . $name .'">' .
-                            '<form class="d-inline" id="reboot-' . $name . '" action="singledevice.php?devicename=' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
-                            '<button name="reboot-' . $name . '" type="submit" class="btn btn-danger controlButton">Reboot</button>' .
+                       echo '<div id="tabGeneral-' . $id .'" class="tabcontent tabcontent-' . $id .'">' .
+                            '<form class="d-inline" id="reboot-' . $id . '" action="singledevice.php?devicename=' . $name . '" method ="post" onsubmit="return confirmsingle()">' .
+                            '<button name="reboot-' . $id . '" type="submit" class="btn btn-danger controlButton">Reboot</button>' .
                             '</form>';
-                            if(isset($_POST["reboot-$name"])){
+                            if(isset($_POST["reboot-$id"])){
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                                 echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
                                 echo $res=shell_exec('adb shell reboot > /dev/null 2>&1');
@@ -1066,32 +1065,32 @@ echo '<div class="cssContainer">' .
                             
                         // Get Logfile
                             echo
-                            '<form class="d-inline" id="logfile-' . $name . '" action="singledevice.php?devicename='.$name.'" method ="post" align="center">' .
-                                '<button name="logfile-' . $name . '" type="submit" class="btn btn-warning controlButton">Pull Logfile</button>' .
+                            '<form class="d-inline" id="logfile-' . $id . '" action="singledevice.php?devicename='.$name.'" method ="post" align="center">' .
+                                '<button name="logfile-' . $id . '" type="submit" class="btn btn-warning controlButton">Pull Logfile</button>' .
                             '</form>';
-                            if(isset($_POST["logfile-$name"])){
+                            if(isset($_POST["logfile-$id"])){
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                                 echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-                                echo $res=shell_exec("adb pull /data/local/tmp/atlas.log deviceLogs/$name.log > /dev/null 2>&1");
+                                echo $res=shell_exec("adb pull /data/local/tmp/atlas.log deviceLogs/$id.log > /dev/null 2>&1");
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                             }
             
                             echo
-                            '<form class="d-inline" id="logfile-' . $name . '" action="/devicelogviewer.php?devicename='.$name.'&localip='.$localip.'" method ="post" align="center">' .
+                            '<form class="d-inline" id="logfile-' . $id . '" action="/devicelogviewer.php?devicename='.$name.'&localip='.$localip.'" method ="post" align="center">' .
                                 '<button name="viewlogs" type="submit" class="btn btn-warning controlButton">Watch Logs</button>' .
                             '</form>';
                             
                         // Open Logfile
-                            $filename = __DIR__ .'/deviceLogs/' . $name . '.log';
+                            $filename = __DIR__ .'/deviceLogs/' . $id . '.log';
                             if(file_exists($filename)){
                                 echo
-                                '<form class="d-inline" id="logfile-' . $name . '" align="center">' .
-                                    '<button onclick="viewLogs(\'' . $name . '\')" type="button" class="btn btn-warning controlButton">View Logfile</button>' .
+                                '<form class="d-inline" id="logfile-' . $id . '" align="center">' .
+                                    '<button onclick="viewLogs(\'' . $id . '\')" type="button" class="btn btn-warning controlButton">View Logfile</button>' .
                                 '</form>';
-                                if(isset($_POST["logfile-$name"])){
+                                if(isset($_POST["logfile-$id"])){
                                     echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                                     echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-                                    echo $res=shell_exec("adb pull /data/local/tmp/atlas.log deviceLogs/$name.log > /dev/null 2>&1");
+                                    echo $res=shell_exec("adb pull /data/local/tmp/atlas.log deviceLogs/$id.log > /dev/null 2>&1");
                                     echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                                 }
                             }
@@ -1099,81 +1098,79 @@ echo '<div class="cssContainer">' .
                             
                             // Get Screenshot
                             echo
-                            '<form class="d-inline" id="scrshot-' . $name . '" action="singledevice.php?devicename='.$name.' method ="post" align="center">' .
-                                '<button name="scrshot-' . $name . '" type="submit" class="btn btn-success controlButton">Pull Screenshot</button>' .
+                            '<form class="d-inline" id="scrshot-' . $id . '" action="singledevice.php?devicename='.$name.'" method="post" align="center">' .
+                                '<button name="scrshot-' . $id . '" type="submit" class="btn btn-success controlButton">Pull Screenshot</button>' .
                             '</form>';
-                            if(isset($_POST["scrshot-$name"])){
+                            if(isset($_POST["scrshot-$id"])){
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                                 echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
                                 echo $res=shell_exec('adb shell screencap -p /sdcard/screen.png > /dev/null 2>&1');
-                                echo $res=shell_exec("adb pull /sdcard/screen.png screenshot/$name.png > /dev/null 2>&1");
+                                echo $res=shell_exec("adb pull /sdcard/screen.png screenshot/$localip.png > /dev/null 2>&1");
                                 echo $res=shell_exec("adb shell rm /sdcard/screen.png > /dev/null 2>&1");
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                 }
                 
                 echo '<br><br>Change Proxy' .
-                    '<form id="proxy" method="post" onsubmit="return confirmsingle()">' .
-                                                                '<textarea name="proxy-' . $name . '" placeholder="IP:PORT" rows="1" style="resize:none"></textarea><br>' .
-                                                                '<input type="submit" value="Change">' .
-                                                                '</form>';
-                                                        if(isset($_POST["proxy-$name"])){
-                                                        $text = $_POST["proxy-$name"];
-                                                        if(empty($text)){
-                                                                echo "No proxy set";
-                                                                }else{
-                                                        echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-                                                        echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
-                                                        echo $res=shell_exec("adb shell settings put global http_proxy $text > /dev/null 2>&1");
-                                                        echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
-                                                        $conn = new mysqli($servername, $username, $password, $dbname, $port);
-                                                        // Checking for connections
-                                                        if ($conn->connect_error) {
-                                                        die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
-                                                        }else{
-                                                        $sql = " UPDATE Devices SET ATVPROXYIP = '$text' WHERE ID = $id; ";
-                                                        $conn->query($sql);
-                                                        $conn->close();
-                                                        ?>
-                                                        <script>
-                                                        window.location.reload();
-                                                        </script>
-                                                        <?php
-                                                        }
-                                                        }
-                                                        }
+                     '<form id="proxy" method="post" onsubmit="return confirmsingle()">' .
+                     '<textarea name="proxy-' . $id . '" placeholder="IP:PORT" rows="1" style="resize:none"></textarea><br>' .
+                     '<input type="submit" value="Change">' .
+                     '</form>';
+                if(isset($_POST["proxy-$id"])){
+                $text = $_POST["proxy-$id"];
+                if(empty($text)){
+                        echo "No proxy set";
+                        }else{
+                echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
+                echo $res=shell_exec("adb shell settings put global http_proxy $text > /dev/null 2>&1");
+                echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                $conn = new mysqli($servername, $username, $password, $dbname, $port);
+                // Checking for connections
+                if ($conn->connect_error) {
+                die('Connect Error (' . $mysqli->connect_errno . ') '. $mysqli->connect_error);
+                }else{
+                $sql = " UPDATE Devices SET ATVPROXYIP = '$text' WHERE ID = $id; ";
+                $conn->query($sql);
+                $conn->close();
+                    echo '<script>' .
+                    'location.replace("/singledevice.php?devicename='.$name.'");' .
+                    '</script>';
+                }
+                }
+                }
                 
 
 
                     echo '</div>' .
                             
                     //Atlas TAB
-                         '<div id="tabAtlas-' . $name .'" class="tabcontent tabcontent-' . $name .'">' .
+                         '<div id="tabAtlas-' . $id .'" class="tabcontent tabcontent-' . $id .'">' .
                         
                         // Start Atlas
-                            '<form class="d-inline" id="start-' . $name . '" action="singledevice.php?devicename='.$name.'" method ="post" onsubmit="return confirmsingle()">' .
-                            '<button name="start-' . $name . '" type="submit" class="btn btn-success controlButton">Start Atlas</button>' .
+                            '<form class="d-inline" id="start-' . $id . '" action="singledevice.php?devicename='.$name.'" method ="post" onsubmit="return confirmsingle()">' .
+                            '<button name="start-' . $id . '" type="submit" class="btn btn-success controlButton">Start Atlas</button>' .
                             '</form>';
-                        if(isset($_POST["start-$name"])){
+                        if(isset($_POST["start-$id"])){
                             echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                             echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
                             echo $res=shell_exec('adb shell "am startservice com.pokemod.atlas/com.pokemod.atlas.services.MappingService" > /dev/null 2>&1');
                             echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                         }
                         // Stop Pogo & Atlas
-                        echo '<form class="d-inline" id="stop-' . $name . '" action="singledevice.php?devicename='.$name.'" method ="post" onsubmit="return confirmsingle()">' .
-                            '<button name="stop-' . $name . '" type="submit" class="btn btn-danger controlButton">Stop Atlas</button>' .
+                        echo '<form class="d-inline" id="stop-' . $id . '" action="singledevice.php?devicename='.$name.'" method ="post" onsubmit="return confirmsingle()">' .
+                            '<button name="stop-' . $id . '" type="submit" class="btn btn-danger controlButton">Stop Atlas</button>' .
                         '</form>';
-                        if(isset($_POST["stop-$name"])){
+                        if(isset($_POST["stop-$id"])){
                             echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                             echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
                             echo $res=shell_exec('adb shell "su -c am force-stop com.nianticlabs.pokemongo & am force-stop com.pokemod.atlas" > /dev/null 2>&1');
                             echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                         }
                         // Update Atlas Config
-                        echo '<form class="d-inline" id="config-atlas-' . $name . '" action="singledevice.php?devicename='.$name.'" method ="post" onsubmit="return confirmsingle()">' .
-                            '<button name="update-atlas-' . $name . '" type="submit" class="btn btn-warning controlButton">Push Atlas Config</button>' .
+                        echo '<form class="d-inline" id="config-atlas-' . $id . '" action="singledevice.php?devicename='.$name.'" method ="post" onsubmit="return confirmsingle()">' .
+                            '<button name="update-atlas-' . $id . '" type="submit" class="btn btn-warning controlButton">Push Atlas Config</button>' .
                         '</form>';
-                        if(isset($_POST["config-atlas-$name"])){
+                        if(isset($_POST["config-atlas-$id"])){
                             echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                             echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
                             echo $res=shell_exec("adb push apps/$name_atlas_config.json /data/local/tmp/atlas_config.json > /dev/null 2>&1");
@@ -1182,13 +1179,13 @@ echo '<div class="cssContainer">' .
                     echo '</div>' .
                     
                     // APKs TAB
-                         '<div id="tabAPKs-' . $name .'" class="tabcontent tabcontent-' . $name .'">' .
+                         '<div id="tabAPKs-' . $id .'" class="tabcontent tabcontent-' . $id .'">' .
 
                         // Update PoGo APK
-                         '<form class="d-inline" id="update-pogo-' . $name . '" action="singledevice.php?devicename='.$name.'" method ="post" onsubmit="return confirmsingle()">' .
-                            '<button name="update-pogo-' . $name . '" type="submit" class="btn btn-primary controlButton">Push PoGo APK</button>' .
+                         '<form class="d-inline" id="update-pogo-' . $id . '" action="singledevice.php?devicename='.$name.'" method ="post" onsubmit="return confirmsingle()">' .
+                            '<button name="update-pogo-' . $id . '" type="submit" class="btn btn-primary controlButton">Push PoGo APK</button>' .
                          '</form>';
-                        if(isset($_POST["update-pogo-$name"])){
+                        if(isset($_POST["update-pogo-$id"])){
                             echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                             echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
                             echo $res=shell_exec('adb install -r apps/pokemongo.apk > /dev/null 2>&1');
@@ -1196,10 +1193,10 @@ echo '<div class="cssContainer">' .
                         }
 
                         // Update Atlas APK
-                        echo '<form class="d-inline" id="update-atlas-' . $name . '" action="singledevice.php?devicename='.$name.'" method ="post" onsubmit="return confirmsingle()">' .
-                            '<button name="update-atlas-' . $name . '" type="submit" class="btn btn-primary controlButton">Push Atlas APK</button>' .
+                        echo '<form class="d-inline" id="update-atlas-' . $id . '" action="singledevice.php?devicename='.$name.'" method ="post" onsubmit="return confirmsingle()">' .
+                            '<button name="update-atlas-' . $id . '" type="submit" class="btn btn-primary controlButton">Push Atlas APK</button>' .
                         '</form>';
-                        if(isset($_POST["update-atlas-$name"])){
+                        if(isset($_POST["update-atlas-$id"])){
                             echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                             echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
                             echo $res=shell_exec('adb install -r apps/atlas.apk > /dev/null 2>&1');
@@ -1208,13 +1205,13 @@ echo '<div class="cssContainer">' .
                     echo '</div>'.// End of Device Options Tablerow
                     
                     // Misc TAB
-                            '<div id="tabMisc-' . $name .'" class="tabcontent tabcontent-' . $name .'">' .
+                            '<div id="tabMisc-' . $id .'" class="tabcontent tabcontent-' . $id .'">' .
 
                         // Get PoGo Version
-                            '<form class="d-inline" id="version-pogo-' . $name . '" action="singledevice.php?devicename='.$name.'" method ="post">' .
-                                '<button name="version-pogo-' . $name . '" type="submit" class="btn btn-primary controlButton">Get Version PoGo</button>' .
+                            '<form class="d-inline" id="version-pogo-' . $id . '" action="singledevice.php?devicename='.$name.'" method ="post">' .
+                                '<button name="version-pogo-' . $id . '" type="submit" class="btn btn-primary controlButton">Get Version PoGo</button>' .
                             '</form>';
-                            if(isset($_POST["version-pogo-$name"])){
+                            if(isset($_POST["version-pogo-$id"])){
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                                 echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
                                 $pogver = shell_exec('adb shell dumpsys package com.nianticlabs.pokemongo | grep -E versionName | sed -e "s@    versionName=@@g"');
@@ -1227,19 +1224,18 @@ echo '<div class="cssContainer">' .
                                         $conn->query($sql);
                                         echo "Checking PoGo Version";
                                         $conn->close();
-                                        echo $res=shell_exec('adb kill-server > /dev/null 2>&1'); ?>
-                                        <script>
-                                        window.location.reload();
-                                        </script>
-                                <?php
+                                        echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                                    echo '<script>' .
+                                    'location.replace("/singledevice.php?devicename='.$name.'");' .
+                                    '</script>';
                                 }
                             }
 
                         // Get Atlas Version
-                            echo '<form class="d-inline" id="version-atlas-' . $name . '" action="singledevice.php?devicename='.$name.'" method ="post">' .
-                                '<button name="version-atlas-' . $name . '" type="submit" class="btn btn-primary controlButton">Get Version Atlas</button>' .
+                            echo '<form class="d-inline" id="version-atlas-' . $id . '" action="singledevice.php?devicename='.$name.'" method ="post">' .
+                                '<button name="version-atlas-' . $id . '" type="submit" class="btn btn-primary controlButton">Get Version Atlas</button>' .
                             '</form>';
-                            if(isset($_POST["version-atlas-$name"])){
+                            if(isset($_POST["version-atlas-$id"])){
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                                 echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
                                 $atver = shell_exec('adb shell dumpsys package com.pokemod.atlas | grep -E versionName | sed -e "s@    versionName=@@g"');
@@ -1252,19 +1248,18 @@ echo '<div class="cssContainer">' .
                                         $conn->query($sql);
                                         echo "Checking Atlas Version";
                                         $conn->close();
-                                        echo $res=shell_exec('adb kill-server > /dev/null 2>&1'); ?>
-                                        <script>
-                                        window.location.reload();
-                                        </script>
-                                <?php
+                                        echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                                    echo '<script>' .
+                                    'location.replace("/singledevice.php?devicename='.$name.'");' .
+                                    '</script>';
                                 }
                             }
                             
                         // get Android Version
-                            echo '<form class="d-inline" id="version-android-' . $name . '" action="singledevice.php?devicename='.$name.'" method ="post">' .
-                                '<button name="version-android-' . $name . '" type="submit" class="btn btn-primary controlButton">Get Version Android</button>' .
+                            echo '<form class="d-inline" id="version-android-' . $id . '" action="singledevice.php?devicename='.$name.'" method ="post">' .
+                                '<button name="version-android-' . $id . '" type="submit" class="btn btn-primary controlButton">Get Version Android</button>' .
                             '</form>';
-                            if(isset($_POST["version-android-$name"])){
+                            if(isset($_POST["version-android-$id"])){
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                                 echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
                                 $anvers= shell_exec('adb shell getprop ro.build.version.release');
@@ -1277,19 +1272,18 @@ echo '<div class="cssContainer">' .
                                         $conn->query($sql);
                                         echo "Checking Android Version";
                                         $conn->close();
-                                        echo $res=shell_exec('adb kill-server > /dev/null 2>&1'); ?>
-                                        <script>
-                                        window.location.reload();
-                                        </script>
-                                <?php
+                                        echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                                    echo '<script>' .
+                                    'location.replace("/singledevice.php?devicename='.$name.'");' .
+                                    '</script>';
                                 }
                             }
                         
                             // get CPU TYPE
-                            echo '<form class="d-inline" id="cputype-' . $name . '" action="singledevice.php?devicename='.$name.'" method ="post">' .
-                                '<button name="cputype-' . $name . '" type="submit" class="btn btn-primary controlButton">Check CPU type</button>' .
+                            echo '<form class="d-inline" id="cputype-' . $id . '" action="singledevice.php?devicename='.$name.'" method ="post">' .
+                                '<button name="cputype-' . $id . '" type="submit" class="btn btn-primary controlButton">Check CPU type</button>' .
                             '</form>';
-                            if(isset($_POST["cputype-$name"])){
+                            if(isset($_POST["cputype-$id"])){
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                                 echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
                                 $cputype= shell_exec('adb shell getprop ro.product.cpu.abi');
@@ -1302,19 +1296,18 @@ echo '<div class="cssContainer">' .
                                         $conn->query($sql);
                                         echo "Checking CPU";
                                         $conn->close();
-                                        echo $res=shell_exec('adb kill-server > /dev/null 2>&1'); ?>
-                                        <script>
-                                        window.location.reload();
-                                        </script>
-                                <?php
+                                        echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                                    echo '<script>' .
+                                    'location.replace("/singledevice.php?devicename='.$name.'");' .
+                                    '</script>';
                                 }
                             }
                             
                             // get temp TYPE
-                            echo '<form class="d-inline" id="temp-' . $name . '" action="singledevice.php?devicename='.$name.'" method ="post">' .
-                                '<button name="temp-' . $name . '" type="submit" class="btn btn-primary controlButton">Recheck Temp</button>' .
+                            echo '<form class="d-inline" id="temp-' . $id . '" action="singledevice.php?devicename='.$name.'" method ="post">' .
+                                '<button name="temp-' . $id . '" type="submit" class="btn btn-primary controlButton">Recheck Temp</button>' .
                             '</form>';
-                            if(isset($_POST["temp-$name"])){
+                            if(isset($_POST["temp-$id"])){
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                                 echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
                                 $temp = shell_exec("adb shell cat /sys/class/thermal/thermal_zone0/temp | awk '{print substr($0, 1, length($0)-3)}'");
@@ -1327,11 +1320,10 @@ echo '<div class="cssContainer">' .
                                         $conn->query($sql);
                                         echo "Checking Device temp";
                                         $conn->close();
-                                        echo $res=shell_exec('adb kill-server > /dev/null 2>&1'); ?>
-                                        <script>
-                                        window.location.reload();
-                                        </script>
-                                <?php
+                                        echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
+                                    echo '<script>' .
+                                    'location.replace("/singledevice.php?devicename='.$name.'");' .
+                                    '</script>';
                                 }
                             }
                                     
@@ -1339,10 +1331,10 @@ echo '<div class="cssContainer">' .
                             
                     
                         // Push eMagisk.zip to Device
-                            echo '<form class="d-inline" id="push-emagisk-' . $name . '" action="singledevice.php?devicename='.$name.'" method ="post" onsubmit="return confirmsingle()">' .
-                                '<button name="push-emagisk-' . $name . '" type="submit" class="btn btn-primary controlButton">Push eMagisk.zip</button>' .
+                            echo '<form class="d-inline" id="push-emagisk-' . $id . '" action="singledevice.php?devicename='.$name.'" method ="post" onsubmit="return confirmsingle()">' .
+                                '<button name="push-emagisk-' . $id . '" type="submit" class="btn btn-primary controlButton">Push eMagisk.zip</button>' .
                             '</form>';
-                            if(isset($_POST["push-emagisk-$name"])){
+                            if(isset($_POST["push-emagisk-$id"])){
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                                 echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
                                 echo $res=shell_exec('adb push apps/eMagisk.zip /sdcard > /dev/null 2>&1');
@@ -1350,10 +1342,10 @@ echo '<div class="cssContainer">' .
                             }
                             
                         // Push eMagisk Config to Device
-                            echo '<form class="d-inline" id="config-emagisk-' . $name . '" action="singledevice.php?devicename='.$name.'" method ="post" onsubmit="return confirmsingle()">' .
-                                '<button name="config-emagisk-' . $name . '" type="submit" class="btn btn-primary controlButton">Push eMagisk Config</button>' .
+                            echo '<form class="d-inline" id="config-emagisk-' . $id . '" action="singledevice.php?devicename='.$name.'" method ="post" onsubmit="return confirmsingle()">' .
+                                '<button name="config-emagisk-' . $id . '" type="submit" class="btn btn-primary controlButton">Push eMagisk Config</button>' .
                             '</form>';
-                            if(isset($_POST["config-emagisk-$name"])){
+                            if(isset($_POST["config-emagisk-$id"])){
                             echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                             echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
                             echo $res=shell_exec('adb push apps/emagisk.congig /data/local/tmp > /dev/null 2>&1');
@@ -1696,11 +1688,9 @@ echo '<div class="cssContainer">' .
                'Total Checked: ' . $countrange . '</br>' .
                'No new devices found';
                sleep(5);
-              ?>
-              <script>
-              window.location.reload();
-              </script>
-              <?php
+              echo '<script>' .
+                  'location.replace("/scanner.php");' .
+                  '</script>';
           } else {
           $final = $foundcount + $existcount;
           echo '</br>Range Checked: ' . $lanip . '.' . $startrange . '/' . $endrange . '</br>' .
@@ -1709,11 +1699,9 @@ echo '<div class="cssContainer">' .
                'Total Found: ' . $final . '</br>' .
                'Total Checked: ' . $countrange . '</br>' ;
                sleep(5);
-              ?>
-              <script>
-              window.location.reload();
-              </script>
-              <?php
+              echo '<script>' .
+                  'location.replace("/scanner.php");' .
+                  '</script>';
           }
      }
                   
@@ -1731,16 +1719,14 @@ echo '<div class="cssContainer">' .
 
 if(empty($atconfig)){
 echo 'No Atlas Config File Found, Would you like to make one?<br>' .
-     '<form class="d-inline" id="atconfcreate" action="editor.php" method ="post">' .
+     '<form class="d-inline" id="atconfcreate" method ="post">' .
      '<button name="atconfcreate" type="submit" class="btn btn-primary">Make Atlas config</button>' .
      '</form>';
 	if(isset($_POST['atconfcreate'])){
                 echo $res=shell_exec('cp apps/atlas_config.json.example apps/atlas_config.json> /dev/null 2>&1 &');
-		?>
-		<script>
-		window.location.reload();
-		</script>
-		<?php
+        echo '<script>' .
+            'location.replace("/editor.php");' .
+            '</script>';
 	}	
 }else{
 echo '<h3>Current Config</h3>' .
@@ -1883,11 +1869,9 @@ echo '<h3>Current Config</h3>' .
                     fwrite($file,'{"authBearer":"'.$AB.'","deviceAuthToken":"'.$DAT.'","deviceName":"'.$name.'","email":"'.$EM.'","rdmUrl":"'.$RURL.'","runOnBoot":'.$ROB.'}');
                     fclose($file);
                     }
-                ?>
-                <script>
-                window.location.reload();
-                </script>
-                <?php
+                echo '<script>' .
+                    'location.replace("/editor.php");' .
+                    '</script>';
             }
             
             
@@ -1987,11 +1971,11 @@ echo '</center></div>' .
                             fwrite($file, "\n");
                             fwrite($file,'rdm_backendURL="'.$RDMUrl.'"');
                             fclose($file);
-                            ?>
-                            <script>
-                            window.location.reload();
-                            </script>
-                            <?php
+                            
+                        echo '<script>' .
+                            'location.replace("/emagiskeditor.php");' .
+                            '</script>';
+        
                         }
                     }
                     echo '</center></div>' .
