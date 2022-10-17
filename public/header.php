@@ -64,6 +64,8 @@ echo '<head>' .
     '<a href="logviewer.php?logtoview=stop">Stop Logs</a>' .
     '<a href="logviewer.php?logtoview=start">Start Logs</a>' .
     '<a href="logviewer.php?logtoview=updater">Updater Logs</a>' .
+    '<a href="logviewer.php?logtoview=magiskupdater">Magisk Updater Logs</a>' .
+    '<a href="logviewer.php?logtoview=pushemag">Push eMag Logs</a>' .
       '</div>' .
     '</div>' .
     '<div class="dropdown">' .

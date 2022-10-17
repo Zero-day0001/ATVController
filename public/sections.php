@@ -13,11 +13,11 @@ echo
                 echo '</div>
                 <div class="columnmenu">';
                     vercheck();
-                    moreToCome();
+                    updatemagisk();
                echo '</div>
                 <div class="columnmenu">';
                     allscreenshot();
-                    moreToCome();
+                    moretocome();
                echo '</div>
 			</div>
 		</div>';

@@ -323,10 +323,9 @@ function deviceinfo() {
                  'location.replace("/");' .
                  '</script>';
             
+            }
         }
     }
-    }
-	
 }
 
 function tempbutton() {
@@ -354,12 +353,45 @@ function tempbutton() {
         if(isset($_POST['temp'])){
             echo $res=shell_exec('scripts/tempcheck.sh > /dev/null 2>&1 &');
             echo '<script>' .
-                 'location.replace("/");' .
+                 'location.replace("/logviewer.php?logtoview=gettemp");' .
                  '</script>';
             
+            }
         }
     }
-  }
+}
+    
+function updatemagisk() {
+    require("config.php");
+    $conn = new mysqli($servername, $username, $password, $dbname, $port);
+
+    //Check Connection
+    if (!$conn) {
+    die("Connection failed: " . mysqli_connect_error());
+    }else{
+    $lastseen = " SELECT * FROM Updater WHERE ID = '1'; ";
+    $res = $conn->query($lastseen);
+    $conn->close();
+    while($rows=$res->fetch_assoc()){
+        $status = $rows['STATUS'];
+    }
+    if($status == 1){
+        echo '<button class="btn btn-primary menuButtonbulk">Waiting for Updater</button>';
+    }elseif($status == 2){
+        echo '<button class="btn btn-primary menuButtonbulk">Waiting for Job</button>';
+    }else{
+        echo '<form id="updatemagisk" method ="post" onsubmit="return confirmscreen()">' .
+            '<button name="updatemagisk" type="submit" class="btn btn-primary menuButtonbulk">Update Magisk ALL</button>' .
+            '</form>';
+        if(isset($_POST['updatemagisk'])){
+            echo $res=shell_exec('scripts/flashmagiskupdate.sh > /dev/null 2>&1 &');
+            echo '<script>' .
+                 'location.replace("/logviewer.php?logtoview=magiskupdater");' .
+                 '</script>';
+            
+            }
+        }
+    }
 }
 
 function rebootbutton() {
@@ -390,9 +422,9 @@ function rebootbutton() {
         echo '<script>' .
              'location.replace("/");' .
              '</script>';
-	}
-   }
-  }
+            }
+        }
+    }
 }
 
 function vercheck() {
@@ -422,11 +454,11 @@ function vercheck() {
         if(isset($_POST['vercheck'])){
                 echo $res=shell_exec('scripts/vercheck.sh > /dev/null 2>&1 &');
             echo '<script>' .
-                 'location.replace("/");' .
+                 'location.replace("/logviewer.php?logtoview=getversion");' .
                  '</script>';
+            }
+        }
     }
-   }
-  }
 }
 
 function allscreenshot() {
@@ -456,11 +488,11 @@ function allscreenshot() {
         if(isset($_POST['allscreenshot'])){
                 echo $res=shell_exec('scripts/allscreenshot.sh > /dev/null 2>&1 &');
             echo '<script>' .
-                 'location.replace("/");' .
+                 'location.replace("/logviewer.php?logtoview=screenshot");' .
                  '</script>';
+            }
+        }
     }
-   }
-  }
 }
 
 function anvercheck() {
@@ -492,9 +524,9 @@ function anvercheck() {
             echo '<script>' .
                  'location.replace("/");' .
                  '</script>';
+            }
+        }
     }
-   }
-  }
 }
 
 function upatlas() {
@@ -524,12 +556,12 @@ function upatlas() {
 	if(isset($_POST['upatlas'])){
 		echo $res=shell_exec('scripts/upat.sh > /dev/null 2>&1 &');
         echo '<script>' .
-             'location.replace("/");' .
+             'location.replace("/logviewer.php?logtoview=updateatlas");' .
              '</script>';
 
-	}
-   }
-  }
+            }
+        }
+    }
 }
     
 function pushemag() {
@@ -552,19 +584,32 @@ function pushemag() {
         }elseif($status == 2){
             echo '<button class="btn btn-primary menuButtonbulk">Waiting for Job</button>';
         }else{
-    echo
-    '<form id="upatlas" method ="post" onsubmit="return confirmscreen()">' .
-        '<button name="upatlas" type="submit" class="btn btn-primary menuButtonbulk">Push Emagisk ALL</button>' .
-    '</form>';
-    if(isset($_POST['upatlas'])){
-        echo $res=shell_exec('scripts/pushemag.sh > /dev/null 2>&1 &');
-        echo '<script>' .
-             'location.replace("/");' .
-             '</script>';
-
+            $filename = 'apps/emagisk.config';
+            if (file_exists($filename)) {
+                echo
+                '<form id="pushemag" method ="post" onsubmit="return confirmscreen()">' .
+                '<button name="pushemag" type="submit" class="btn btn-primary menuButtonbulk">Push Emagisk ALL</button>' .
+                '</form>';
+                if(isset($_POST['pushemag'])){
+                    echo $res=shell_exec('scripts/pushemag.sh > /dev/null 2>&1 &');
+                    echo '<script>' .
+                    'location.replace("/logviewer.php?logtoview=pushemag");' .
+                    '</script>';
+                }
+                
+            }else{
+                echo
+                '<form id="pushemag" method ="post" onsubmit="return confirmscreen()">' .
+                '<button name="pushemag" type="submit" class="btn btn-primary menuButtonbulk">Push Emagisk ALL</br><small>(requires config)</small></button>' .
+                '</form>';
+                if(isset($_POST['pushemag'])){
+                    echo '<script>' .
+                     'location.replace("/editor.php?type=emagconfig");' .
+                     '</script>';
+                    }
+            }
+        }
     }
-   }
-  }
 }
     
 function startbutton() {
@@ -594,11 +639,11 @@ function startbutton() {
 	if(isset($_POST['start'])){
 		echo $res=shell_exec('scripts/start.sh > /dev/null 2>&1 &');
         echo '<script>' .
-             'location.replace("/");' .
+             'location.replace("/logviewer.php?logtoview=start");' .
              '</script>';
-	}
-   }
-  }
+            }
+        }
+    }
 }
 
 function stopbutton() {
@@ -628,11 +673,11 @@ function stopbutton() {
 	if(isset($_POST['stop'])){
 		echo $res=shell_exec('scripts/stop.sh > /dev/null 2>&1 &');
         echo '<script>' .
-             'location.replace("/");' .
+             'location.replace("/logviewer.php?logtoview=stop");' .
              '</script>';
-	}
-   }
-  }
+            }
+        }
+    }
 }
     
 function restartbutton() {
@@ -665,9 +710,9 @@ function restartbutton() {
         echo '<script>' .
              'location.replace("/");' .
              '</script>';
+            }
+        }
     }
-   }
-  }
 }
     
 function uppogo() {
@@ -697,11 +742,11 @@ function uppogo() {
 	if(isset($_POST['uppogo'])){
 		echo $res=shell_exec('scripts/uppogo.sh > /dev/null 2>&1 &');
         echo '<script>' .
-             'location.replace("/");' .
+             'location.replace("/logviewer.php?logtoview=updatepogo");' .
              '</script>';
-	}
-   }
-  }
+            }
+        }
+    }
 }
     
 function serverControls() {
@@ -757,11 +802,8 @@ function serverControls() {
             if(isset($_POST['UpdatePokemonGo'])){
                 echo shell_exec('wget -b -O apps/pokemongo.apk '.$pokemongoURL.'#'.$pokemongoURLauth.' ');
             }
-    }
-    
-    
+        }
     echo '</center></div>';
-         
 }
     
 function devicelogViewer() {
@@ -843,6 +885,24 @@ function logViewer() {
         $lines = count(file("$filePath"));
         $uplog = file_get_contents("$filePath");
         $logname = "Updater";
+    }
+    elseif($urlparse == "magiskupdater"){
+        $filePath = "outputs/magiskupdater.log";
+        $lines = count(file("$filePath"));
+        $uplog = file_get_contents("$filePath");
+        $logname = "Magisk Updater";
+    }
+    elseif($urlparse == "pushemag"){
+        $filePath = "outputs/emagisk-push.log";
+        $lines = count(file("$filePath"));
+        $uplog = file_get_contents("$filePath");
+        $logname = "eMagisk Push";
+    }
+    elseif($urlparse == "magiskupdaterapk"){
+        $filePath = "outputs/magiskinstallerapk.log";
+        $lines = count(file("$filePath"));
+        $uplog = file_get_contents("$filePath");
+        $logname = "Magisk APK installer";
     }
          
     echo '<div class="cssContainer"><center>' .
