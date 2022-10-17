@@ -27,6 +27,7 @@ for i in `cat scripts/ips` ; do
       sleep 1
       adb push apps/emagisk.config /data/local/tmp > /dev/null 2>&1
       adb push apps/eMagisk.zip /sdcard > /dev/null 2>&1
+      adb shell "su -c 'magisk --install-module emagisk.zip && reboot'"
       adb kill-server
     done
   else
@@ -37,6 +38,7 @@ for i in `cat scripts/ips` ; do
       sleep 1
       adb push apps/emagisk.config /data/local/tmp > /dev/null 2>&1
       adb push apps/eMagisk.zip /sdcard > /dev/null 2>&1
+      adb shell "su -c 'magisk --install-module emagisk.zip && reboot'"
     adb kill-server
   fi
 done
