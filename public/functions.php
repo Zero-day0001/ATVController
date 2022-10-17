@@ -1423,7 +1423,20 @@ echo '<div class="cssContainer">' .
                                 }
                             }
                                     
-                            
+                        // update Magisk on Device
+                            echo '<form class="d-inline" id="update-magisk-' . $id . '" action="singledevice.php?devicename='.$name.'" method ="post" onsubmit="return confirmsingle()">' .
+                                '<button name="update-magisk-' . $id . '" type="submit" class="btn btn-primary controlButton">Update Magisk</button>' .
+                            '</form>';
+                            if(isset($_POST["update-magisk-$id"])){
+                                echo "Killing adb server";
+                                echo $res=shell_exec('adb kill-server');
+                                echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
+                                echo "Installing Magisk.apk";
+                                echo $res=shell_exec('adb install -r apps/Magiskv23.apk');
+                                echo "Done";
+                                echo "Killing ADB Server";
+                                echo $res=shell_exec('adb kill-server');
+                            }
                             
                     
                         // Push eMagisk.zip to Device
@@ -1434,6 +1447,7 @@ echo '<div class="cssContainer">' .
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                                 echo $res=shell_exec("adb connect $localip:$adbport > /dev/null 2>&1");
                                 echo $res=shell_exec('adb push apps/eMagisk.zip /sdcard > /dev/null 2>&1');
+                                echo $res=shell_exec('adb shell "su -c "magisk --install-module /sdcard/eMagisk.zip && reboot" > /dev/null 2>&1"');
                                 echo $res=shell_exec('adb kill-server > /dev/null 2>&1');
                             }
                             
@@ -1643,7 +1657,7 @@ echo '<div class="cssContainer">' .
                             '</tr>' .
                             '<tr>' .
                             '<th style="text-align:right;padding-right:20px;width:50%;">' .
-                            "Last Seen:" .
+                            "Last Seen(Live from RDM):" .
                             '</th>' .
                             '<td>';
                             $conn = new mysqli($RDMservername, $RDMusername, $RDMpassword, $RDMdbname, $RDMport);
